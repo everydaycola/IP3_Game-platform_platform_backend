@@ -1,21 +1,21 @@
 ## Gedetailleerde omschrijving
 
-Als een student het proces voor een inschrijving aan het doorlopen is 
-moet hij zich kunnen inschrijvingen voor opleidingsonderdelen binnen de richting 
+Als een student het proces voor een inschrijving aan het doorlopen is
+moet hij zich kunnen inschrijvingen voor opleidingsonderdelen binnen de richting
 waarvoor hij nog geen credits heeft verworven.
 
 ## Aanpassingen aan het domeinmodel
 
-Het concept opleidingsonderdeelInschrijving moet toegevoegd worden. 
+Het concept opleidingsonderdeelInschrijving moet toegevoegd worden.
 Deze is gekoppeld aan een inschrijving van een student en aan een opleidingsonderdeel.
 
-
 ## Taken
+
 * [ ] Toon lijst waarvoor student nog geen credits verwierf
 * [ ] Laat de student opleidingsonderdelen selecteren en sla deze opleidingsonderdeel
-* [ ] Voeg update functionaliteit toe. 
-	* Preselecteer opleidingsonderdelen waarvoor de student ingeschreven is. 
-	* Verwijder inschrijvingen als deze gedeselecteerd werden.
+* [ ] Voeg update functionaliteit toe.
+    * Preselecteer opleidingsonderdelen waarvoor de student ingeschreven is.
+    * Verwijder inschrijvingen als deze gedeselecteerd werden.
 
 ## Relevante wireframes
 
@@ -56,5 +56,6 @@ Link naar de wireframes
         Then subscription with id 1 has a courseSubscriptions with courseId 1
 ```
 
-## Definition of ready checklist 
+## Definition of ready checklist
+
 [ ] Alle voorwaarden in de Definition of Ready checklist (zie canvas) zijn voldaan. Deze user story is refined.
