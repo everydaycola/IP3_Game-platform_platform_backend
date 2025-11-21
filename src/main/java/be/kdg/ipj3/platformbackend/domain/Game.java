@@ -1,7 +1,9 @@
 package be.kdg.ipj3.platformbackend.domain;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class Game {
     private final GameId id;
@@ -34,27 +36,4 @@ public class Game {
         return new Game(id,name,description,price,image,icon);
     }
 
-    public GameId getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
 }

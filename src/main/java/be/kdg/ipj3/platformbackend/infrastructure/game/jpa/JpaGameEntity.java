@@ -2,10 +2,7 @@ package be.kdg.ipj3.platformbackend.infrastructure.game.jpa;
 
 import be.kdg.ipj3.platformbackend.domain.Game;
 import be.kdg.ipj3.platformbackend.domain.GameId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
