@@ -18,6 +18,6 @@ public class GameService {
 
     public List<Game> findAll(){
         log.info("Returning all Games");
-        return games.FindAll().orElseThrow();
+        return games.findAll();
     }
 }
