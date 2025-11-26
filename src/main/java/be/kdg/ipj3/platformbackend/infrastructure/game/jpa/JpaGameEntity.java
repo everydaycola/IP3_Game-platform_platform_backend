@@ -33,6 +33,9 @@ public class JpaGameEntity {
     @JoinColumn(name = "genre_id", nullable = false)
     private JpaGenreEntity genre;
 
+    @Column
+    private String url;
+
     public JpaGameEntity() {
     }
 
@@ -64,7 +67,8 @@ public class JpaGameEntity {
                 this.price,
                 this.image,
                 this.icon,
-                genre.toDomain()
+                genre.toDomain(),
+                this.url
         );
     }
 }

@@ -10,29 +10,32 @@ VALUES ('aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaa3',
 
 
 
-INSERT INTO games (id, name, description, price, image, icon, genre_id)
+INSERT INTO games (id, name, description, price, image, icon, genre_id, url)
 VALUES ('11111111-1111-1111-1111-111111111111',
         'Tic Tac Toe',
         'A classic 2-player strategy game.',
         19.98,
         'tictactoe.png',
         'https://www.svgrepo.com/show/143264/tic-tac-toe-game.svg',
-        'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaa2');
+        'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaa2',
+        '');
 
-INSERT INTO games (id, name, description, price, image, icon, genre_id)
+INSERT INTO games (id, name, description, price, image, icon, genre_id, url)
 VALUES ('22222222-2222-2222-2222-222222222222',
         'Go',
         'An ancient abstract strategy board game originating from East Asia.',
         29.99,
         'go.png',
         '',
-        'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaa2');
+        'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaa2',
+        '');
 
-INSERT INTO games (id, name, description, price, image, icon, genre_id)
+INSERT INTO games (id, name, description, price, image, icon, genre_id, url)
 VALUES ('33333333-3333-3333-3333-333333333333',
         'Tetris',
         'A tile-matching puzzle game where players rotate pieces to clear lines.',
         14.99,
         'tetris.png',
         '',
-        'aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaa3');
+        'aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaa3',
+        '');
