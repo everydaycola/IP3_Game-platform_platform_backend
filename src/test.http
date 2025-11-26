@@ -14,3 +14,6 @@ GET {{baseUrl}}/{{go}}
 
 ### Get Tetris
 GET {{baseUrl}}/{{tetris}}
+
+### Get non-existing game
+GET {{baseUrl}}/99999999-9999-9999-9999-999999999999
