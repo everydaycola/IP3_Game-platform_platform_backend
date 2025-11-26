@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.application;
 
 import be.kdg.ipj3.platformbackend.domain.Game;
+import be.kdg.ipj3.platformbackend.domain.GameId;
 import be.kdg.ipj3.platformbackend.domain.GameRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,4 +21,9 @@ public class GameService {
         log.info("Returning all Games");
         return games.findAll();
     }
+
+        public Game find(GameId gameId){
+        log.info("Finding game {}", gameId.id());
+        return games.findById(gameId.id()).orElseThrow(gameId::notFound);
+        }
 }
