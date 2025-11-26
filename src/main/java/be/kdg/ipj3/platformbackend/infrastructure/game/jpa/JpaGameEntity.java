@@ -29,6 +29,10 @@ public class JpaGameEntity {
     @Column
     private String icon;
 
+    @ManyToOne
+    @JoinColumn(name = "genre_id", nullable = false)
+    private JpaGenreEntity genre;
+
     public JpaGameEntity() {
     }
 
@@ -59,7 +63,8 @@ public class JpaGameEntity {
                 this.description,
                 this.price,
                 this.image,
-                this.icon
+                this.icon,
+                genre.toDomain()
         );
     }
 }
