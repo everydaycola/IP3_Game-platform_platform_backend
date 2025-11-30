@@ -20,7 +20,7 @@ VALUES ('11111111-1111-1111-1111-111111111111',
         'tictactoe.png',
         'https://www.svgrepo.com/show/143264/tic-tac-toe-game.svg',
         'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaa2',
-        'http://localhost:8090/gamehosts/tic-tac-toe/')
+        'http://localhost:5174/')
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO games (id, name, description, price, image, icon, genre_id, url)
