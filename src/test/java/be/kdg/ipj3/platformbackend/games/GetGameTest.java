@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,12 +25,8 @@ public class GetGameTest {
     @Mock
     GameRepository gameRepository;
 
+    @InjectMocks
     GameService gameService;
-
-    @BeforeEach
-    public void setup() {
-        gameService = new GameService(gameRepository);
-    }
 
     @Nested
     class SuccesFlows {
