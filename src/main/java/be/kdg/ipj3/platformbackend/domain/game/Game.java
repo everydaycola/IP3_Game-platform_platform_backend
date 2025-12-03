@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.domain;
+package be.kdg.ipj3.platformbackend.domain.game;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Game {
     private final GameId id;
-    private String name;
-    private String description;
-    private double price;
-    private String image;
-    private String icon;
-    private String url;
-    private Genre genre;
+    private final String name;
+    private final String description;
+    private final double price;
+    private final String image;
+    private final String icon;
+    private final String url;
+    private final Genre genre;
 
     public Game(String name, String description, double price, String image, String icon, String url, Genre genre) {
         this.url = url;

@@ -1,7 +1,7 @@
-package be.kdg.ipj3.platformbackend.infrastructure.game.jpa;
+package be.kdg.ipj3.platformbackend.infrastructure.game.jpa.entity.game;
 
-import be.kdg.ipj3.platformbackend.domain.Game;
-import be.kdg.ipj3.platformbackend.domain.GameId;
+import be.kdg.ipj3.platformbackend.domain.game.Game;
+import be.kdg.ipj3.platformbackend.domain.game.GameId;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -39,13 +39,14 @@ public class JpaGameEntity {
     public JpaGameEntity() {
     }
 
-    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon) {
+    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.image = image;
         this.icon = icon;
+        this.url = url;
     }
 
     public static JpaGameEntity fromDomain(Game game) {
@@ -55,7 +56,8 @@ public class JpaGameEntity {
                 game.getDescription(),
                 game.getPrice(),
                 game.getImage(),
-                game.getIcon()
+                game.getIcon(),
+                game.getUrl()
         );
     }
 
@@ -67,7 +69,7 @@ public class JpaGameEntity {
                 this.price,
                 this.image,
                 this.icon,
-                genre.toDomain(),
+                this.genre.toDomain(),
                 this.url
         );
     }

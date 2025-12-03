@@ -1,6 +1,6 @@
-package be.kdg.ipj3.platformbackend.api.dtos;
+package be.kdg.ipj3.platformbackend.api.dtos.game;
 
-import be.kdg.ipj3.platformbackend.domain.Game;
+import be.kdg.ipj3.platformbackend.domain.game.Game;
 
 import java.util.UUID;
 

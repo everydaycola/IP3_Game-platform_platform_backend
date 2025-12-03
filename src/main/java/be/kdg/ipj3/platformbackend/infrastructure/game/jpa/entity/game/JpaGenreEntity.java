@@ -1,6 +1,6 @@
-package be.kdg.ipj3.platformbackend.infrastructure.game.jpa;
+package be.kdg.ipj3.platformbackend.infrastructure.game.jpa.entity.game;
 
-import be.kdg.ipj3.platformbackend.domain.Genre;
+import be.kdg.ipj3.platformbackend.domain.game.Genre;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -23,9 +23,6 @@ public class JpaGenreEntity {
     @Column
     private String description;
 
-    @OneToMany(mappedBy = "genre", orphanRemoval = true)
-    private List<JpaGameEntity> games;
-
     public JpaGenreEntity() {
     }
 
@@ -37,7 +34,7 @@ public class JpaGenreEntity {
 
     public static JpaGenreEntity fromDomain(Genre genre) {
         return new JpaGenreEntity(
-                UUID.randomUUID(),
+                genre.getId(),
                 genre.getName(),
                 genre.getDescription()
         );
@@ -45,6 +42,7 @@ public class JpaGenreEntity {
 
     public Genre toDomain() {
         return new Genre(
+                this.id,
                 this.name,
                 this.description
         );

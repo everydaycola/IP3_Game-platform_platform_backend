@@ -1,5 +1,6 @@
-package be.kdg.ipj3.platformbackend.domain;
+package be.kdg.ipj3.platformbackend.domain.game;
 
+import be.kdg.ipj3.platformbackend.domain.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;

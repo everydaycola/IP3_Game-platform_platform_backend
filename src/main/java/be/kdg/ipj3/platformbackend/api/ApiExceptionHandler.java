@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.api;
 
-import be.kdg.ipj3.platformbackend.domain.NotFoundException;
+import be.kdg.ipj3.platformbackend.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

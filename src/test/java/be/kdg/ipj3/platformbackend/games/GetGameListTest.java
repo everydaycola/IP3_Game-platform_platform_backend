@@ -1,9 +1,8 @@
 package be.kdg.ipj3.platformbackend.games;
 import be.kdg.ipj3.platformbackend.application.GameService;
-import be.kdg.ipj3.platformbackend.domain.Game;
-import be.kdg.ipj3.platformbackend.domain.GameRepository;
-import be.kdg.ipj3.platformbackend.domain.Genre;
-import org.junit.jupiter.api.BeforeEach;
+import be.kdg.ipj3.platformbackend.domain.game.Game;
+import be.kdg.ipj3.platformbackend.domain.game.Genre;
+import be.kdg.ipj3.platformbackend.domain.repository.GameRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -30,9 +31,9 @@ public class GetGameListTest {
         @Test
         void getFullGamesList_returnsExpected() {
             //Arrange
-            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Genre strategy = new Genre("Strategy","Genre where a good strategy is key.");
-            List<Game> gameList = new ArrayList<Game>(
+            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
+            Genre strategy = new Genre(UUID.randomUUID(),"Strategy","Genre where a good strategy is key.");
+            List<Game> gameList = new ArrayList<>(
                     List.of(
                             new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle),
                             new Game("Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy),
