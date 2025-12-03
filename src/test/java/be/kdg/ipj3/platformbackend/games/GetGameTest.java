@@ -1,8 +1,11 @@
 package be.kdg.ipj3.platformbackend.games;
 
 import be.kdg.ipj3.platformbackend.application.GameService;
-import be.kdg.ipj3.platformbackend.domain.*;
-import org.junit.jupiter.api.BeforeEach;
+import be.kdg.ipj3.platformbackend.domain.exception.NotFoundException;
+import be.kdg.ipj3.platformbackend.domain.game.Game;
+import be.kdg.ipj3.platformbackend.domain.game.GameId;
+import be.kdg.ipj3.platformbackend.domain.game.Genre;
+import be.kdg.ipj3.platformbackend.domain.repository.GameRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,16 +34,10 @@ public class GetGameTest {
         @Test
         void getGame_byExistingId_returnsGame() {
             //Arrange
-            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Genre strategy = new Genre("Strategy","Genre where a good strategy is key.");
+            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
 
             Game game1 = new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
-            Game game2 = new Game("Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy);
-            Game game3 =  new Game("Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy);
 
-            List<Game> gameList = new ArrayList<Game>(
-                    List.of(game1,game2,game3)
-            );
             Mockito.when(gameRepository.findById(game1.getId().id())).thenReturn(Optional.of(game1));
 
             //Act
