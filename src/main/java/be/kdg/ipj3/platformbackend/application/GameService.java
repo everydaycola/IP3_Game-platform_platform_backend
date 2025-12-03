@@ -41,7 +41,7 @@ public class GameService {
     }
 
     public void removeFavoriteGame(GameId gameId, UserId userId) {
-        log.info("User: " + userId + " removed game with id" + gameId + "to their favorites.");
+        log.info("User: " + userId + " removed game with id" + gameId + "from their favorites.");
         FavoriteGame favoriteGame = new FavoriteGame(userId.id(), gameId.id());
         gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         favoriteGameRepository.remove(favoriteGame);

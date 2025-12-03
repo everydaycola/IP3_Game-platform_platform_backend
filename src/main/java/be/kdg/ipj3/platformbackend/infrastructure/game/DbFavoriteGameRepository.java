@@ -25,6 +25,6 @@ public class DbFavoriteGameRepository implements FavoriteGameRepository {
 
     @Override
     public void remove(FavoriteGame game) {
-
+        jpaFavoriteGameRepository.delete(new JpaFavoriteGameEntity(game.getFavoriteGameId()));
     }
 }

@@ -99,7 +99,7 @@ class GameIntegrationTests {
     @Nested
     class RemoveGameFavoriteIntegrationFlows{
         @Test
-        public void addFavorite_should_return_200_when_fired_with_valid_gameId()throws Exception{
+        public void removeFavorite_should_return_200_when_fired_with_valid_gameId()throws Exception{
             UUID gameId = UUID.fromString("11111111-1111-1111-1111-111111111111");
             UUID userId = UUID.randomUUID();
             mockMvc.perform(delete("/api/games/favorite/{id}", gameId)
@@ -118,7 +118,7 @@ class GameIntegrationTests {
 
 
         @Test
-        public void addFavorite_should_return_404_when_fired_with_invalid_gameId()throws Exception{
+        public void removeFavorite_should_return_404_when_fired_with_invalid_gameId()throws Exception{
             UUID gameId = UUID.fromString("22222222-2222-2222-2222-222222222222");
             UUID userId = UUID.randomUUID();
             mockMvc.perform(delete("/api/games/favorite/{id}", gameId)
