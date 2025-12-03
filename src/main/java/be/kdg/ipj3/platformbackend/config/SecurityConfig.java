@@ -25,8 +25,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-//                .authorizeHttpRequests((authorize) -> authorize
-//                        .anyRequest().authenticated()) // this makes everything require authorisation
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/games/favorite/**").authenticated()
+                        .anyRequest().permitAll()
+                )
                 .sessionManagement(mgmt -> mgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(rs -> rs.jwt(jwt -> jwtAuthenticationConverter()))
                 ;
