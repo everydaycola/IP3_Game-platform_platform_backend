@@ -1,8 +1,8 @@
 package be.kdg.ipj3.platformbackend.games;
-import be.kdg.ipj3.platformbackend.application.GameService;
-import be.kdg.ipj3.platformbackend.domain.game.Game;
-import be.kdg.ipj3.platformbackend.domain.game.Genre;
-import be.kdg.ipj3.platformbackend.domain.repository.GameRepository;
+import be.kdg.ipj3.platformbackend.game.application.GameService;
+import be.kdg.ipj3.platformbackend.game.domain.Game;
+import be.kdg.ipj3.platformbackend.game.domain.Genre;
+import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
