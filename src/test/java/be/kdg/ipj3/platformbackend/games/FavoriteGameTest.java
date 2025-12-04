@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.games;
 
+import be.kdg.ipj3.platformbackend.game.application.FavoriteGameService;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.game.domain.FavoriteGame;
@@ -33,7 +34,7 @@ public class FavoriteGameTest {
     FavoriteGameRepository favoriteGameRepository;
 
     @InjectMocks
-    GameService gameService;
+    FavoriteGameService favoriteGameService;
 
     @Nested
     class SuccesFlows {
@@ -54,7 +55,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.of(game1));
 
             // Act
-            Game result = gameService.addFavoriteGame(gameId, userId);
+            Game result = favoriteGameService.addFavoriteGame(gameId, userId);
             //Assert
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo("Tic Tac Toe");
@@ -82,7 +83,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.of(game1));
 
             // Act
-            gameService.removeFavoriteGame(gameId, userId);
+            favoriteGameService.removeFavoriteGame(gameId, userId);
 
             //assert
             Mockito.verify(gameRepository, times(1)).findById(selectedGameId);
@@ -103,7 +104,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> gameService.addFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> favoriteGameService.addFavoriteGame(invalidGameId,new UserId(userId)))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());
@@ -121,7 +122,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> gameService.removeFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> favoriteGameService.removeFavoriteGame(invalidGameId,new UserId(userId)))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());
