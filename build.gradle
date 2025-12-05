@@ -35,7 +35,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testCompileOnly("org.projectlombok:lombok:1.18.42")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
-
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:rabbitmq"
 }
 
 tasks.named('test') {

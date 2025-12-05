@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisterGameTest {
@@ -51,7 +52,7 @@ public class RegisterGameTest {
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo(game1.getName());
             assertThat(result.getGenre().getName()).isEqualTo(game1.getGenre().getName());
-            Mockito.verify(gameRepository, Mockito.atMostOnce()).save(Mockito.any());
+            verify(gameRepository, Mockito.atLeastOnce()).save(Mockito.any());
         }
     }
 
@@ -75,7 +76,7 @@ public class RegisterGameTest {
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo(game1.getName());
             assertThat(result.getGenre().getName()).isEqualTo(game1.getGenre().getName());
-            Mockito.verify(gameRepository, Mockito.never()).save(Mockito.any());
+            verify(gameRepository, Mockito.never()).save(Mockito.any());
         }
     }
 }
