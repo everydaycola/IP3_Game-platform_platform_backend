@@ -62,15 +62,15 @@ public class JpaGameEntity {
     }
 
     public Game toDomain() {
-        return Game.fromDb(
+        return new Game(
                 new GameId(this.id),
                 this.name,
                 this.description,
                 this.price,
                 this.image,
                 this.icon,
-                this.genre.toDomain(),
-                this.url
+                this.url,
+                this.genre.toDomain()
         );
     }
 }

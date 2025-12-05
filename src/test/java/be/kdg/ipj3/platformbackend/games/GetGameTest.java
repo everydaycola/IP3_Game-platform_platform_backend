@@ -34,9 +34,9 @@ public class GetGameTest {
         @Test
         void getGame_byExistingId_returnsGame() {
             //Arrange
-            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
+            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
 
-            Game game1 = new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
 
             Mockito.when(gameRepository.findById(game1.getId().id())).thenReturn(Optional.of(game1));
 

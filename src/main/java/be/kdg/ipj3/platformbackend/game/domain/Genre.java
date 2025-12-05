@@ -6,12 +6,11 @@ import java.util.UUID;
 
 @Getter
 public class Genre {
-    private final UUID id;
+
     private final String name;
     private final String description;
 
-    public Genre(UUID id,String name, String description) {
-        this.id = id;
+    public Genre(String name, String description) {
         this.name = name;
         this.description = description;
     }

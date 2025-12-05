@@ -47,8 +47,8 @@ public class FavoriteGameTest {
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
             FavoriteGame returnValue = new FavoriteGame(currentUserId, selectedGameId);
-            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
             Mockito.when(favoriteGameRepository.save(Mockito.any(FavoriteGame.class)))
                     .thenReturn(returnValue);
             Mockito.when(gameRepository.findById(selectedGameId))
@@ -76,8 +76,8 @@ public class FavoriteGameTest {
             UUID currentUserId = UUID.randomUUID();
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
-            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
 
             Mockito.when(gameRepository.findById(selectedGameId))
                     .thenReturn(Optional.of(game1));

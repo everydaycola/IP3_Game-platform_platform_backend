@@ -33,7 +33,7 @@ public class JpaGenreEntity {
 
     public static JpaGenreEntity fromDomain(Genre genre) {
         return new JpaGenreEntity(
-                genre.getId(),
+                UUID.randomUUID(),
                 genre.getName(),
                 genre.getDescription()
         );
@@ -41,7 +41,6 @@ public class JpaGenreEntity {
 
     public Genre toDomain() {
         return new Genre(
-                this.id,
                 this.name,
                 this.description
         );
