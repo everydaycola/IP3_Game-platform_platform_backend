@@ -2,13 +2,16 @@ package be.kdg.ipj3.platformbackend.user.api;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendListDto;
+import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRequestListDto;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -49,4 +52,12 @@ public class FriendController {
         friendService.acceptFriendRequest(userId, friendId);
         return ResponseEntity.ok("Friend request succesfully accepted!");
     }
+
+    @GetMapping("/requests")
+    public ResponseEntity<FriendRequestListDto> findAllFriendRequests(@AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        List<PlatformUserFriend> friendRequests = friendService.findFriendRequestsForUser(userId);
+        return ResponseEntity.ok(FriendRequestListDto.from(friendRequests));
+    }
+
 }

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,5 +60,10 @@ public class FriendService {
         PlatformUserFriend friendRequest = platformUserRepository.findFriendRequestBetween(friendId, userId);
         PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now());
         platformUserRepository.save(updatedRequest);
+    }
+
+    public List<PlatformUserFriend> findFriendRequestsForUser(UserId userId) {
+        log.info("Finding friend requests for user {}", userId);
+        return platformUserRepository.findAllFriendRequestsForUser(userId);
     }
 }

@@ -56,6 +56,11 @@ GET {{baseUrl}}/friends
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
+### Get list of friend request of player 2
+GET {{baseUrl}}/friends/requests
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
 ### Accept the request as player 2 (after this the above test should now give a result with the friend)
 PATCH {{baseUrl}}/friends/{{userId}}/accept
 Content-Type: application/json
@@ -69,7 +74,6 @@ Authorization: Bearer {{access_token}}
 DELETE {{baseUrl}}/friends/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{access_token_player_2}}
-
 
 //Extra test. Wat als er al een request open staat?
 // Verwijder de friendship tussen de twee users hierboven voor deze test te laten slagen.

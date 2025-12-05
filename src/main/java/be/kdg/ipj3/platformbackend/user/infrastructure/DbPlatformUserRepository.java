@@ -81,4 +81,13 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
         jpaFriendRepository.removeById(JpaPlatformUserFriendId.fromDomain(friendRelation.getId()));
     }
 
+    @Override
+    public List<PlatformUserFriend> findAllFriendRequestsForUser(UserId userId) {
+        return jpaFriendRepository
+                .findAllByFriend_IdAndIsConfirmedFalse(userId.id())
+                .stream()
+                .map(JpaPlatformUserFriendEntity::toDomain)
+                .collect(Collectors.toList());
+    }
+
 }
