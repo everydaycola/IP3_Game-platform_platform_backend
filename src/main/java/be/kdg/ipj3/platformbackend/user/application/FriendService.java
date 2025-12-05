@@ -30,17 +30,19 @@ public class FriendService {
         return platformUserRepository.findByIdWithFriends(userId);
     }
 
-    public void addFriendToFriendList(UserId userId, UserId friendId) {
+    public void addFriendRequest(UserId userId, UserId friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
         PlatformUser user = platformUserRepository.findUserById(userId);
+        PlatformUser friend = platformUserRepository.findUserById(friendId);
+
         PlatformUserFriend friendRelation = new PlatformUserFriend(
-                new PlatformUserFriendId(userId.id(), friendId.id()),
+                new PlatformUserFriendId(userId.id(), friend.getUserId().id()),
                 false,
                 LocalDateTime.now(),
                 null
         );
         try {
-            platformUserRepository.findFriendRequestBetween(friendId.id(), userId);
+            platformUserRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
             acceptFriendRequest(userId, friendId.id());
             return;
         }catch(NotFoundException e){

@@ -35,7 +35,7 @@ public class FriendController {
     @PatchMapping("/{friendId}")
     public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.addFriendToFriendList(userId,new UserId(friendId));
+        friendService.addFriendRequest(userId,new UserId(friendId));
         return ResponseEntity.ok(FriendListDto.from(friendService.findUserWithFriends(userId)));
     }
 

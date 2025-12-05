@@ -67,6 +67,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public PlatformUserFriend findFriendRequestBetween(UUID friendId, UserId userId) {
+        jpaPlatformUserRepository.findById(friendId).orElseThrow(userId::notFound);
         return jpaFriendRepository.findByUser_IdAndFriend_IdAndIsConfirmedFalse(friendId, userId.id()).orElseThrow(userId::notFound).toDomain();
     }
 
