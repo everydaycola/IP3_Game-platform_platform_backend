@@ -1,4 +1,5 @@
 package be.kdg.ipj3.platformbackend.user.domain;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,16 @@ public class PlatformUserFriendId {
 
     public static PlatformUserFriendId fromDb(UUID userId, UUID friendId) {
         return new PlatformUserFriendId(userId, friendId);
+    }
+
+    public ConflictException conflict() {
+        log.error("UserFriend already exists for {} and {}",userId, friendId);
+        return new ConflictException("User [" + userId+ "] and ["+friendId + "] already exists.");
+    }
+
+    public static ConflictException conflict(UUID userId, UUID friendId) {
+        log.error("UserFriend already exists for {} and {}",userId, friendId);
+        return new ConflictException("User [" + userId+ "] and ["+friendId + "] already exists.");
     }
 
 }

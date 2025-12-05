@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendId;
@@ -54,10 +55,10 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
-    public void save(PlatformUserFriend user) {
+    public PlatformUserFriend save(PlatformUserFriend user) {
         JpaPlatformUserEntity userEntity= jpaPlatformUserRepository.findById(user.getId().getUserId()).orElseThrow();
         JpaPlatformUserEntity friendEntity= jpaPlatformUserRepository.findById(user.getId().getFriendId()).orElseThrow();
-        jpaFriendRepository.save(JpaPlatformUserFriendEntity.fromDomain(user, userEntity, friendEntity));
+        return jpaFriendRepository.save(JpaPlatformUserFriendEntity.fromDomain(user, userEntity, friendEntity)).toDomain();
     }
 
     @Override
@@ -89,6 +90,14 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
                 .stream()
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void validateIfFriendRelationExists(UserId userId, UserId friendId) {
+        jpaFriendRepository.findFriendById(JpaPlatformUserFriendId.fromDomain(new PlatformUserFriendId(userId.id(), friendId.id())))
+                .ifPresent(match -> {
+                    throw PlatformUserFriendId.conflict(userId.id(), friendId.id());
+                });
     }
 
 }

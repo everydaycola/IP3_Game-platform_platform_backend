@@ -9,6 +9,7 @@ public record FriendRequestListDto(List<FriendDto> friends) {
         List<FriendDto> friendDtos = friends
                 .stream()
                 .map(f -> new FriendDto(
+                        f.getId().getUserId(),
                         f.getId().getFriendId(),
                         f.getIsConfirmed(),
                         f.getRequestedAt(),

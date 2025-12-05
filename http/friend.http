@@ -16,7 +16,6 @@ client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{player1username
 > {%
     client.global.set("access_token", response.body.access_token);
 %}
-
 ### Get access token (player 2)
 POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -26,7 +25,6 @@ client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{player2username
 > {%
     client.global.set("access_token_player_2", response.body.access_token);
 %}
-
 
 ### register player 1 to the platform (this can be used to populate users based on their jwt token from for ex. first signin)
 POST {{baseUrl}}
@@ -46,7 +44,7 @@ Authorization: Bearer {{access_token_player_2}}
     client.global.set("userIdPlayer2", response.body.id);
 %}
 
-### Add player 2 as friend of player 1
+### Add player 2 as friend of player 1 (now expected to throw 409 when trying duplicates.)
 PATCH {{baseUrl}}/friends/{{userIdPlayer2}}
 Content-Type: application/json
 Authorization: Bearer {{access_token}}

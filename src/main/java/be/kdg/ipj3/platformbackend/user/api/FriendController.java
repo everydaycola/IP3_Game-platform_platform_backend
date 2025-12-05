@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.user.api;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.api.dtos.FriendDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendListDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRequestListDto;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
@@ -47,10 +48,10 @@ public class FriendController {
     }
 
     @PatchMapping("/{friendId}/accept")
-    public ResponseEntity<String> acceptFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.acceptFriendRequest(userId, friendId);
-        return ResponseEntity.ok("Friend request succesfully accepted!");
+        PlatformUserFriend newFriend = friendService.acceptFriendRequest(userId, friendId);
+        return ResponseEntity.ok(FriendDto.from(newFriend));
     }
 
     @GetMapping("/requests")

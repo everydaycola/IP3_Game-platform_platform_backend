@@ -9,6 +9,7 @@ public record FriendListDto(UUID id, List<FriendDto> friends) {
     public static FriendListDto from(final PlatformUser user) {
         List<FriendDto> friendDtos = user.getFriends().stream()
                 .map(f -> new FriendDto(
+                        f.getId().getUserId(),
                         f.getId().getFriendId(),
                         f.getIsConfirmed(),
                         f.getRequestedAt(),

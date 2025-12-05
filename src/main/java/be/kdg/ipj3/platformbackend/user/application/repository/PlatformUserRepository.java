@@ -13,9 +13,10 @@ public interface PlatformUserRepository {
     PlatformUser findUserById(UserId userId);
     PlatformUserFriend findFriendById(UserId userId,UserId friendId);
     void save(PlatformUser user);
-    void save(PlatformUserFriend user);
+    PlatformUserFriend save(PlatformUserFriend user);
     PlatformUser createUser(PlatformUser user);
     PlatformUserFriend findFriendRequestBetween(UUID friendId, UserId userId);
     void remove(UserId userId, UserId friendId);
     List<PlatformUserFriend> findAllFriendRequestsForUser(UserId userId);
+    void validateIfFriendRelationExists(UserId userId, UserId friendId);
 }
