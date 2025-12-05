@@ -27,7 +27,7 @@ public class GetGameListTest {
     GameService gameService;
 
     @Nested
-    class SuccesFlows {
+    class SuccessFlows {
         @Test
         void getFullGamesList_returnsExpected() {
             //Arrange

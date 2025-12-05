@@ -30,7 +30,7 @@ public class GetGameTest {
     GameService gameService;
 
     @Nested
-    class SuccesFlows {
+    class SuccessFlows {
         @Test
         void getGame_byExistingId_returnsGame() {
             //Arrange

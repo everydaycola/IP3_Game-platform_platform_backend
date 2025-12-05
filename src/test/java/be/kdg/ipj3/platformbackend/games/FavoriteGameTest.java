@@ -37,7 +37,7 @@ public class FavoriteGameTest {
     FavoriteGameService favoriteGameService;
 
     @Nested
-    class SuccesFlows {
+    class SuccessFlows {
         @Test
         void addFavoriteExistingGame_Should_return_Game() {
             // Arrange
