@@ -46,6 +46,10 @@ public class GameService {
                 gameDto.url(),
                 findGenre(gameDto.genre())
                 );
-        gameRepository.save(game);
+        if (game.isUrlReachable()){
+            gameRepository.save(game);
+        } else {
+            log.error("Game: {} not registered due to url not being reachable", game.getUrl());
+        }
     }
 }
