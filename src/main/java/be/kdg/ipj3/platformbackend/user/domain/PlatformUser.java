@@ -1,38 +1,37 @@
 package be.kdg.ipj3.platformbackend.user.domain;
+
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Getter
 @Slf4j
 public class PlatformUser {
-    UserId userId;
-    List<PlatformUser> friends;
+    private final UserId userId;
+    private final List<PlatformUserFriend> friends;
 
-    public PlatformUser(UserId userId, List<PlatformUser> friends) {
+    public PlatformUser(UserId userId, List<PlatformUserFriend> friends) {
         this.userId = userId;
-        this.friends = friends;
+        this.friends = friends != null ? friends : new ArrayList<>();
     }
 
     public static PlatformUser fromDbWithoutFriends(UUID userId) {
-        log.info("returning user without friends: {}", userId);
-        return new PlatformUser(new UserId(userId), new ArrayList<PlatformUser>());
+        log.info("Returning user without friends: {}", userId);
+        return new PlatformUser(new UserId(userId), new ArrayList<>());
     }
 
-    public static PlatformUser fromDb(UUID userId, List<JpaPlatformUserEntity> friendEntities) {
-        log.info("returning user with {} friends: {}", friendEntities != null ? friendEntities.size() : 0, userId);
+    public static PlatformUser fromDb(UUID userId, List<be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity> friendEntities) {
+        log.info("Returning user with {} friends: {}", friendEntities != null ? friendEntities.size() : 0, userId);
 
-        List<PlatformUser> friends = new ArrayList<>();
+        List<PlatformUserFriend> friends = new ArrayList<>();
         if (friendEntities != null && !friendEntities.isEmpty()) {
             friends = friendEntities.stream()
-                    .map(JpaPlatformUserEntity::toDomainWithoutFriends)
-                    .collect(Collectors.toList());
+                    .map(PlatformUserFriend::fromJpa) // convert each join entity to domain
+                    .toList();
         }
 
         return new PlatformUser(new UserId(userId), friends);

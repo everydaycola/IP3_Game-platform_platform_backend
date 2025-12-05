@@ -13,9 +13,10 @@ public class JpaPlatformUserEntity {
     @Column
     private UUID id;
 
-    @ManyToMany
-    private List<JpaPlatformUserEntity> friends;
+    @OneToMany(mappedBy = "user")
+    private List<JpaPlatformUserFriendEntity> friends;
 
+    //Todo implement correct fromdomain here for the updates.
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser user) {
         JpaPlatformUserEntity entity = new JpaPlatformUserEntity();
