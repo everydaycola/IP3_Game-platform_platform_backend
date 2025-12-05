@@ -37,6 +37,7 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.testcontainers:rabbitmq"
+    testImplementation "org.testcontainers:testcontainers-nginx:2.0.2"
 }
 
 tasks.named('test') {

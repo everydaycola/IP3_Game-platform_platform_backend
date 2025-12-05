@@ -2,35 +2,44 @@ package be.kdg.ipj3.platformbackend.games;
 
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
-import be.kdg.ipj3.platformbackend.game.domain.GameId;
-import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.RegisterGameMessage;
-import be.kdg.ipj3.platformbackend.shared.api.UrlChecker;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
+import org.testcontainers.nginx.NginxContainer;
+import org.testcontainers.utility.DockerImageName;
 import java.time.Duration;
-import java.util.Optional;
+import java.util.List;
+import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("test")
 public class GameMessageHandlerIntegrationTests {
+
+
+    private static final DockerImageName NGINX_IMAGE =
+            DockerImageName.parse("nginx:1.27-alpine");
+
+    @Container
+    static NginxContainer nginx = new NginxContainer(NGINX_IMAGE)
+            .waitingFor(new HttpWaitStrategy()
+                    .forPath("/")
+                    .forStatusCode(200)
+                    .withStartupTimeout(Duration.ofSeconds(30)));
 
     @Container
     static RabbitMQContainer rabbit = new RabbitMQContainer("rabbitmq:3.12-management")
@@ -42,62 +51,80 @@ public class GameMessageHandlerIntegrationTests {
         registry.add("spring.rabbitmq.port", rabbit::getAmqpPort);
         registry.add("spring.rabbitmq.username", rabbit::getAdminUsername);
         registry.add("spring.rabbitmq.password", rabbit::getAdminPassword);
-        registry.add("spring.rabbitmq.fourteengames.register-game-queue", () -> "register-game-test-queue");
+        registry.add("spring.rabbitmq.fourteengames.register-game-queue", () -> "register_game");
     }
+
+    @DynamicPropertySource
+    static void configureNginx(DynamicPropertyRegistry registry) {
+        registry.add("urlchecker.base-url", () ->
+                "http://" + nginx.getHost() + ":" + nginx.getMappedPort(80)
+        );
+    }
+
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @MockitoBean
-    private UrlChecker urlChecker;
-
-    @MockitoBean
+    @Autowired
     private GameRepository gameRepository;
 
     @Nested
     class RegisterGameFlows {
         @Test
         void whenMessageSent_itIsConsumed() {
-            // Arrange
-            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20,
-                    "testimg.png", "testicon.png", "http://localhost:8080", puzzle);
+            //Arrange
 
-            RegisterGameMessage message = new RegisterGameMessage(FullGameDto.from(game1));
+            String url = "http://" + nginx.getHost() + ":" + nginx.getMappedPort(80);
 
-            // Mock repository & URL checker
-            Mockito.when(gameRepository.findGenre(puzzle.getName())).thenReturn(Optional.of(puzzle));
-            Mockito.when(urlChecker.isUrlReachable(game1.getUrl())).thenReturn(true);
+            FullGameDto dto = new FullGameDto(
+                    UUID.randomUUID(),
+                    "Tic Tac Toe",
+                    "Game where you..",
+                    20,
+                    "testImg.png",
+                    "testicon.png", "Strategy",url);
+            //Replicating the genre from "test_data.sql";
 
-            // Act
-            rabbitTemplate.convertAndSend("register-game-test-queue", message);
+            RegisterGameMessage message = new RegisterGameMessage(dto);
 
-            // Assert
+            //Act
+            //rabbitTemplate.convertAndSend("register-game-test-queue", message);
+            rabbitTemplate.convertAndSend("xivgames_exchange", "game.register", message);
+
+            //Assert
             Awaitility.await()
-                    .atMost(Duration.ofSeconds(5))
-                    .untilAsserted(() -> {
-                        ArgumentCaptor<Game> captor = ArgumentCaptor.forClass(Game.class);
-                        verify(gameRepository).save(captor.capture());
+                            .atMost(Duration.ofSeconds(10))
+                                    .untilAsserted(() -> {
+                                        var games = gameRepository.findAll();
 
-                        Game captured = captor.getValue();
-                        assertThat(captured.getId().id()).isEqualTo(game1.getId().id());
-                        assertThat(captured.getName()).isEqualTo(game1.getName());
-                        assertThat(captured.getUrl()).isEqualTo(game1.getUrl());
-                    });
+                                        assertEquals(2, games.size());
+                                        Game saved = games.get(1);
+
+                                        assertEquals(dto.id(), saved.getId().id());
+                                        assertEquals(dto.name(), saved.getName());
+                                        assertEquals(dto.url(), saved.getUrl());
+                                        assertEquals(dto.genre(), saved.getGenre().getName());
+                                    });
+
         }
 
         @Test
         void whenMalformedMessageIsSent_listenerDoesNotCrash() {
-            // Arrange
+            //Arrange
+            List<Game> gamesList = gameRepository.findAll();
             String badJson = "{ \"invalid\": \"data\" }";
 
-            // Act
-            rabbitTemplate.convertAndSend("register-game-test-queue", badJson);
+            //Act
+            rabbitTemplate.convertAndSend("xivgames_exchange", "game.register", badJson);
 
-            // Assert
+            //Assert
             Awaitility.await()
-                    .atMost(Duration.ofSeconds(5))
-                    .untilAsserted(() -> verify(gameRepository, Mockito.never()).save(Mockito.any()));
+                    .atMost(Duration.ofSeconds(10))
+                    .untilAsserted(() -> {
+                        var games = gameRepository.findAll();
+                        assertEquals(gamesList.size(), games.size());
+                    });
+
         }
     }
 }
