@@ -18,7 +18,7 @@ public class GameMessageHandler {
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.fourteengames.register-game-queue}")
-    void onRegisterGameRecieved(RegisterGameMessage message){
+    void onRegisterGame(RegisterGameMessage message){
         log.info("Register game message received for Game: {}", message.gameDto().id());
         try {
             gameService.registerGame(message.gameDto());

@@ -15,9 +15,11 @@ import java.util.List;
 @Slf4j
 public class GameService {
     private final GameRepository gameRepository;
+    private final UrlChecker urlChecker;
 
-    public GameService(GameRepository games) {
+    public GameService(GameRepository games, UrlChecker urlChecker) {
         this.gameRepository = games;
+        this.urlChecker = urlChecker;
     }
 
     public List<Game> findAll() {
@@ -47,7 +49,6 @@ public class GameService {
                 gameDto.url(),
                 findGenre(gameDto.genre())
                 );
-        UrlChecker urlChecker = new UrlChecker();
         if (urlChecker.isUrlReachable(game.getUrl())){
             gameRepository.save(game);
         } else {

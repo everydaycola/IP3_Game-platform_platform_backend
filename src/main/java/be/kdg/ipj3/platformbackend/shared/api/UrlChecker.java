@@ -2,6 +2,8 @@ package be.kdg.ipj3.platformbackend.shared.api;
 
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -11,6 +13,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 @Slf4j
+@Component
 public class UrlChecker {
     public boolean isUrlReachable(String url) {
         log.info("Checking if the url: {} is reachable",url);
