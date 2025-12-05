@@ -44,3 +44,8 @@ VALUES ('33333333-3333-3333-3333-333333333333',
         'aaaaaaa2-aaaa-aaaa-aaaa-aaaaaaaaaaa3',
         '')
     ON CONFLICT (id) DO NOTHING;
+
+-- Test users
+INSERT INTO platform_user (id)
+VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa456')
+    ON CONFLICT (id) DO NOTHING;
