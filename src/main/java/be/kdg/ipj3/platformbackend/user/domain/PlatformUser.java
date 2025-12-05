@@ -19,21 +19,9 @@ public class PlatformUser {
         this.friends = friends != null ? friends : new ArrayList<>();
     }
 
-    public static PlatformUser fromDbWithoutFriends(UUID userId) {
-        log.info("Returning user without friends: {}", userId);
-        return new PlatformUser(new UserId(userId), new ArrayList<>());
-    }
-
-    public static PlatformUser fromDb(UUID userId, List<be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity> friendEntities) {
-        log.info("Returning user with {} friends: {}", friendEntities != null ? friendEntities.size() : 0, userId);
-
-        List<PlatformUserFriend> friends = new ArrayList<>();
-        if (friendEntities != null && !friendEntities.isEmpty()) {
-            friends = friendEntities.stream()
-                    .map(PlatformUserFriend::fromJpa) // convert each join entity to domain
-                    .toList();
-        }
-
-        return new PlatformUser(new UserId(userId), friends);
+    public static PlatformUser fromDb(UUID userId, List<PlatformUserFriend> friends) {
+        log.info("Returning user with {} friends: {}", friends != null ? friends.size() : 0, userId);
+        List<PlatformUserFriend> friendList = friends != null ? friends : new ArrayList<>();
+        return new PlatformUser(new UserId(userId), friendList);
     }
 }

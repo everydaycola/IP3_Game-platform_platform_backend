@@ -24,25 +24,29 @@ public class FriendController {
     }
 
     @GetMapping
-    public ResponseEntity<FriendListDto> findAll(@AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<FriendListDto> findAllFriends(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        return ResponseEntity.ok(FriendListDto.from(friendService.findOneWithFriends(userId)));
+        return ResponseEntity.ok(FriendListDto.from(friendService.findUserWithFriends(userId)));
     }
 
     @PatchMapping("/{friendId}")
-    public ResponseEntity<FriendListDto> addFriend(@PathVariable final UUID friendId,@AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         friendService.addFriendToFriendList(userId,new UserId(friendId));
-        return ResponseEntity.ok(FriendListDto.from(friendService.findOneWithFriends(userId)));
+        return ResponseEntity.ok(FriendListDto.from(friendService.findUserWithFriends(userId)));
     }
 
     @DeleteMapping("/{friendId}")
     public ResponseEntity<FriendListDto> removeFriend(@PathVariable final UUID friendId,@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         friendService.removeFriendFromFriendList(userId,new UserId(friendId));
-        return ResponseEntity.ok(FriendListDto.from(friendService.findOneWithFriends(userId)));
+        return ResponseEntity.ok(FriendListDto.from(friendService.findUserWithFriends(userId)));
     }
 
-
-
+    @PatchMapping("/{friendId}/accept")
+    public ResponseEntity<String> acceptFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        friendService.acceptFriendRequest(userId, friendId);
+        return ResponseEntity.ok("Friend request succesfully accepted!");
+    }
 }

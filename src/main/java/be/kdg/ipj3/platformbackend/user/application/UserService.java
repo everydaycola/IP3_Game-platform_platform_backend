@@ -4,9 +4,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 
 @Service
@@ -17,10 +15,6 @@ public class UserService {
 
     public UserService(PlatformUserRepository platformUserRepository) {
         this.platformUserRepository = platformUserRepository;
-    }
-
-    public PlatformUser getUser(UserId userId) {
-        return platformUserRepository.findOne(userId);
     }
 
     public PlatformUser addUser(UserId userId) {

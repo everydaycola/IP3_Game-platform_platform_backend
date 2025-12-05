@@ -3,11 +3,18 @@ package be.kdg.ipj3.platformbackend.user.application;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 @Slf4j
+@Transactional
 public class FriendService {
 
     private final PlatformUserRepository platformUserRepository;
@@ -16,24 +23,37 @@ public class FriendService {
         this.platformUserRepository = platformUserRepository;
     }
 
-    public PlatformUser findOneWithFriends(UserId userId) {
+    public PlatformUser findUserWithFriends(UserId userId) {
         log.info("Returning all Games");
-        return platformUserRepository.findOneWithFriends(userId);
+        return platformUserRepository.findByIdWithFriends(userId);
     }
 
     public void addFriendToFriendList(UserId userId, UserId friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
-        PlatformUser user = platformUserRepository.findOne(userId);
-        PlatformUser friend = platformUserRepository.findOne(friendId);
-        user.getFriends().add(friend);
+
+        PlatformUser user = platformUserRepository.findUserById(userId);
+
+
+        PlatformUserFriend friendRelation = new PlatformUserFriend(
+                new PlatformUserFriendId(userId.id(), friendId.id()),
+                false,
+                LocalDateTime.now(),
+                null
+        );
+
+        user.getFriends().add(friendRelation);
         platformUserRepository.save(user);
     }
 
     public void removeFriendFromFriendList(UserId userId, UserId friendId) {
         log.info("Removing friend {} from user {}", userId, friendId);
-        PlatformUser user = platformUserRepository.findOneWithFriends(userId);
-        PlatformUser friend = platformUserRepository.findOne(friendId);
-        user.getFriends().remove(friend);
-        platformUserRepository.save(user);
+        platformUserRepository.remove(userId, friendId);
+    }
+
+    public void acceptFriendRequest(UserId userId, UUID friendId) {
+        log.info("Accepting friend request between {} to user {}", friendId, userId);
+        PlatformUserFriend friendRequest = platformUserRepository.findFriendRequestBetween(friendId, userId);
+        PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now());
+        platformUserRepository.save(updatedRequest);
     }
 }
