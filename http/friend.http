@@ -69,3 +69,21 @@ Authorization: Bearer {{access_token}}
 DELETE {{baseUrl}}/friends/{{userId}}
 Content-Type: application/json
 Authorization: Bearer {{access_token_player_2}}
+
+
+//Extra test. Wat als er al een request open staat?
+// Verwijder de friendship tussen de twee users hierboven voor deze test te laten slagen.
+### Add player 2 as friend of player 1 (again)
+PATCH {{baseUrl}}/friends/{{userIdPlayer2}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Add player 1 as friend of player 2 (new request opening)
+PATCH {{baseUrl}}/friends/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+### Get friendlist should show this now since it should auto-accept them.
+GET {{baseUrl}}/friends
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

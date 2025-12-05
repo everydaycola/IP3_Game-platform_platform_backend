@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
@@ -30,17 +31,20 @@ public class FriendService {
 
     public void addFriendToFriendList(UserId userId, UserId friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
-
         PlatformUser user = platformUserRepository.findUserById(userId);
-
-
         PlatformUserFriend friendRelation = new PlatformUserFriend(
                 new PlatformUserFriendId(userId.id(), friendId.id()),
                 false,
                 LocalDateTime.now(),
                 null
         );
-
+        try {
+            platformUserRepository.findFriendRequestBetween(friendId.id(), userId);
+            acceptFriendRequest(userId, friendId.id());
+            return;
+        }catch(NotFoundException e){
+            log.info("No existing request between {} and {}", userId, friendId);
+        }
         user.getFriends().add(friendRelation);
         platformUserRepository.save(user);
     }
