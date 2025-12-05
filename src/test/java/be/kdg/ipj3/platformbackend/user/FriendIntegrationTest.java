@@ -164,6 +164,39 @@ class FriendIntegrationTest {
         }
 
         @Test
+        public void addFriendRequest_shouldReturn409_WhenFiredWithAlreadyExistingParams() throws Exception {
+            //Arrange
+            UUID userId = UUID.fromString("11111111-1111-1111-aabb-111111111111");
+            UUID friendId = UUID.fromString("11111111-1111-1111-aaaa-111111111111");
+            //Act
+            //Assert
+            mockMvc.perform(patch("/api/user/friends/" + friendId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+            mockMvc.perform(patch("/api/user/friends/" + friendId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isConflict());
+        }
+
+        @Test
         public void addFriendRequest_from_users_in_both_directions_should_return_200() throws Exception {
             // Arrange
             UUID userId = UUID.fromString("11111111-1111-1111-1234-111111111111");
