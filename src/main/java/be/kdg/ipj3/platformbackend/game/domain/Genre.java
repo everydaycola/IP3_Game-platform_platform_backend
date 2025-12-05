@@ -1,9 +1,10 @@
 package be.kdg.ipj3.platformbackend.game.domain;
 
+import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.UUID;
-
+@Slf4j
 @Getter
 public class Genre {
 
@@ -13,5 +14,10 @@ public class Genre {
     public Genre(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public static NotFoundException notFound() {
+        log.error("Genre not found");
+        return new NotFoundException("Genre not found");
     }
 }
