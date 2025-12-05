@@ -23,7 +23,7 @@ public class DbGameRepository implements GameRepository {
 
     @Override
     public void save(Game game) {
-
+        jpaGameRepository.save(JpaGameEntity.fromDomain(game));
     }
 
     @Override
