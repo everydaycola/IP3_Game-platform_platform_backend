@@ -2,7 +2,7 @@ package be.kdg.ipj3.platformbackend.user;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
-import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

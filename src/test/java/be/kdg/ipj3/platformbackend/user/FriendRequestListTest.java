@@ -2,7 +2,7 @@ package be.kdg.ipj3.platformbackend.user;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
-import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.times;
 public class FriendRequestListTest {
 
     @Mock
-    PlatformUserRepository platformUserRepository;
+    PlatformUserFriendRepository platformUserFriendRepository;
 
     @InjectMocks
     FriendService friendService;
@@ -48,7 +48,7 @@ public class FriendRequestListTest {
                             )
                     )
             );
-            Mockito.when(platformUserRepository.findAllFriendRequestsForUser(userId)).thenReturn(friendRequestList);
+            Mockito.when(platformUserFriendRepository.findAllFriendRequestsForUser(userId)).thenReturn(friendRequestList);
 
 
             //Act
@@ -61,23 +61,23 @@ public class FriendRequestListTest {
             assertThat(result.getFirst().getIsConfirmed()).isEqualTo(false);
             assertThat(result.getFirst().getRequestedAt()).isEqualTo(now);
             assertThat(result.getFirst().getConfirmedAt()).isNull();
-            Mockito.verify(platformUserRepository, times(1)).findAllFriendRequestsForUser(userId);
-            Mockito.verifyNoMoreInteractions(platformUserRepository);
+            Mockito.verify(platformUserFriendRepository, times(1)).findAllFriendRequestsForUser(userId);
+            Mockito.verifyNoMoreInteractions(platformUserFriendRepository);
         }
 
         @Test
         void getFriendRequestList_should_return_empty_when_no_open_requests(){
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
-            Mockito.when(platformUserRepository.findAllFriendRequestsForUser(userId)).thenReturn(new ArrayList<>());
+            Mockito.when(platformUserFriendRepository.findAllFriendRequestsForUser(userId)).thenReturn(new ArrayList<>());
 
             //Act
             List<PlatformUserFriend> result = friendService.findFriendRequestsForUser(userId);
 
             //Assert
             assertThat(result.size()).isEqualTo(0);
-            Mockito.verify(platformUserRepository, times(1)).findAllFriendRequestsForUser(userId);
-            Mockito.verifyNoMoreInteractions(platformUserRepository);
+            Mockito.verify(platformUserFriendRepository, times(1)).findAllFriendRequestsForUser(userId);
+            Mockito.verifyNoMoreInteractions(platformUserFriendRepository);
 
         }
     }

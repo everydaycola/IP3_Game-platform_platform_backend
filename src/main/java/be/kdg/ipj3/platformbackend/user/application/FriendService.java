@@ -2,7 +2,8 @@ package be.kdg.ipj3.platformbackend.user.application;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
-import be.kdg.ipj3.platformbackend.user.application.repository.PlatformUserRepository;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
@@ -20,9 +21,11 @@ import java.util.UUID;
 public class FriendService {
 
     private final PlatformUserRepository platformUserRepository;
+    private final PlatformUserFriendRepository platformUserFriendRepository;
 
-    public FriendService(PlatformUserRepository platformUserRepository) {
+    public FriendService(PlatformUserRepository platformUserRepository, PlatformUserFriendRepository platformUserFriendRepository) {
         this.platformUserRepository = platformUserRepository;
+        this.platformUserFriendRepository = platformUserFriendRepository;
     }
 
     public PlatformUser findUserWithFriends(UserId userId) {
@@ -42,31 +45,31 @@ public class FriendService {
                 null
         );
         try {
-            platformUserRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
+            platformUserFriendRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
             acceptFriendRequest(userId, friendId.id());
             return;
         }catch(NotFoundException e){
             log.info("No existing request between {} and {}", userId, friendId);
         }
-        platformUserRepository.validateIfFriendRelationExists(userId, friendId);
+        platformUserFriendRepository.validateIfFriendRelationExists(userId, friendId);
         user.getFriends().add(friendRelation);
         platformUserRepository.save(user);
     }
 
     public void removeFriendFromFriendList(UserId userId, UserId friendId) {
         log.info("Removing friend {} from user {}", userId, friendId);
-        platformUserRepository.remove(userId, friendId);
+        platformUserFriendRepository.remove(userId, friendId);
     }
 
     public PlatformUserFriend acceptFriendRequest(UserId userId, UUID friendId) {
         log.info("Accepting friend request between {} to user {}", friendId, userId);
-        PlatformUserFriend friendRequest = platformUserRepository.findFriendRequestBetween(friendId, userId);
+        PlatformUserFriend friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
         PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now());
-        return platformUserRepository.save(updatedRequest);
+        return platformUserFriendRepository.save(updatedRequest);
     }
 
     public List<PlatformUserFriend> findFriendRequestsForUser(UserId userId) {
         log.info("Finding friend requests for user {}", userId);
-        return platformUserRepository.findAllFriendRequestsForUser(userId);
+        return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
     }
 }
