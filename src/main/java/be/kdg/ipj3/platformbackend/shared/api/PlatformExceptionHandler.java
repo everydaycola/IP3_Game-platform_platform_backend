@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.shared.api;
 
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,5 +13,10 @@ public class PlatformExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleGameNotFound(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public static ResponseEntity<String> handleFriendConflict(ConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

@@ -1,0 +1,91 @@
+@ClientId=go-backend
+@ClientSecret=b0ZVXfrGkyFlgXTPXtvCBOM4TLZzc9UY
+@player1username=123
+@player1password=123
+@player2username=456
+@player2password=456
+@baseUrl = http://localhost:8080/api/user
+
+
+### Get access token (player 1)
+POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{player1username}}&password={{player1password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+### Get access token (player 2)
+POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{player2username}}&password={{player2password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token_player_2", response.body.access_token);
+%}
+
+### register player 1 to the platform (this can be used to populate users based on their jwt token from for ex. first signin)
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.global.set("userId", response.body.id);
+%}
+
+### register player 2 to the platform
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+> {%
+    client.global.set("userIdPlayer2", response.body.id);
+%}
+
+### Add player 2 as friend of player 1 (now expected to throw 409 when trying duplicates.)
+PATCH {{baseUrl}}/friends/{{userIdPlayer2}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Get friendlist for player 1 (should be empty since player 2 did not accept yet.)
+GET {{baseUrl}}/friends
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Get list of friend request of player 2
+GET {{baseUrl}}/friends/requests
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+### Accept the request as player 2 (after this the above test should now give a result with the friend)
+PATCH {{baseUrl}}/friends/{{userId}}/accept
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+### Remove a friend (Do this test or the next depends on which user disconnects only one of these will succeed)
+DELETE {{baseUrl}}/friends/{{userIdPlayer2}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+### Remove a friend (Do this test or the next depends on which user disconnects only one of these will succeed)
+DELETE {{baseUrl}}/friends/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+//Extra test. Wat als er al een request open staat?
+// Verwijder de friendship tussen de twee users hierboven voor deze test te laten slagen.
+### Add player 2 as friend of player 1 (again)
+PATCH {{baseUrl}}/friends/{{userIdPlayer2}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### Add player 1 as friend of player 2 (new request opening)
+PATCH {{baseUrl}}/friends/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}
+
+### Get friendlist should show this now since it should auto-accept them.
+GET {{baseUrl}}/friends
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
