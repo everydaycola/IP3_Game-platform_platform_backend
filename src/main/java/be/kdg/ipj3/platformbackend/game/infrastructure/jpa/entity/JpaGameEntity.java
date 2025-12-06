@@ -30,7 +30,7 @@ public class JpaGameEntity {
     private String icon;
 
     @ManyToOne
-    @JoinColumn(name = "genre_id", nullable = false)
+    @JoinColumn(name = "genre_name", nullable = false)
     private JpaGenreEntity genre;
 
     @Column
@@ -39,7 +39,7 @@ public class JpaGameEntity {
     public JpaGameEntity() {
     }
 
-    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url) {
+    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -47,6 +47,7 @@ public class JpaGameEntity {
         this.image = image;
         this.icon = icon;
         this.url = url;
+        this.genre = genre;
     }
 
     public static JpaGameEntity fromDomain(Game game) {
@@ -57,20 +58,21 @@ public class JpaGameEntity {
                 game.getPrice(),
                 game.getImage(),
                 game.getIcon(),
-                game.getUrl()
+                game.getUrl(),
+                JpaGenreEntity.fromDomain(game.getGenre())
         );
     }
 
     public Game toDomain() {
-        return Game.fromDb(
+        return new Game(
                 new GameId(this.id),
                 this.name,
                 this.description,
                 this.price,
                 this.image,
                 this.icon,
-                this.genre.toDomain(),
-                this.url
+                this.url,
+                this.genre.toDomain()
         );
     }
 }

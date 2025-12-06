@@ -1,10 +1,19 @@
 package be.kdg.ipj3.platformbackend.game.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+
 @Getter
 @Slf4j
+@AllArgsConstructor
 public class Game {
     private final GameId id;
     private final String name;
@@ -15,31 +24,5 @@ public class Game {
     private final String url;
     private final Genre genre;
 
-    public Game(String name, String description, double price, String image, String icon, String url, Genre genre) {
-        this.url = url;
-        this.id = new GameId();
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.image = image;
-        this.icon = icon;
-        this.genre = genre;
-    }
-
-    private Game(GameId id, String name, String description, double price, String image, String icon, String url, Genre genre) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.image = image;
-        this.icon = icon;
-        this.url = url;
-        this.genre = genre;
-    }
-
-    public static Game fromDb(GameId id, String name, String description, double price, String image, String icon, Genre genre, String url) {
-        log.info("Returning game: {} from database.", name);
-        return new Game(id, name, description, price, image, icon, url, genre);
-    }
 
 }

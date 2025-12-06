@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.games;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
+import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
@@ -27,17 +27,17 @@ public class GetGameListTest {
     GameService gameService;
 
     @Nested
-    class SuccesFlows {
+    class SuccessFlows {
         @Test
         void getFullGamesList_returnsExpected() {
             //Arrange
-            Genre puzzle = new Genre(UUID.randomUUID(),"Puzzle","Genre where you solve puzzles");
-            Genre strategy = new Genre(UUID.randomUUID(),"Strategy","Genre where a good strategy is key.");
+            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
+            Genre strategy = new Genre("Strategy","Genre where a good strategy is key.");
             List<Game> gameList = new ArrayList<>(
                     List.of(
-                            new Game("Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle),
-                            new Game("Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy),
-                            new Game("Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy)
+                            new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle),
+                            new Game(new GameId(),"Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy),
+                            new Game(new GameId(),"Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy)
                     )
             );
             Mockito.when(gameRepository.findAll()).thenReturn(gameList);
