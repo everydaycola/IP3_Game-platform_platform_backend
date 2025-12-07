@@ -84,6 +84,13 @@ public class FriendController {
         return ResponseEntity.ok(FriendDto.from(friendUser));
     }
 
+    @PatchMapping("/{friendId}/deny")
+    public ResponseEntity denyFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        friendService.denyFriendRequest(userId, friendId);
+        return ResponseEntity.ok("Friendrequest succesfully denied.");
+    }
+
     @GetMapping("/requests")
     public ResponseEntity<FriendRequestListDto> findAllFriendRequests(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);

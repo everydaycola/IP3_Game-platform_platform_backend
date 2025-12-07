@@ -68,6 +68,11 @@ public class FriendService {
         return platformUserFriendRepository.save(updatedRequest);
     }
 
+    public void denyFriendRequest(UserId userId, UUID friendId) {
+        log.info("Denying friend request between {} to user {}", friendId, userId);
+        platformUserFriendRepository.remove(userId, new UserId(friendId));
+    }
+
     public List<PlatformUserFriend> findFriendRequestsForUser(UserId userId) {
         log.info("Finding friend requests for user {}", userId);
         return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
