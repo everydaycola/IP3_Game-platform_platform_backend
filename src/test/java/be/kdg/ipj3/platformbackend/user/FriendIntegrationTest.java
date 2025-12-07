@@ -217,7 +217,19 @@ class FriendIntegrationTest {
 
         @Test
         void deny_friend_request_should_return_200_when_open_and_authenticated() throws Exception {
-            //Todo: implement this test correctly.
+            //Arrange
+            mockMvc.perform(patch("/api/user/friends/" + friendId)
+                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+            //Act
+            //Assert
+            mockMvc.perform(patch("/api/user/friends/" + userId + "/deny")
+                            .with(authJwt(friendId, "test_user", "user", "test_user@test.be"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
         }
 
         @Test

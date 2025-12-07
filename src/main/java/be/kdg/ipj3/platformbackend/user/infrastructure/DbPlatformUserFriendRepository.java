@@ -1,7 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
-import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
@@ -31,7 +30,9 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
 
     @Override
     public PlatformUserFriend findFriendById(UserId userId,UserId friendId) {
-        return jpaFriendRepository.findByUser_IdAndFriend_IdAndIsConfirmedTrue(userId.id(),friendId.id()).orElseThrow(userId::notFound).toDomain();
+        return jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId.id(), true)
+                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId.id()).notFound())
+                .toDomain();
     }
 
     @Override
@@ -44,17 +45,17 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
     @Override
     public PlatformUserFriend findFriendRequestBetween(UUID friendId, UserId userId) {
         jpaPlatformUserRepository.findById(friendId).orElseThrow(userId::notFound);
-        return jpaFriendRepository.findByUser_IdAndFriend_IdAndIsConfirmedFalse(friendId, userId.id()).orElseThrow(userId::notFound).toDomain();
+        return jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId, false)
+                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId).notFound())
+                .toDomain();
     }
 
     @Override
     public void remove(UserId userId, UserId friendId) {
-        PlatformUserFriend friendRelation;
-        try {
-            friendRelation = findFriendById(userId, friendId);
-        }catch(NotFoundException e){
-            friendRelation = findFriendById(friendId, userId);
-        }
+        PlatformUserFriend friendRelation = jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId.id(), false)
+                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId.id()).notFound())
+                .toDomain();
+
         jpaFriendRepository.removeById(JpaPlatformUserFriendId.fromDomain(friendRelation.getId()));
     }
 
@@ -71,7 +72,7 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
     public void validateIfFriendRelationExists(UserId userId, UserId friendId) {
         jpaFriendRepository.findFriendById(JpaPlatformUserFriendId.fromDomain(new PlatformUserFriendId(userId.id(), friendId.id())))
                 .ifPresent(match -> {
-                    throw PlatformUserFriendId.conflict(userId.id(), friendId.id());
+                    throw new PlatformUserFriendId(userId.id(), friendId.id()).conflict();
                 });
     }
 

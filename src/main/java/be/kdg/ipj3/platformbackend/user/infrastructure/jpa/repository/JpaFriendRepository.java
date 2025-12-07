@@ -26,11 +26,18 @@ public interface JpaFriendRepository extends JpaRepository<JpaPlatformUserFriend
     FROM JpaPlatformUserFriendEntity f
     WHERE f.isConfirmed = true
       AND (f.user.id = :id OR f.friend.id = :id)
-""")
+    """)
     List<JpaPlatformUserFriendEntity> findAllByUserOrFriend(@Param("id") UUID id);
 
-    Optional<JpaPlatformUserFriendEntity> findByUser_IdAndFriend_IdAndIsConfirmedTrue(UUID userId, UUID friendId);
-    Optional<JpaPlatformUserFriendEntity> findByUser_IdAndFriend_IdAndIsConfirmedFalse(UUID friendId, UUID userId);
+    @Query("""
+    SELECT f
+    FROM JpaPlatformUserFriendEntity f
+    WHERE f.isConfirmed = :isConfirmed
+      AND ((f.user.id = :userId AND f.friend.id = :friendId)
+           OR (f.user.id = :friendId AND f.friend.id = :userId))
+""")
+    Optional<JpaPlatformUserFriendEntity> findByUserAndFriendAndConfirmationStatus(@Param("userId") UUID userId,@Param("friendId") UUID friendId, @Param("isConfirmed") boolean isConfirmed);
+
     void removeById(JpaPlatformUserFriendId id);
     Optional<JpaPlatformUserFriendEntity> findFriendById(JpaPlatformUserFriendId id);
 }

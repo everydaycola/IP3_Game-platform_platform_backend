@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.domain;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,12 +22,13 @@ public class PlatformUserFriendId {
         return new PlatformUserFriendId(userId, friendId);
     }
 
-    public ConflictException conflict() {
-        log.error("UserFriend already exists for {} and {}",userId, friendId);
-        return new ConflictException("User [" + userId+ "] and ["+friendId + "] already exists.");
+    public NotFoundException notFound() {
+        log.error("No platform friend relation between users {} and {}", userId, friendId);
+        return new NotFoundException("No platform friend relation between users ["+userId+"] and [" + friendId +"]");
     }
 
-    public static ConflictException conflict(UUID userId, UUID friendId) {
+
+    public ConflictException conflict() {
         log.error("UserFriend already exists for {} and {}",userId, friendId);
         return new ConflictException("User [" + userId+ "] and ["+friendId + "] already exists.");
     }
