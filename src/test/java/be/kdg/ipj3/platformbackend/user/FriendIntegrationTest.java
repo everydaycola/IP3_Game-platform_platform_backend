@@ -292,6 +292,43 @@ class FriendIntegrationTest {
         }
     }
 
+    @Nested
+    class RetrieveBasicUserInfo {
+        @Test
+        void getUserData_should_return_200_when_fired_from_a_registered_user() throws Exception {
+            //Arrange
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/user")
+                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        void getUserData_should_return_404_when_not_found() throws Exception {
+            //Arrange
+            UUID invalidUserId = UUID.fromString("99999999-9999-9999-9999-99999999");
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/user")
+                            .with(authJwt(invalidUserId, "test_user", "user", "test_user@test.be"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void getUserData_should_return_401_when_not_authenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/user"))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
 }
 
 

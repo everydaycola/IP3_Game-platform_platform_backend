@@ -21,6 +21,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public ResponseEntity<PlatformUserDto> getUserData(@AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        log.info("User with id {} was recognized by the platform", userId);
+        return ResponseEntity.ok(PlatformUserDto.from(userService.findUserById(userId)));
+    }
 
     @PostMapping
     public ResponseEntity<PlatformUserDto> addUser(@AuthenticationPrincipal Jwt token) {
