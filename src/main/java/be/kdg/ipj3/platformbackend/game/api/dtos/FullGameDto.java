@@ -1,10 +1,12 @@
 package be.kdg.ipj3.platformbackend.game.api.dtos;
 
+import be.kdg.ipj3.platformbackend.achievement.api.AchievementDto;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 
+import java.util.List;
 import java.util.UUID;
 
-public record FullGameDto(UUID id, String name, String description, double price, String image, String icon, String genre, String url) {
+public record FullGameDto(UUID id, String name, String description, double price, String image, String icon, String genre, String url, List<AchievementDto> achievements) {
     public static FullGameDto from(final Game game){
         return new FullGameDto(
                 game.getId().id(),
@@ -14,7 +16,8 @@ public record FullGameDto(UUID id, String name, String description, double price
                 game.getImage(),
                 game.getIcon(),
                 game.getGenre().getName(),
-                game.getUrl()
+                game.getUrl(),
+                game.getAchievements().stream().map(AchievementDto::from).toList()
         );
     }
 }
