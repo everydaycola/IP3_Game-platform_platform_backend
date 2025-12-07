@@ -17,26 +17,37 @@ public class JpaPlatformUserEntity {
     @Column(name = "id", nullable = false)
     private UUID id;
 
+    @Column
+    private String userName;
+
+    @Column
+    private String biography;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JpaPlatformUserFriendEntity> friends = new ArrayList<>();
 
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id, List<JpaPlatformUserFriendEntity> friends) {
+    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaPlatformUserFriendEntity> friends) {
         this.id = id;
+        this.userName = userName;
+        this.biography = biography;
         this.friends = friends;
     }
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser domain) {
         JpaPlatformUserEntity entity = new JpaPlatformUserEntity();
         entity.id = domain.getUserId().id();
+        entity.userName = domain.getUserName();
+        entity.biography = domain.getBiography();
 
         entity.friends = domain.getFriends().stream()
                 .map(friend -> JpaPlatformUserFriendEntity.fromDomain(
                         friend,
                         entity,
-                        new JpaPlatformUserEntity(friend.getId().getFriendId(), List.of())
+                        //Strings here are enough since the ID relation between friends is enough.
+                        new JpaPlatformUserEntity(friend.getId().getFriendId(),"","", List.of())
                 ))
                 .toList();
 
@@ -48,7 +59,7 @@ public class JpaPlatformUserEntity {
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
 
-        return PlatformUser.fromDb(id, friendList);
+        return PlatformUser.fromDb(id, userName,biography,friendList);
     }
 
 }

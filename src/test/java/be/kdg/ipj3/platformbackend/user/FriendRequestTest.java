@@ -41,10 +41,12 @@ public class FriendRequestTest {
         void addFriendToFriendList_should_addNewFriend_whenNoExistingRequest() {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
+            String userName1 = "TestUser1";
             UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
+            String userName2 = "TestUser2";
 
-            PlatformUser user = new PlatformUser(userId, new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId,userName1,"", new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>());
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);
             Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))
@@ -63,10 +65,12 @@ public class FriendRequestTest {
         void addFriendToFriendList_should_acceptExistingRequest_whenRequestExists() {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
+            String userName1= "TestUser1";
             UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
+            String userName2 = "TestUser2";
 
-            PlatformUser user = new PlatformUser(userId, new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId,userName1,"", new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>());
             PlatformUserFriend existingRequest = new PlatformUserFriend(new PlatformUserFriendId(userId.id(), friend1Id.id()),false,LocalDateTime.now(),null);
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);

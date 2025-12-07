@@ -32,7 +32,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
         List<PlatformUserFriend> confirmedFriends = friendsDb.stream()
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
-        return PlatformUser.fromDb(userId.id(),confirmedFriends);
+        return PlatformUser.fromDb(userId.id(), confirmedFriends);
     }
 
     @Override
