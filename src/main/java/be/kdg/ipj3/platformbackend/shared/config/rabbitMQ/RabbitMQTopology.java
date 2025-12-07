@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.config.rabbitMQ;
+package be.kdg.ipj3.platformbackend.shared.config.rabbitMQ;
 
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
