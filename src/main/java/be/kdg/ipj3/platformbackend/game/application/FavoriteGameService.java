@@ -9,6 +9,9 @@ import be.kdg.ipj3.platformbackend.game.domain.repository.FavoriteGameRepository
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @Slf4j
 public class FavoriteGameService {
@@ -33,5 +36,15 @@ public class FavoriteGameService {
         FavoriteGame favoriteGame = new FavoriteGame(userId.id(), gameId.id());
         gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         favoriteGameRepository.remove(favoriteGame);
+    }
+
+    public List<FavoriteGame> findAll(UserId userId) {
+        log.info("Returning favorites for user: " + userId);
+        return favoriteGameRepository.findAllByUserId(userId);
+    }
+
+    public FavoriteGame findFavoriteGame(UserId userId, UUID gameId) {
+        log.info("Checking if game {} is in favorites for user {}", gameId, userId.id());
+        return favoriteGameRepository.findFavorite(userId, gameId);
     }
 }
