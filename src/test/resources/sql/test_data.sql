@@ -16,13 +16,13 @@ VALUES(
        'localhost:8080'
       );
 
---This is the ID for your own id.
+
 INSERT INTO platform_user (id)
 VALUES('11111111-1111-1111-1234-111111111111');
--- this is a random other player ID.
 INSERT INTO platform_user (id)
 VALUES('11111111-1111-1111-aaaa-111111111111');
-
--- this is a player that we auto-accept friends with.
 INSERT INTO platform_user (id)
 VALUES('11111111-1111-1111-aabb-111111111111');
+INSERT INTO platform_user (id)
+VALUES('11111111-1111-1111-aacc-111111111111');
+
