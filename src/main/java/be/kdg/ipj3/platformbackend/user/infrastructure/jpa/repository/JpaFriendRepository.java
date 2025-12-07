@@ -12,7 +12,14 @@ import java.util.Optional;
 
 
 public interface JpaFriendRepository extends JpaRepository<JpaPlatformUserFriendEntity, JpaPlatformUserFriendId> {
-    List<JpaPlatformUserFriendEntity> findAllByFriend_IdAndIsConfirmedFalse(UUID id);
+
+    @Query("""
+    SELECT f
+    FROM JpaPlatformUserFriendEntity f
+    WHERE f.isConfirmed = false
+      AND (f.user.id = :id OR f.friend.id = :id)
+    """)
+    List<JpaPlatformUserFriendEntity> findAllFriendRequestByUserOrFriend(@Param("id") UUID id);
 
     @Query("""
     SELECT f

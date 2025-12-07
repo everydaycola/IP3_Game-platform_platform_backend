@@ -61,7 +61,7 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
     @Override
     public List<PlatformUserFriend> findAllFriendRequestsForUser(UserId userId) {
         return jpaFriendRepository
-                .findAllByFriend_IdAndIsConfirmedFalse(userId.id())
+                .findAllFriendRequestByUserOrFriend(userId.id())
                 .stream()
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
