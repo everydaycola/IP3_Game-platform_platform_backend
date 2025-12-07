@@ -2,8 +2,6 @@ package be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa;
 
 import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
-import be.kdg.ipj3.platformbackend.game.domain.Game;
-import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity.JpaGameEntity;
 import jakarta.persistence.*;
 

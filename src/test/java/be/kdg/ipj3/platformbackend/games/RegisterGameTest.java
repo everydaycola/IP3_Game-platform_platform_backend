@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -38,7 +39,7 @@ public class RegisterGameTest {
         void registerGame_registers_game_with_working_url_without_exceptions(){
             //Arrange
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "http://localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "http://localhost:8080", puzzle, new ArrayList<>());
 
             FullGameDto dto = FullGameDto.from(game1);
 
@@ -62,7 +63,7 @@ public class RegisterGameTest {
         void registerGame_does_not_register_game_when_url_is_unreachable(){
             //Arrange
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "http://localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "http://localhost:8080", puzzle, new ArrayList<>());
 
             FullGameDto dto = FullGameDto.from(game1);
 

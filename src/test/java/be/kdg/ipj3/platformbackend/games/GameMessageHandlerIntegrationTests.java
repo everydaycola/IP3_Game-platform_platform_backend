@@ -4,6 +4,7 @@ import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.RegisterGameMessage;
+import jakarta.transaction.Transactional;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.nginx.NginxContainer;
 import org.testcontainers.utility.DockerImageName;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,7 +84,10 @@ public class GameMessageHandlerIntegrationTests {
                     "Game where you..",
                     20,
                     "testImg.png",
-                    "testicon.png", "Strategy",url);
+                    "testicon.png",
+                    "Strategy",
+                    url,
+                    new ArrayList<>());
             //Replicating the genre from "test_data.sql";
 
             RegisterGameMessage message = new RegisterGameMessage(dto);

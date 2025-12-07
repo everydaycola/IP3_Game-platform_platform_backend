@@ -1,6 +1,5 @@
 package be.kdg.ipj3.platformbackend.game.application;
 
-import be.kdg.ipj3.platformbackend.achievement.api.AchievementDto;
 import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;

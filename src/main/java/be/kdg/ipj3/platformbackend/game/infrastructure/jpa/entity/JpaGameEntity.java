@@ -4,7 +4,9 @@ import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaAchievement
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +40,7 @@ public class JpaGameEntity {
     @Column
     private String url;
 
-    @OneToMany(mappedBy = "game", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "game" ,orphanRemoval = true, cascade = CascadeType.ALL)
     private List<JpaAchievementEntity> achievements;
 
     public JpaGameEntity() {
@@ -83,7 +85,7 @@ public class JpaGameEntity {
                 this.icon,
                 this.url,
                 this.genre.toDomain(),
-                achievements.stream().map(JpaAchievementEntity::toDomain).toList()
+                this.achievements.stream().map(JpaAchievementEntity::toDomain).toList()
         );
     }
 }
