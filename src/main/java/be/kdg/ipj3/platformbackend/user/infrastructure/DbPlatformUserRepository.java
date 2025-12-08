@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -28,16 +29,23 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public PlatformUser findByIdWithFriends(UserId userId) {
-        List<JpaPlatformUserFriendEntity> friendsDb = jpaFriendRepository.findAllByUser_IdAndIsConfirmedTrue(userId.id());
+        List<JpaPlatformUserFriendEntity> friendsDb = jpaFriendRepository.findAllByUserOrFriend(userId.id());
         List<PlatformUserFriend> confirmedFriends = friendsDb.stream()
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
-        return PlatformUser.fromDb(userId.id(),confirmedFriends);
+        return PlatformUser.fromDb(userId.id(), confirmedFriends);
     }
 
     @Override
     public PlatformUser findUserById(UserId userId) {
         return jpaPlatformUserRepository.findById(userId.id()).orElseThrow(userId::notFound).toDomain();
+    }
+
+    @Override
+    public List<PlatformUser> findAllUsersByIds(List<UUID> idList) {
+        return jpaPlatformUserRepository.findAllById(idList).stream()
+                .map(JpaPlatformUserEntity::toDomain)
+                .toList();
     }
 
 

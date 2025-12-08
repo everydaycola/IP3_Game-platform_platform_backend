@@ -32,11 +32,12 @@ public class RegisteringNewUserTest {
         void addUser_should_return_user_when_user_id_is_provided() {
             //Arrange
             UserId userId = new UserId(UUID.randomUUID());
-            PlatformUser mockUser = new PlatformUser(userId, new ArrayList<>());
+            String userName1 = "TestUser1";
+            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>());
             Mockito.when(platformUserRepository.createUser(Mockito.any(PlatformUser.class)))
                     .thenReturn(mockUser);
             // Act
-            PlatformUser result = userService.addUser(userId);
+            PlatformUser result = userService.addUser(userId,userName1);
             // Assert
             assertThat(result).isNotNull();
             assertThat(result.getUserId()).isEqualTo(userId);

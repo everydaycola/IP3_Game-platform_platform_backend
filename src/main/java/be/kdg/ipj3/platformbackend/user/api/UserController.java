@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.user.api;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.PlatformUserDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
+import be.kdg.ipj3.platformbackend.user.helpers.JwtHelpers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,11 +21,19 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public ResponseEntity<PlatformUserDto> getUserData(@AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        log.info("User with id {} was recognized by the platform", userId);
+        return ResponseEntity.ok(PlatformUserDto.from(userService.findUserById(userId)));
+    }
 
     @PostMapping
     public ResponseEntity<PlatformUserDto> addUser(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        return ResponseEntity.ok(PlatformUserDto.from(userService.addUser(userId)));
+        String userName = JwtHelpers.userNameFromToken(token);
+        log.info("User with id {} was recognized by the platform", userId);
+        return ResponseEntity.ok(PlatformUserDto.from(userService.addUser(userId,userName)));
     }
 
 }

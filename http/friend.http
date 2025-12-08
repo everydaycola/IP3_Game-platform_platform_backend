@@ -89,3 +89,7 @@ Authorization: Bearer {{access_token_player_2}}
 GET {{baseUrl}}/friends
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
+
+### Get platform User data
+GET {{baseUrl}}
+Authorization: Bearer {{access_token}}
