@@ -6,14 +6,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record FriendListDto(UUID id, List<FriendDto> friends) {
-    public static FriendListDto from(final PlatformUser user) {
-        List<FriendDto> friendDtos = user.getFriends().stream()
+    public static FriendListDto from(final PlatformUser user, List<PlatformUser> friends) {
+        List<FriendDto> friendDtos = friends.stream()
                 .map(f -> new FriendDto(
-                        f.getId().getUserId(),
-                        f.getId().getFriendId(),
-                        f.getIsConfirmed(),
-                        f.getRequestedAt(),
-                        f.getConfirmedAt()
+                        f.getUserId().id(),
+                        f.getUserName(),
+                        f.getBiography()
+
                 ))
                 .collect(Collectors.toList());
 

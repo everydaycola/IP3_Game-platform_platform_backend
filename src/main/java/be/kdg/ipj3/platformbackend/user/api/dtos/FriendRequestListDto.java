@@ -1,19 +1,16 @@
 package be.kdg.ipj3.platformbackend.user.api.dtos;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
-
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public record FriendRequestListDto(List<FriendDto> friends) {
-    public static FriendRequestListDto from(final List<PlatformUserFriend> friends) {
+    public static FriendRequestListDto from(final List<PlatformUser> friends) {
         List<FriendDto> friendDtos = friends
                 .stream()
                 .map(f -> new FriendDto(
-                        f.getId().getUserId(),
-                        f.getId().getFriendId(),
-                        f.getIsConfirmed(),
-                        f.getRequestedAt(),
-                        f.getConfirmedAt()
+                        f.getUserId().id(),
+                        f.getUserName(),
+                        f.getBiography()
                 ))
                 .collect(Collectors.toList());
 

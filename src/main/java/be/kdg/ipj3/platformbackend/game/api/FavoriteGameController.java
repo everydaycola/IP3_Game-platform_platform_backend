@@ -1,7 +1,9 @@
 package be.kdg.ipj3.platformbackend.game.api;
 
+import be.kdg.ipj3.platformbackend.game.api.dtos.FavoriteGameDto;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
+import be.kdg.ipj3.platformbackend.game.domain.FavoriteGame;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +28,25 @@ public class FavoriteGameController {
         this.gameService = gameService;
         this.favoriteGameService = favoriteGameService;
     }
+
+    @GetMapping
+    public ResponseEntity<List<FavoriteGameDto>> getAllFavorite(@AuthenticationPrincipal Jwt token){
+        UserId userId = UserId.fromToken(token);
+        List<FavoriteGame> favorites =  favoriteGameService.findAll(userId);
+        List<FavoriteGameDto> dtos = favorites.stream()
+                .map(FavoriteGameDto::from)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/{gameId}")
+    public ResponseEntity<FavoriteGameDto> getFavorite(@PathVariable final UUID gameId,@AuthenticationPrincipal Jwt token){
+        UserId userId = UserId.fromToken(token);
+        FavoriteGame favorite = favoriteGameService.findFavoriteGame(userId, gameId);
+        return ResponseEntity.ok(FavoriteGameDto.from(favorite));
+    }
+
 
     @PostMapping("/{selectedGameId}")
     public ResponseEntity<FullGameDto> addFavorite(@PathVariable final UUID selectedGameId, @AuthenticationPrincipal Jwt token){

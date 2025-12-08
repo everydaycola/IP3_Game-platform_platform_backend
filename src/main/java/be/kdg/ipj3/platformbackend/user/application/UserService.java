@@ -6,6 +6,8 @@ import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -17,8 +19,20 @@ public class UserService {
         this.platformUserRepository = platformUserRepository;
     }
 
-    public PlatformUser addUser(UserId userId) {
-        PlatformUser user = new PlatformUser(userId, new ArrayList<>(), new ArrayList<>());
+    public PlatformUser addUser(UserId userId, String userName) {
+        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(), new ArrayList<>());
         return platformUserRepository.createUser(user);
+    }
+
+    public List<PlatformUser> findUserListByIdList(List<UserId> friendIds) {
+        List<UUID> uuids = friendIds.stream()
+                .map(UserId::id)
+                .toList();
+
+        return platformUserRepository.findAllUsersByIds(uuids);
+    }
+
+    public PlatformUser findUserById(UserId userId) {
+        return platformUserRepository.findUserById(userId);
     }
 }
