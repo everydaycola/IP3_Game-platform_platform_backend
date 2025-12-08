@@ -18,7 +18,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId) {
-        PlatformUser user = new PlatformUser(userId, new ArrayList<>());
+        PlatformUser user = new PlatformUser(userId, new ArrayList<>(), new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 }

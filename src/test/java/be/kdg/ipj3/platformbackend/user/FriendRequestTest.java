@@ -43,8 +43,8 @@ public class FriendRequestTest {
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
 
-            PlatformUser user = new PlatformUser(userId, new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId, new ArrayList<>(), new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>(), new ArrayList<>());
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);
             Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))
@@ -65,8 +65,8 @@ public class FriendRequestTest {
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
 
-            PlatformUser user = new PlatformUser(userId, new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId, new ArrayList<>(), new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friend1Id, new ArrayList<>(), new ArrayList<>());
             PlatformUserFriend existingRequest = new PlatformUserFriend(new PlatformUserFriendId(userId.id(), friend1Id.id()),false,LocalDateTime.now(),null);
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);

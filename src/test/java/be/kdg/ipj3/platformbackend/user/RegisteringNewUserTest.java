@@ -32,7 +32,7 @@ public class RegisteringNewUserTest {
         void addUser_should_return_user_when_user_id_is_provided() {
             //Arrange
             UserId userId = new UserId(UUID.randomUUID());
-            PlatformUser mockUser = new PlatformUser(userId, new ArrayList<>());
+            PlatformUser mockUser = new PlatformUser(userId, new ArrayList<>(), new ArrayList<>());
             Mockito.when(platformUserRepository.createUser(Mockito.any(PlatformUser.class)))
                     .thenReturn(mockUser);
             // Act
