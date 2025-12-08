@@ -28,12 +28,12 @@ public class DbGameRepository implements GameRepository {
 
     @Override
     public List<Game> findAll() {
-        return jpaGameRepository.findAll().stream().map(JpaGameEntity::toDomain).toList();
+       return jpaGameRepository.findAllWithAchievements().stream().map(JpaGameEntity::toDomain).toList();
     }
 
     @Override
     public Optional<Game> findById(UUID id) {
-        return jpaGameRepository.findById(id).map(JpaGameEntity::toDomain);
+        return jpaGameRepository.findByIdWithAchievements(id).map(JpaGameEntity::toDomain);
     }
 
     @Override

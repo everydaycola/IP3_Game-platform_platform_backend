@@ -8,6 +8,7 @@ import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.shared.api.UrlChecker;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class GameService {
     private final GameRepository gameRepository;
     private final UrlChecker urlChecker;

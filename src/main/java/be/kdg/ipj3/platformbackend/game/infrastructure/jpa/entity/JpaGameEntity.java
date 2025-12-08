@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity;
 
+import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaAchievementEntity;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
@@ -76,6 +77,12 @@ public class JpaGameEntity {
     }
 
     public Game toDomain() {
+        //Necessary for testing to not fail with lazy loading
+        List<Achievement> domainAchievements = new ArrayList<>();
+        for (JpaAchievementEntity jpaAchievement : this.achievements){
+          domainAchievements.add(jpaAchievement.toDomain());
+        }
+
         return new Game(
                 new GameId(this.id),
                 this.name,
@@ -85,7 +92,7 @@ public class JpaGameEntity {
                 this.icon,
                 this.url,
                 this.genre.toDomain(),
-                this.achievements.stream().map(JpaAchievementEntity::toDomain).toList()
+                domainAchievements
         );
     }
 }
