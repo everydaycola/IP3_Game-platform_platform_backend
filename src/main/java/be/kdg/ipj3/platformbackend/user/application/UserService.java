@@ -35,4 +35,8 @@ public class UserService {
     public PlatformUser findUserById(UserId userId) {
         return platformUserRepository.findUserById(userId);
     }
+
+    public PlatformUser findUserByUserName(String userName) {
+        return platformUserRepository.findUserByUserName(userName);
+    }
 }

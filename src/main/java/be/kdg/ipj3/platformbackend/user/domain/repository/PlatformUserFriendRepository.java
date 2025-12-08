@@ -8,10 +8,10 @@ import java.util.UUID;
 
 
 public interface PlatformUserFriendRepository {
-    PlatformUserFriend findFriendById(UserId userId,UserId friendId);
     PlatformUserFriend save(PlatformUserFriend user);
     PlatformUserFriend findFriendRequestBetween(UUID friendId, UserId userId);
     void remove(UserId userId, UserId friendId);
     List<PlatformUserFriend> findAllFriendRequestsForUser(UserId userId);
     void validateIfFriendRelationExists(UserId userId, UserId friendId);
+    List<UUID> getUniqueFriendIdsForUser(UUID userId);
 }

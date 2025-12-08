@@ -7,11 +7,12 @@ import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,5 +77,31 @@ public class FriendService {
     public List<PlatformUserFriend> findFriendRequestsForUser(UserId userId) {
         log.info("Finding friend requests for user {}", userId);
         return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
+    }
+
+    public List<PlatformUser> getFriendRecommendations(UUID id, int size, String nameQuery) {
+        log.info("Finding friend recommendations for user");
+        List<UUID> friendIds = platformUserFriendRepository.getUniqueFriendIdsForUser(id);
+        friendIds.add(id);
+        List<PlatformUser> recommendations  = new ArrayList<>();
+        if(nameQuery != null && !nameQuery.isEmpty()){
+            recommendations.addAll(
+                    platformUserRepository.findRecommendationsListOfSizeWithNameQuery(friendIds,nameQuery, size)
+                            .stream()
+                            .map(JpaPlatformUserEntity::toDomain)
+                            .toList()
+            );
+        }
+        int remaining = size - recommendations.size();
+        if(remaining > 0){
+            recommendations.forEach(recommendation -> friendIds.add(recommendation.getUserId().id()));
+            recommendations.addAll(
+                    platformUserRepository.findRecommendationsListOfSize(friendIds, size)
+                            .stream()
+                            .map(JpaPlatformUserEntity::toDomain)
+                            .toList()
+            );
+        }
+        return recommendations;
     }
 }

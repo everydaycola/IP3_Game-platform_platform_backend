@@ -28,12 +28,6 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
         this.jpaFriendRepository = jpaFriendRepository;
     }
 
-    @Override
-    public PlatformUserFriend findFriendById(UserId userId,UserId friendId) {
-        return jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId.id(), true)
-                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId.id()).notFound())
-                .toDomain();
-    }
 
     @Override
     public PlatformUserFriend save(PlatformUserFriend user) {
@@ -74,6 +68,11 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
                 .ifPresent(match -> {
                     throw new PlatformUserFriendId(userId.id(), friendId.id()).conflict();
                 });
+    }
+
+    @Override
+    public List<UUID> getUniqueFriendIdsForUser(UUID userId) {
+        return jpaFriendRepository.findFriendIdsByUserId(userId);
     }
 
 }

@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
@@ -59,4 +60,23 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     public PlatformUser createUser(PlatformUser user) {
         return jpaPlatformUserRepository.save(JpaPlatformUserEntity.fromDomain(user)).toDomain();
     }
+
+    @Override
+    public PlatformUser findUserByUserName(String userName) {
+        return jpaPlatformUserRepository
+                .findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User with username '" + userName + "' not found"))
+                .toDomain();
+    }
+
+    @Override
+    public List<JpaPlatformUserEntity> findRecommendationsListOfSize( List<UUID> excludedIds, int size) {
+        return jpaPlatformUserRepository.findUsersNotInListLimited(excludedIds, size);
+    }
+
+    @Override
+    public List<JpaPlatformUserEntity> findRecommendationsListOfSizeWithNameQuery( List<UUID> excludedIds,String nameQuery, int size) {
+        return jpaPlatformUserRepository.findUsersNotInListWithNameQuery(excludedIds,nameQuery, size);
+    }
+
 }

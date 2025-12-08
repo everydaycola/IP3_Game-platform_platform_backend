@@ -3,16 +3,19 @@ package be.kdg.ipj3.platformbackend.user.api;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendListDto;
+import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRecommendationListDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRequestListDto;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,10 +50,11 @@ public class FriendController {
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
 
-    @PatchMapping("/{friendId}")
-    public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PostMapping("/{friendUserName}")
+    public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.addFriendRequest(userId, new UserId(friendId));
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.addFriendRequest(userId, new UserId(friend.getUserId().id()));
 
         PlatformUser user = friendService.findUserWithFriends(userId);
         List<UserId> friendIds = extractFriendIds(user.getFriends(), userId);
@@ -71,10 +75,11 @@ public class FriendController {
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
 
-    @PatchMapping("/{friendId}/accept")
-    public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PatchMapping("/{friendUserName}/accept")
+    public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        PlatformUserFriend newFriend = friendService.acceptFriendRequest(userId, friendId);
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        PlatformUserFriend newFriend = friendService.acceptFriendRequest(userId, friend.getUserId().id());
 
         UUID otherUserId = newFriend.getId().getUserId().equals(userId.id())
                 ? newFriend.getId().getFriendId()
@@ -84,10 +89,11 @@ public class FriendController {
         return ResponseEntity.ok(FriendDto.from(friendUser));
     }
 
-    @PatchMapping("/{friendId}/deny")
-    public ResponseEntity denyFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PatchMapping("/{friendUserName}/deny")
+    public ResponseEntity denyFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.denyFriendRequest(userId, friendId);
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.denyFriendRequest(userId, friend.getUserId().id());
         return ResponseEntity.ok("Friendrequest succesfully denied.");
     }
 
@@ -109,6 +115,22 @@ public class FriendController {
 
         return ResponseEntity.ok(FriendRequestListDto.from(requestingUsers));
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<FriendRecommendationListDto> getFriendRecommendations
+            (@AuthenticationPrincipal Jwt token,
+             @RequestParam(name = "size", defaultValue = "10") int size,
+             @RequestParam(name = "nameQuery", required = false) String nameQuery
+             ){
+        if (size < 0 || size > 20) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Size must be between 0 and 20");
+        }
+        UserId userId = UserId.fromToken(token);
+        log.info("Getting friend recomendations for user with id {} ", userId.id());
+        List<PlatformUser> friendRecommendations = friendService.getFriendRecommendations(userId.id(), size, nameQuery);
+        return ResponseEntity.ok(FriendRecommendationListDto.from(friendRecommendations));
+    }
+
 
     private List<UserId> extractFriendIds(List<PlatformUserFriend> friends, UserId currentUserId) {
         return friends.stream()
