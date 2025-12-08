@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Service
 @Slf4j
+@Service
 @Transactional
 public class UserService {
 

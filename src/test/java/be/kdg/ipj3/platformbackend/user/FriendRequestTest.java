@@ -7,7 +7,6 @@ import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepo
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Optional;
 
+import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,8 +48,8 @@ public class FriendRequestTest {
 
             PlatformUser user = new PlatformUser(userId,userName1,"", new ArrayList<>());
             PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>());
-            Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
-            Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);
+            Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
+            Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(Optional.of(friend));
             Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))
                     .thenThrow(new NotFoundException("No request found"));
 
@@ -63,28 +64,27 @@ public class FriendRequestTest {
 
         @Test
         void addFriendToFriendList_should_acceptExistingRequest_whenRequestExists() {
-            //Arrange
+            // Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
-            String userName1= "TestUser1";
-            UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
-            String userName2 = "TestUser2";
-
-            PlatformUser user = new PlatformUser(userId,userName1,"", new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>());
-            PlatformUserFriend existingRequest = new PlatformUserFriend(new PlatformUserFriendId(userId.id(), friend1Id.id()),false,LocalDateTime.now(),null);
-            Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
-            Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);
-            Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))
+            UserId friendId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friendId, "TestUser2", "", new ArrayList<>());
+            PlatformUserFriend existingRequest = new PlatformUserFriend(
+                    UUID.randomUUID(), friend, user, false, LocalDateTime.now(), null
+            );
+            Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
+            Mockito.when(platformUserRepository.findUserById(friendId)).thenReturn(Optional.of(friend));
+            Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friendId.id(), userId))
                     .thenReturn(existingRequest);
 
-            //Act
-            friendService.addFriendRequest(userId, friend1Id);
-            //Assert
+            // Act
+            friendService.addFriendRequest(userId, friendId);
 
+            // Assert
             Mockito.verify(platformUserRepository, times(1)).findUserById(userId);
-            //The second call occurs in the 'acceptFriendRequest method' which is invoked within.
-            Mockito.verify(platformUserFriendRepository, times(2)).findFriendRequestBetween(friend1Id.id(), userId);
-
+            Mockito.verify(platformUserRepository, times(1)).findUserById(friendId);
+            Mockito.verify(platformUserFriendRepository, times(2)).findFriendRequestBetween(friendId.id(), userId);
+            Mockito.verify(platformUserFriendRepository, never()).validateIfFriendRelationExists(userId, friendId);
         }
 
         @Test
@@ -100,18 +100,32 @@ public class FriendRequestTest {
 
         @Test
         void acceptFriendRequest_should_update_the_state_of_an_existing_friend_request() {
-            //Arrange
+            // Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
-            UUID friend1Id = UUID.fromString("11111111-1111-1111-1111-111111111112");
+            UUID friendId = UUID.fromString("11111111-1111-1111-1111-111111111112");
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>());
+            PlatformUser friend = new PlatformUser(new UserId(friendId), "TestUser2", "", new ArrayList<>());
             LocalDateTime now = LocalDateTime.now();
-            PlatformUserFriend testFriend = new PlatformUserFriend(new PlatformUserFriendId(userId.id(), friend1Id),false, now,null);
-            Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id,userId)).thenReturn(testFriend);
 
-            //Act
-            friendService.acceptFriendRequest(userId, friend1Id);
+            PlatformUserFriend existingRequest = new PlatformUserFriend(
+                    UUID.randomUUID(),
+                    user,
+                    friend,
+                    false,
+                    now,
+                    null
+            );
 
-            //Assert
-            Mockito.verify(platformUserFriendRepository, times(1)).findFriendRequestBetween(friend1Id,userId);
+            Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friendId, userId))
+                    .thenReturn(existingRequest);
+
+            // Act
+            friendService.acceptFriendRequest(userId, friendId);
+
+            // Assert
+            Mockito.verify(platformUserFriendRepository, times(1)).findFriendRequestBetween(friendId, userId);
+            assertTrue(existingRequest.getIsConfirmed(), "The friend request should be marked as accepted");
+            Mockito.verify(platformUserFriendRepository, times(1)).save(existingRequest);
         }
 
     }
