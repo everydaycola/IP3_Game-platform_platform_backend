@@ -90,7 +90,7 @@ public class FriendController {
     }
 
     @PatchMapping("/{friendUserName}/deny")
-    public ResponseEntity denyFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<String> denyFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         PlatformUser friend = userService.findUserByUserName(friendUserName);
         friendService.denyFriendRequest(userId, friend.getUserId().id());

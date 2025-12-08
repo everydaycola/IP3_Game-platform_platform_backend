@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "platform_user_friend")
@@ -33,6 +34,9 @@ public class JpaPlatformUserFriendEntity {
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
 
+    @Column(name="sender_id")
+    private UUID senderId;
+
     protected JpaPlatformUserFriendEntity() {}
 
     private JpaPlatformUserFriendEntity(
@@ -41,7 +45,8 @@ public class JpaPlatformUserFriendEntity {
             JpaPlatformUserEntity friend,
             LocalDateTime requestedAt,
             Boolean isConfirmed,
-            LocalDateTime confirmedAt
+            LocalDateTime confirmedAt,
+            UUID senderId
     ) {
         this.id = id;
         this.user = user;
@@ -49,6 +54,7 @@ public class JpaPlatformUserFriendEntity {
         this.requestedAt = requestedAt;
         this.isConfirmed = isConfirmed;
         this.confirmedAt = confirmedAt;
+        this.senderId = senderId;
     }
 
     public static JpaPlatformUserFriendEntity fromDomain(
@@ -67,12 +73,13 @@ public class JpaPlatformUserFriendEntity {
                 friendEntity,
                 domain.getRequestedAt(),
                 domain.getIsConfirmed(),
-                domain.getConfirmedAt()
+                domain.getConfirmedAt(),
+                domain.getSenderId()
         );
     }
 
     public PlatformUserFriend toDomain() {
         PlatformUserFriendId domainId =PlatformUserFriendId.fromDb(this.id.userId, this.id.friendId);
-        return PlatformUserFriend.fromDb(domainId, isConfirmed, requestedAt, confirmedAt);
+        return PlatformUserFriend.fromDb(domainId, isConfirmed, requestedAt, confirmedAt, senderId);
     }
 }

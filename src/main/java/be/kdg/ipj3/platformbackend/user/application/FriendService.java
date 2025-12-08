@@ -8,6 +8,7 @@ import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendId;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class FriendService {
                 new PlatformUserFriendId(userId.id(), friend.getUserId().id()),
                 false,
                 LocalDateTime.now(),
-                null
+                null,
+                userId.id()
         );
         try {
             platformUserFriendRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
@@ -65,7 +67,7 @@ public class FriendService {
     public PlatformUserFriend acceptFriendRequest(UserId userId, UUID friendId) {
         log.info("Accepting friend request between {} to user {}", friendId, userId);
         PlatformUserFriend friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
-        PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now());
+        PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now(), friendRequest.getSenderId());
         return platformUserFriendRepository.save(updatedRequest);
     }
 
