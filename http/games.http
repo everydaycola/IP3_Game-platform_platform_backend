@@ -27,12 +27,15 @@ GET {{baseUrl}}/99999999-9999-9999-9999-999999999999
 POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=platform-backend&client_secret=anh2BTvft5XQJSQgTsJZRYbn90IGgVS2&username=test_user&password=1234&grant_type=password&scope=openid
+client_id=platform-backend&client_secret=nYNwTH09AguPkCyPk6Wt6jW2xgrBXrje&username=123&password=123&grant_type=password&scope=openid
 
 > {%
     client.global.set("test_user_token", response.body.access_token);
 %}
 
+### Retrieve favorite game list (Empty list when no favorites)
+GET {{baseUrl}}/favorite
+Authorization: Bearer {{test_user_token}}
 
 ### Favorite a game
 POST {{baseUrl}}/favorite/{{ttt}}
@@ -48,4 +51,12 @@ Authorization: Bearer {{test_user_token}}
 
 ### Remove a non-existant game from favorites.
 POST {{baseUrl}}/favorite/99999999-9999-9999-9999-999999999999
+Authorization: Bearer {{test_user_token}}
+
+### Retrieve favorite game list
+GET {{baseUrl}}/favorite
+Authorization: Bearer {{test_user_token}}
+
+### Retrieve specific favorite game (404 when ttt is NOT a favorite)
+GET {{baseUrl}}/favorite/{{ttt}}
 Authorization: Bearer {{test_user_token}}
