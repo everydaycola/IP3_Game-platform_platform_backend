@@ -21,7 +21,7 @@ public class PlatformUser {
     private final List<PlatformUserFriend> friends;
     private List<UserAchievement> achievements;
 
-    public PlatformUser(UserId userId,String userName, String biography, List<PlatformUserFriend> friends, List<UserAchievement> achievements) {
+    public PlatformUser(UserId userId, String userName, String biography, List<PlatformUserFriend> friends, List<UserAchievement> achievements) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
@@ -29,14 +29,19 @@ public class PlatformUser {
         this.achievements = achievements != null ? achievements : new ArrayList<>();
     }
 
+    public static PlatformUser fromDb(UUID userId, List<PlatformUserFriend> friends, List<UserAchievement> achievements) {
+        log.info("Returning user with {} friends: {}", friends != null ? friends.size() : 0, userId);
+        List<PlatformUserFriend> friendList = friends != null ? friends : new ArrayList<>();
+        return new PlatformUser(new UserId(userId),"", "", friendList,achievements );
+    }
     public static PlatformUser fromDb(UUID userId,String userName, String biography, List<PlatformUserFriend> friends, List<UserAchievement> achievements) {
         log.info("Returning user with {} friends: {}", friends != null ? friends.size() : 0, userId);
         List<PlatformUserFriend> friendList = friends != null ? friends : new ArrayList<>();
         return new PlatformUser(new UserId(userId),userName, biography, friendList, achievements);
     }
 
-    public void addAchievement(Achievement achievement){
-        achievements.add(new UserAchievement(this.userId,achievement.getId(), LocalDateTime.now()));
+    public void addAchievement(Achievement achievement) {
+        achievements.add(new UserAchievement(this.userId, achievement.getId(), LocalDateTime.now()));
     }
 
 }

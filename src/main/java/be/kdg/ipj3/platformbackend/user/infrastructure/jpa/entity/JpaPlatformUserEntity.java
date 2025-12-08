@@ -59,7 +59,7 @@ public class JpaPlatformUserEntity {
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
 
-        return PlatformUser.fromDb(id, userName,biography,friendList);
+        return PlatformUser.fromDb(id, userName,biography,friendList, new ArrayList<>());
     }
 
 }

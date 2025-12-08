@@ -46,7 +46,7 @@ public class FriendRequestTest {
             String userName2 = "TestUser2";
 
             PlatformUser user = new PlatformUser(userId,userName1,"", new ArrayList<>(), new ArrayList<>());
-            PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>()), new ArrayList<>();
+            PlatformUser friend = new PlatformUser(friend1Id,userName2,"", new ArrayList<>(), new ArrayList<>());
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(user);
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(friend);
             Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))

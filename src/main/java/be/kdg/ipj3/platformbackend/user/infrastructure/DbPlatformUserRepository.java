@@ -11,6 +11,7 @@ import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatfor
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,7 +34,8 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
         List<PlatformUserFriend> confirmedFriends = friendsDb.stream()
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
-        return PlatformUser.fromDb(userId.id(), confirmedFriends);
+        //Todo: return achievements
+        return PlatformUser.fromDb(userId.id(), confirmedFriends, new ArrayList<>());
     }
 
     @Override
