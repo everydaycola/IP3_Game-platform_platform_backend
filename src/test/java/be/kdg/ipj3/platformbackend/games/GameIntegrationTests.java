@@ -144,5 +144,139 @@ class GameIntegrationTests {
         }
     }
 
+    @Nested
+    class GetGameFavoriteIntegrationFlows{
+        @Test
+        public void getFavoriteGameList_should_return_200_when_fired_with_valid_gameId()throws Exception{
+            UUID gameId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+            UUID userId = UUID.randomUUID();
+
+            mockMvc.perform(post("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get("/api/games/favorite")
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(delete("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        public void getFavoriteGameList_should_return_200_whenNoFavoriteGamesAreOnTheUser()throws Exception{
+            UUID userId = UUID.randomUUID();
+
+            mockMvc.perform(get("/api/games/favorite")
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        public void getSpecificFavoriteGameList_should_return_200_whenGameIsInFavorites()throws Exception{
+            UUID gameId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+            UUID userId = UUID.randomUUID();
+
+            mockMvc.perform(post("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(get("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(delete("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+        }
+
+        @Test
+        public void getSpecificFavoriteGameList_should_return_404_whenGameIsNotInFavorites()throws Exception{
+            UUID gameId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+            UUID userId = UUID.randomUUID();
+
+            mockMvc.perform(get("/api/games/favorite/{id}", gameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(userId.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+
+        }
+
+    }
+
 
 }
