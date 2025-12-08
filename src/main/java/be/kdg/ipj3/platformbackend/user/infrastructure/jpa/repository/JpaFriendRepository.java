@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository;
 
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaFriendRequestEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,43 +11,44 @@ import java.util.UUID;
 import java.util.Optional;
 
 
-public interface JpaFriendRepository extends JpaRepository<JpaPlatformUserFriendEntity, JpaPlatformUserFriendId> {
+public interface JpaFriendRepository extends JpaRepository<JpaFriendRequestEntity, JpaPlatformUserFriendId> {
 
     @Query("""
     SELECT f
-    FROM JpaPlatformUserFriendEntity f
+    FROM JpaFriendRequestEntity f
     WHERE f.isConfirmed = false
-      AND (f.user.id = :id OR f.friend.id = :id)
-      AND(f.senderId != :id)
+      AND (f.sender.id = :id OR f.receiver.id = :id)
     """)
-    List<JpaPlatformUserFriendEntity> findAllFriendRequestByUserOrFriend(@Param("id") UUID id);
+    List<JpaFriendRequestEntity> findAllFriendRequestByUserOrFriend(@Param("id") UUID id);
 
     @Query("""
     SELECT f
-    FROM JpaPlatformUserFriendEntity f
+    FROM JpaFriendRequestEntity f
     WHERE f.isConfirmed = true
-      AND (f.user.id = :id OR f.friend.id = :id)
+      AND (f.sender.id = :id OR f.receiver.id = :id)
     """)
-    List<JpaPlatformUserFriendEntity> findAllByUserOrFriend(@Param("id") UUID id);
+    List<JpaFriendRequestEntity> findAllByUserOrFriend(@Param("id") UUID id);
 
     @Query("""
     SELECT f
-    FROM JpaPlatformUserFriendEntity f
+    FROM JpaFriendRequestEntity f
     WHERE f.isConfirmed = :isConfirmed
-      AND ((f.user.id = :userId AND f.friend.id = :friendId)
-           OR (f.user.id = :friendId AND f.friend.id = :userId))
+      AND ((f.sender.id = :userId AND f.receiver.id = :friendId)
+           OR (f.sender.id = :friendId AND f.receiver.id = :userId))
 """)
-    Optional<JpaPlatformUserFriendEntity> findByUserAndFriendAndConfirmationStatus(@Param("userId") UUID userId,@Param("friendId") UUID friendId, @Param("isConfirmed") boolean isConfirmed);
+    Optional<JpaFriendRequestEntity> findByUserAndFriendAndConfirmationStatus(@Param("userId") UUID userId, @Param("friendId") UUID friendId, @Param("isConfirmed") boolean isConfirmed);
 
     @Query("""
     SELECT DISTINCT CASE
-           WHEN f.user.id = :userId THEN f.friend.id
-           ELSE f.user.id
+           WHEN f.sender.id = :userId THEN f.receiver.id
+           ELSE f.sender.id
            END
-    FROM JpaPlatformUserFriendEntity f
-    WHERE (:userId = f.user.id OR :userId = f.friend.id)
+    FROM JpaFriendRequestEntity f
+    WHERE (:userId = f.sender.id OR :userId = f.receiver.id)
 """)
     List<UUID> findFriendIdsByUserId(@Param("userId") UUID userId);
     void removeById(JpaPlatformUserFriendId id);
-    Optional<JpaPlatformUserFriendEntity> findFriendById(JpaPlatformUserFriendId id);
+    Optional<JpaFriendRequestEntity> findFriendById(JpaPlatformUserFriendId id);
+    Optional<JpaFriendRequestEntity> findBySenderIdAndReceiverId(UUID senderId, UUID receiverId);
+    void removeJpaFriendRequestEntityById(UUID id);
 }

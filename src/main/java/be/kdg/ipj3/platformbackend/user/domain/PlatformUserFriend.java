@@ -4,29 +4,38 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+//Todo: rename again
 @Getter
 public class PlatformUserFriend {
-    private final PlatformUserFriendId id;
-    private final Boolean isConfirmed;
+    private final UUID id;
+    private final PlatformUser sender;
+    private final PlatformUser receiver;
+    private Boolean isConfirmed;
     private final LocalDateTime requestedAt;
-    private final LocalDateTime confirmedAt;
-    private final UUID senderId;
+    private LocalDateTime confirmedAt;
 
-    public PlatformUserFriend(PlatformUserFriendId id, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt, UUID senderId) {
+    public PlatformUserFriend(UUID id,PlatformUser sender, PlatformUser receiver, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt) {
         this.id = id;
+        this.sender = sender;
+        this.receiver = receiver;
         this.isConfirmed = isConfirmed;
         this.requestedAt = requestedAt;
         this.confirmedAt = confirmedAt;
-        this.senderId = senderId;
     }
 
     public static PlatformUserFriend fromDb(
-            PlatformUserFriendId id,
+            UUID id,
+            PlatformUser sender,
+            PlatformUser receiver,
             Boolean isConfirmed,
             LocalDateTime requestedAt,
-            LocalDateTime confirmedAt,
-            UUID senderId
+            LocalDateTime confirmedAt
     ) {
-        return new PlatformUserFriend(id, isConfirmed, requestedAt, confirmedAt, senderId);
+        return new PlatformUserFriend(id,sender, receiver, isConfirmed, requestedAt, confirmedAt);
+    }
+
+    public void accept() {
+        this.isConfirmed = true;
+        this.confirmedAt = LocalDateTime.now();
     }
 }

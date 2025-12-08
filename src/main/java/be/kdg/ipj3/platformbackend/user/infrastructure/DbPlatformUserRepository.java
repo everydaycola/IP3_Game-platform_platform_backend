@@ -6,7 +6,7 @@ import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaFriendRequestEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaFriendRepository;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatformUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +30,9 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public PlatformUser findByIdWithFriends(UserId userId) {
-        List<JpaPlatformUserFriendEntity> friendsDb = jpaFriendRepository.findAllByUserOrFriend(userId.id());
+        List<JpaFriendRequestEntity> friendsDb = jpaFriendRepository.findAllByUserOrFriend(userId.id());
         List<PlatformUserFriend> confirmedFriends = friendsDb.stream()
-                .map(JpaPlatformUserFriendEntity::toDomain)
+                .map(JpaFriendRequestEntity::toDomain)
                 .collect(Collectors.toList());
         return PlatformUser.fromDb(userId.id(), confirmedFriends);
     }

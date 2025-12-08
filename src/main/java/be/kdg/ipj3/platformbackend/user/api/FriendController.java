@@ -9,6 +9,7 @@ import be.kdg.ipj3.platformbackend.user.application.FriendService;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,9 +41,9 @@ public class FriendController {
         PlatformUser user = friendService.findUserWithFriends(userId);
         List<UserId> friendIds = user.getFriends().stream()
                 .map(friend -> {
-                    UUID friendId = friend.getId().getUserId().equals(userId.id())
-                            ? friend.getId().getFriendId()
-                            : friend.getId().getUserId();
+                    UUID friendId = friend.getReceiver().getUserId().id().equals(userId.id())
+                            ? friend.getSender().getUserId().id()
+                            : friend.getReceiver().getUserId().id();
                     return new UserId(friendId);
                 })
                 .toList();
@@ -81,9 +82,9 @@ public class FriendController {
         PlatformUser friend = userService.findUserByUserName(friendUserName);
         PlatformUserFriend newFriend = friendService.acceptFriendRequest(userId, friend.getUserId().id());
 
-        UUID otherUserId = newFriend.getId().getUserId().equals(userId.id())
-                ? newFriend.getId().getFriendId()
-                : newFriend.getId().getUserId();
+        UUID otherUserId = newFriend.getReceiver().getUserId().id().equals(userId.id())
+                ? newFriend.getSender().getUserId().id()
+                : newFriend.getReceiver().getUserId().id();
         PlatformUser friendUser = userService.findUserById(new UserId(otherUserId));
 
         return ResponseEntity.ok(FriendDto.from(friendUser));
@@ -104,9 +105,11 @@ public class FriendController {
 
         List<UserId> requestingUserIds = friendRequests.stream()
                 .map(request -> {
-                    UUID requestingUserId = request.getId().getUserId().equals(userId.id())
-                            ? request.getId().getFriendId()
-                            : request.getId().getUserId();
+                    UUID requestingUserId = request.getSender().getUserId().id().equals(userId.id())
+                            ? request.getReceiver().getUserId().id()
+                            : request.getSender().getUserId().id();
+
+
                     return new UserId(requestingUserId);
                 })
                 .toList();
@@ -135,9 +138,9 @@ public class FriendController {
     private List<UserId> extractFriendIds(List<PlatformUserFriend> friends, UserId currentUserId) {
         return friends.stream()
                 .map(friend -> {
-                    UUID friendId = friend.getId().getUserId().equals(currentUserId.id())
-                            ? friend.getId().getFriendId()
-                            : friend.getId().getUserId();
+                    UUID friendId = friend.getSender().getUserId().id().equals(currentUserId.id())
+                            ? friend.getReceiver().getUserId().id()
+                            : friend.getSender().getUserId().id();
                     return new UserId(friendId);
                 })
                 .toList();

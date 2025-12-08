@@ -41,11 +41,12 @@ public class FriendService {
         PlatformUser friend = platformUserRepository.findUserById(friendId);
 
         PlatformUserFriend friendRelation = new PlatformUserFriend(
-                new PlatformUserFriendId(userId.id(), friend.getUserId().id()),
+                UUID.randomUUID(),
+                user,
+                friend,
                 false,
                 LocalDateTime.now(),
-                null,
-                userId.id()
+                null
         );
         try {
             platformUserFriendRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
@@ -67,8 +68,8 @@ public class FriendService {
     public PlatformUserFriend acceptFriendRequest(UserId userId, UUID friendId) {
         log.info("Accepting friend request between {} to user {}", friendId, userId);
         PlatformUserFriend friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
-        PlatformUserFriend updatedRequest = new PlatformUserFriend(friendRequest.getId(),true, friendRequest.getRequestedAt(), LocalDateTime.now(), friendRequest.getSenderId());
-        return platformUserFriendRepository.save(updatedRequest);
+        friendRequest.accept();
+        return platformUserFriendRepository.save(friendRequest);
     }
 
     public void denyFriendRequest(UserId userId, UUID friendId) {
