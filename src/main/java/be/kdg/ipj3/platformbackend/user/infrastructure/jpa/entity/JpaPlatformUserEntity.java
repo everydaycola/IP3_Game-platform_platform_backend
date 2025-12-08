@@ -1,4 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
+import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
+import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
 import jakarta.persistence.*;
@@ -26,14 +28,18 @@ public class JpaPlatformUserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JpaPlatformUserFriendEntity> friends = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JpaUserAchievementEntity> achievements = new ArrayList<>();
+
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaPlatformUserFriendEntity> friends) {
+    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaPlatformUserFriendEntity> friends, List<JpaUserAchievementEntity> achievements) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
         this.friends = friends;
+        this.achievements = achievements;
     }
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser domain) {
@@ -47,7 +53,7 @@ public class JpaPlatformUserEntity {
                         friend,
                         entity,
                         //Strings here are enough since the ID relation between friends is enough.
-                        new JpaPlatformUserEntity(friend.getId().getFriendId(),"","", List.of())
+                        new JpaPlatformUserEntity(friend.getId().getFriendId(),"","", List.of(), List.of())
                 ))
                 .toList();
 
@@ -59,7 +65,11 @@ public class JpaPlatformUserEntity {
                 .map(JpaPlatformUserFriendEntity::toDomain)
                 .collect(Collectors.toList());
 
-        return PlatformUser.fromDb(id, userName,biography,friendList, new ArrayList<>());
+        List<UserAchievement> achievementList = achievements.stream()
+                .map(JpaUserAchievementEntity::toDomain)
+                .toList();
+
+        return PlatformUser.fromDb(id, userName,biography,friendList, achievementList);
     }
 
 }

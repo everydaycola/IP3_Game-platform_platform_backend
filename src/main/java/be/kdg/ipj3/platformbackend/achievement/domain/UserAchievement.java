@@ -1,12 +1,13 @@
 package be.kdg.ipj3.platformbackend.achievement.domain;
 
-import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@Getter
 public class UserAchievement {
-    private final UserId userId;
-    private final AchievementId achievementId;
+    private final UserAchievementId id;
     private final LocalDateTime dateAchieved;
 }

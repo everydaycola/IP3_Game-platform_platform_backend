@@ -2,6 +2,7 @@ package be.kdg.ipj3.platformbackend.user.domain;
 
 import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
+import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,8 @@ public class PlatformUser {
         return new PlatformUser(new UserId(userId),userName, biography, friendList, achievements);
     }
 
-    public void addAchievement(Achievement achievement) {
-        achievements.add(new UserAchievement(this.userId, achievement.getId(), LocalDateTime.now()));
+    public void gainAchievement(Achievement achievement) {
+        achievements.add(new UserAchievement(new UserAchievementId(userId, achievement.getId()), LocalDateTime.now()));
     }
 
 }
