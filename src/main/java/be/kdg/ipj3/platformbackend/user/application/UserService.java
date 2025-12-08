@@ -35,7 +35,12 @@ public class UserService {
     }
 
     public PlatformUser findUserById(UserId userId) {
-        return platformUserRepository.findUserById(userId);
+        return platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+    }
+
+    public PlatformUser findOrCreateUserById(UserId userId, String userName) {
+        return platformUserRepository.findUserById(userId)
+                .orElseGet(() -> this.addUser(userId, userName));
     }
 
     public PlatformUser findUserByUserName(String userName) {

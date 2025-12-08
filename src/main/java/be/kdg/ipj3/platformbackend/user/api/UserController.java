@@ -33,12 +33,7 @@ public class UserController {
     public ResponseEntity<PlatformUserDto> addUser(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         String userName = JwtHelpers.userNameFromToken(token);
-        PlatformUser user;
-        try {
-            user = userService.findUserById(userId);
-        }catch(Exception e){
-            user = userService.addUser(userId, userName);
-        }
+        PlatformUser user = userService.findOrCreateUserById(userId, userName);
         log.info("User with id {} was recognized by the platform", userId);
         return ResponseEntity.ok(PlatformUserDto.from(user));
     }

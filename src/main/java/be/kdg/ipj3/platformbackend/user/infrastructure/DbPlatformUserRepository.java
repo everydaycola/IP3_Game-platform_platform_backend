@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,8 +39,8 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
-    public PlatformUser findUserById(UserId userId) {
-        return jpaPlatformUserRepository.findById(userId.id()).orElseThrow(userId::notFound).toDomain();
+    public Optional<PlatformUser> findUserById(UserId userId) {
+        return jpaPlatformUserRepository.findById(userId.id()).map(JpaPlatformUserEntity::toDomain);
     }
 
     @Override

@@ -37,8 +37,8 @@ public class FriendService {
 
     public void addFriendRequest(UserId userId, UserId friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
-        PlatformUser user = platformUserRepository.findUserById(userId);
-        PlatformUser friend = platformUserRepository.findUserById(friendId);
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        PlatformUser friend = platformUserRepository.findUserById(friendId).orElseThrow(userId::notFound);
 
         PlatformUserFriend friendRelation = new PlatformUserFriend(
                 UUID.randomUUID(),

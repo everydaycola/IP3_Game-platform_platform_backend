@@ -5,11 +5,12 @@ import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PlatformUserRepository {
     PlatformUser findByIdWithFriends(UserId userId);
-    PlatformUser findUserById(UserId userId);
+    Optional<PlatformUser> findUserById(UserId userId);
     List<PlatformUser> findAllUsersByIds(List<UUID> idList);
     void save(PlatformUser user);
     PlatformUser createUser(PlatformUser user);
