@@ -61,7 +61,7 @@ public class FriendService {
 
     public void removeFriendFromFriendList(UserId userId, UserId friendId) {
         log.info("Removing friend {} from user {}", userId, friendId);
-        platformUserFriendRepository.remove(userId, friendId);
+        platformUserFriendRepository.remove(userId, friendId, true);
     }
 
     public PlatformFriendRequest acceptFriendRequest(UserId userId, UUID friendId) {
@@ -73,7 +73,7 @@ public class FriendService {
 
     public void denyFriendRequest(UserId userId, UUID friendId) {
         log.info("Denying friend request between {} to user {}", friendId, userId);
-        platformUserFriendRepository.remove(userId, new UserId(friendId));
+        platformUserFriendRepository.remove(userId, new UserId(friendId), false);
     }
 
     public List<PlatformFriendRequest> findFriendRequestsForUser(UserId userId) {

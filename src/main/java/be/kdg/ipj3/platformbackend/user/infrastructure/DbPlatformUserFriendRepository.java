@@ -48,8 +48,8 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
     }
 
     @Override
-    public void remove(UserId userId, UserId friendId) {
-        JpaFriendRequestEntity friendRelation = jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(userId.id(), friendId.id(), false)
+    public void remove(UserId userId, UserId friendId,boolean isConfirmed) {
+        JpaFriendRequestEntity friendRelation = jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(userId.id(), friendId.id(), isConfirmed)
                 .or(() -> jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(friendId.id(), userId.id(), false))
                 .orElseThrow(() -> new NotFoundException("Friend request not found"));
 
