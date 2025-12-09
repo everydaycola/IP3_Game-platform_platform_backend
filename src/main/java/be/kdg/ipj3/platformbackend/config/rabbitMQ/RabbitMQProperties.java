@@ -11,4 +11,5 @@ public class RabbitMQProperties {
     private final String exchangeName;
     private final String registerGameQueue;
     private final String registerGameBinding;
+    private final String analyticsExchange;
 }
