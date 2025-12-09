@@ -56,10 +56,11 @@ public class FriendController {
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
     //NOT USED IN UI YET.
-    @DeleteMapping("/{friendId}")
-    public ResponseEntity<FriendListDto> removeFriend(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @DeleteMapping("/{friendUserName}")
+    public ResponseEntity<FriendListDto> removeFriend(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.removeFriendFromFriendList(userId, new UserId(friendId));
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.removeFriendFromFriendList(userId, friend.getUserId());
 
         PlatformUser user = friendService.findUserWithFriends(userId);
         List<UserId> friendIds = user.getFriendIds();
