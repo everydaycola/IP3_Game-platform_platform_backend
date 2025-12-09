@@ -28,12 +28,10 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
         this.jpaFriendRepository = jpaFriendRepository;
     }
 
-
-    //Todo : orElseThrow isn't throwing anything right now :'(
     @Override
     public PlatformFriendRequest save(PlatformFriendRequest user) {
-        JpaPlatformUserEntity userEntity = jpaPlatformUserRepository.findById(user.getSender().getUserId().id()).orElseThrow();
-        JpaPlatformUserEntity friendEntity = jpaPlatformUserRepository.findById(user.getReceiver().getUserId().id()).orElseThrow();
+        JpaPlatformUserEntity userEntity = jpaPlatformUserRepository.findById(user.getSender().getUserId().id()).orElseThrow(user.getSender().getUserId()::notFound);
+        JpaPlatformUserEntity friendEntity = jpaPlatformUserRepository.findById(user.getReceiver().getUserId().id()).orElseThrow(user.getSender().getUserId()::notFound);
         return jpaFriendRepository.save(JpaFriendRequestEntity.fromDomain(user, userEntity, friendEntity)).toDomain();
     }
 

@@ -6,7 +6,6 @@ import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepo
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,8 +80,9 @@ public class FriendService {
         return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
     }
 
-    public List<PlatformUser> getFriendRecommendations(UUID id, int size, String nameQuery) {
+    public List<PlatformUser> getFriendRecommendations(UUID id,  String nameQuery) {
         log.info("Finding friend recommendations for user");
+        int size = 10;
         List<UUID> friendIds = platformUserFriendRepository.getUniqueFriendIdsForUser(id);
         friendIds.add(id);
         List<PlatformUser> recommendations = new ArrayList<>();
@@ -91,7 +91,7 @@ public class FriendService {
         }
         if (size > recommendations.size()) {
             recommendations.forEach(recommendation -> friendIds.add(recommendation.getUserId().id()));
-            recommendations.addAll(platformUserRepository.findRecommendationsListOfSize(friendIds, size));
+            recommendations.addAll(platformUserRepository.findRecommendationsListOfSize(friendIds, size - recommendations.size()));
         }
         return recommendations;
     }

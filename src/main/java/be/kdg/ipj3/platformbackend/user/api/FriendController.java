@@ -10,12 +10,10 @@ import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +32,6 @@ public class FriendController {
         this.userService = userService;
     }
 
-    //WORKS
     @GetMapping
     public ResponseEntity<FriendListDto> findAllFriends(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
@@ -42,7 +39,6 @@ public class FriendController {
         List<PlatformUser> fullFriends =  userService.findUserListByIdList(user.getFriendIds());
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
-    //WORKS
     @PostMapping("/{friendUserName}")
     public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
@@ -104,15 +100,11 @@ public class FriendController {
     @GetMapping("/recommendations")
     public ResponseEntity<FriendRecommendationListDto> getFriendRecommendations
             (@AuthenticationPrincipal Jwt token,
-             @RequestParam(name = "size", defaultValue = "10") int size,
              @RequestParam(name = "nameQuery", required = false) String nameQuery
              ){
-        if (size < 0 || size > 20) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Size must be between 0 and 20");
-        }
         UserId userId = UserId.fromToken(token);
         log.info("Getting friend recomendations for user with id {} ", userId.id());
-        List<PlatformUser> friendRecommendations = friendService.getFriendRecommendations(userId.id(), size, nameQuery);
+        List<PlatformUser> friendRecommendations = friendService.getFriendRecommendations(userId.id(), nameQuery);
         return ResponseEntity.ok(FriendRecommendationListDto.from(friendRecommendations));
     }
 
