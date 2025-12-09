@@ -40,7 +40,7 @@ class FriendIntegrationTest {
         UUID friendId2 = UUID.fromString("11111111-1111-1111-aabb-111111111111");
         user = new PlatformUser(new UserId(userId), "test-host","",new ArrayList<>());
         friend1 = new PlatformUser(new UserId(friendId), "test-user-1","",new ArrayList<>());
-        friend2 = new PlatformUser(new UserId(friendId2), "test-user-1","",new ArrayList<>());
+        friend2 = new PlatformUser(new UserId(friendId2), "test-user-2","",new ArrayList<>());
     }
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor authJwt(UUID id, String givenName, String familyName, String email) {
@@ -107,7 +107,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(post("/api/user/friends/" + friend1.getUserId().id())
+            mockMvc.perform(post("/api/user/friends/" + friend1.getUserName())
                             .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -119,7 +119,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserId().id()))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserName()))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -129,7 +129,7 @@ class FriendIntegrationTest {
             UUID invalidUserId = UUID.randomUUID();
             //Act
             //Assert
-            mockMvc.perform(post("/api/user/friends/" + friend1.getUserId().id())
+            mockMvc.perform(post("/api/user/friends/" + friend1.getUserName())
                             .with(authJwt(invalidUserId, "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -139,11 +139,11 @@ class FriendIntegrationTest {
         @Test
         void addFriendRequest_should_return_404_with_invalid_friend_id() throws Exception {
             //Arrange
-            UUID invalidFriendId = UUID.randomUUID();
+            String nonExistantUserName = "invalid";
 
             //Act
             //Assert
-            mockMvc.perform(post("/api/user/friends/" + invalidFriendId)
+            mockMvc.perform(post("/api/user/friends/" + nonExistantUserName)
                             .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -156,7 +156,7 @@ class FriendIntegrationTest {
             //Act
             //Assert
             //Check on conflict
-            mockMvc.perform(post("/api/user/friends/" + friend2.getUserId().id())
+            mockMvc.perform(post("/api/user/friends/" + friend2.getUserName())
                             .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -168,7 +168,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(post("/api/user/friends/" + user.getUserId().id())
+            mockMvc.perform(post("/api/user/friends/" + user.getUserName())
                             .with(authJwt(friend2.getUserId().id(), "test_user_2", "user2", "test_user_2@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -181,7 +181,7 @@ class FriendIntegrationTest {
         @Test
         void accept_friend_request_should_return_200_when_open_and_authenticated() throws Exception {
             //Arrange
-            mockMvc.perform(post("/api/user/friends/" + friend2.getUserId().id())
+            mockMvc.perform(post("/api/user/friends/" + friend2.getUserName())
                             .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
