@@ -1,5 +1,7 @@
 package be.kdg.ipj3.platformbackend.user;
 
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -26,15 +29,18 @@ class FriendIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private UUID userId;
-    private UUID friendId;
-    private UUID friendId2;
+    private PlatformUser user;
+    private PlatformUser friend1;
+    private PlatformUser friend2;
 
     @BeforeEach
     void setUp() {
-        userId = UUID.fromString("11111111-1111-1111-1234-111111111111");
-        friendId = UUID.fromString("11111111-1111-1111-aaaa-111111111111");
-        friendId2 = UUID.fromString("11111111-1111-1111-aabb-111111111111");
+        UUID userId = UUID.fromString("11111111-1111-1111-1234-111111111111");
+        UUID friendId = UUID.fromString("11111111-1111-1111-aaaa-111111111111");
+        UUID friendId2 = UUID.fromString("11111111-1111-1111-aabb-111111111111");
+        user = new PlatformUser(new UserId(userId), "test-host","",new ArrayList<>(), new ArrayList<>());
+        friend1 = new PlatformUser(new UserId(friendId), "test-user-1","",new ArrayList<>(), new ArrayList<>());
+        friend2 = new PlatformUser(new UserId(friendId2), "test-user-2","",new ArrayList<>(), new ArrayList<>());
     }
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor authJwt(UUID id, String givenName, String familyName, String email) {
@@ -54,7 +60,7 @@ class FriendIntegrationTest {
             //Act
             //Assert
             mockMvc.perform(get("/api/user/friends")
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -78,7 +84,7 @@ class FriendIntegrationTest {
             //Act
             //Assert
             mockMvc.perform(get("/api/user/friends/requests")
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -101,8 +107,8 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + friend1.getUserName())
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -113,7 +119,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserName()))
                     .andExpect(status().isUnauthorized());
         }
 
@@ -123,7 +129,7 @@ class FriendIntegrationTest {
             UUID invalidUserId = UUID.randomUUID();
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId)
+            mockMvc.perform(post("/api/user/friends/" + friend1.getUserName())
                             .with(authJwt(invalidUserId, "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -133,12 +139,12 @@ class FriendIntegrationTest {
         @Test
         void addFriendRequest_should_return_404_with_invalid_friend_id() throws Exception {
             //Arrange
-            UUID invalidFriendId = UUID.randomUUID();
+            String nonExistantUserName = "invalid";
 
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + invalidFriendId)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + nonExistantUserName)
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound());
@@ -150,8 +156,8 @@ class FriendIntegrationTest {
             //Act
             //Assert
             //Check on conflict
-            mockMvc.perform(patch("/api/user/friends/" + friendId2)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + friend2.getUserName())
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isConflict());
@@ -162,8 +168,8 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + userId)
-                            .with(authJwt(friendId2, "test_user_2", "user2", "test_user_2@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + user.getUserName())
+                            .with(authJwt(friend2.getUserId().id(), "test_user_2", "user2", "test_user_2@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -175,16 +181,16 @@ class FriendIntegrationTest {
         @Test
         void accept_friend_request_should_return_200_when_open_and_authenticated() throws Exception {
             //Arrange
-            mockMvc.perform(patch("/api/user/friends/" + friendId2)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + friend2.getUserName())
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
 
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + userId + "/accept")
-                            .with(authJwt(friendId2, "friend_user", "friend", "friend_user@test.be"))
+            mockMvc.perform(patch("/api/user/friends/" + user.getUserName() + "/accept")
+                            .with(authJwt(friend2.getUserId().id(), "friend_user", "friend", "friend_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -195,8 +201,8 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId + "/accept")
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserName() + "/accept")
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound());
@@ -207,7 +213,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId + "/accept"))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserName() + "/accept"))
                     .andExpect(status().isUnauthorized());
         }
     }
@@ -218,15 +224,15 @@ class FriendIntegrationTest {
         @Test
         void deny_friend_request_should_return_200_when_open_and_authenticated() throws Exception {
             //Arrange
-            mockMvc.perform(patch("/api/user/friends/" + friendId)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(post("/api/user/friends/" + friend1.getUserName())
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + userId + "/deny")
-                            .with(authJwt(friendId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(patch("/api/user/friends/" + user.getUserName() + "/deny")
+                            .with(authJwt(friend1.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -237,8 +243,8 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId + "/deny")
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserId().id() + "/deny")
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound());
@@ -249,7 +255,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(patch("/api/user/friends/" + friendId + "/deny"))
+            mockMvc.perform(patch("/api/user/friends/" + friend1.getUserId().id() + "/deny"))
                     .andExpect(status().isUnauthorized());
         }
     }
@@ -262,7 +268,7 @@ class FriendIntegrationTest {
             UUID invalidUserId = UUID.randomUUID();
             //Act
             //Assert
-            mockMvc.perform(delete("/api/user/friends/" + friendId2)
+            mockMvc.perform(delete("/api/user/friends/" + friend2.getUserId().id())
                             .with(authJwt(invalidUserId, "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -276,7 +282,7 @@ class FriendIntegrationTest {
             //Act
             //Assert
             mockMvc.perform(delete("/api/user/friends/" + nonFriendId)
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound());
@@ -287,7 +293,7 @@ class FriendIntegrationTest {
             //Arrange
             //Act
             //Assert
-            mockMvc.perform(delete("/api/user/friends/" + friendId))
+            mockMvc.perform(delete("/api/user/friends/" + friend1.getUserId().id()))
                     .andExpect(status().isUnauthorized());
         }
     }
@@ -300,7 +306,7 @@ class FriendIntegrationTest {
             //Act
             //Assert
             mockMvc.perform(get("/api/user")
-                            .with(authJwt(userId, "test_user", "user", "test_user@test.be"))
+                            .with(authJwt(user.getUserId().id(), "test_user", "user", "test_user@test.be"))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());

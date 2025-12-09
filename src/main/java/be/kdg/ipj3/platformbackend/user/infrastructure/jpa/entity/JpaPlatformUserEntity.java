@@ -1,7 +1,9 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +13,11 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "platform_user")
 @Access(AccessType.FIELD)
+@Getter
 public class JpaPlatformUserEntity {
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column
     private UUID id;
 
     @Column
@@ -23,17 +26,21 @@ public class JpaPlatformUserEntity {
     @Column
     private String biography;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JpaPlatformUserFriendEntity> friends = new ArrayList<>();
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JpaFriendRequestEntity> sentFriendRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JpaFriendRequestEntity> receivedFriendRequests = new ArrayList<>();
+
 
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaPlatformUserFriendEntity> friends) {
+    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaFriendRequestEntity> friends) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
-        this.friends = friends;
+        this.receivedFriendRequests = friends;
     }
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser domain) {
@@ -42,24 +49,43 @@ public class JpaPlatformUserEntity {
         entity.userName = domain.getUserName();
         entity.biography = domain.getBiography();
 
-        entity.friends = domain.getFriends().stream()
-                .map(friend -> JpaPlatformUserFriendEntity.fromDomain(
-                        friend,
-                        entity,
-                        //Strings here are enough since the ID relation between friends is enough.
-                        new JpaPlatformUserEntity(friend.getId().getFriendId(),"","", List.of())
-                ))
-                .toList();
+        entity.receivedFriendRequests = domain.getReceivedFriendRequests().stream()
+                .map(friendReq -> JpaFriendRequestEntity
+                        .fromDomain(friendReq, JpaPlatformUserEntity.fromDomainWithoutFriends(friendReq.getSender()), JpaPlatformUserEntity.fromDomain(friendReq.getReceiver())
+                        ))
+                .collect(Collectors.toList());
 
+        entity.sentFriendRequests = domain.getSentFriendRequests().stream()
+                .map(friendReq -> JpaFriendRequestEntity
+                        .fromDomain(friendReq, JpaPlatformUserEntity.fromDomainWithoutFriends(friendReq.getSender()), JpaPlatformUserEntity.fromDomain(friendReq.getReceiver())
+                        ))
+                .collect(Collectors.toList());
+        return entity;
+    }
+
+    public static JpaPlatformUserEntity fromDomainWithoutFriends(PlatformUser domain) {
+        JpaPlatformUserEntity entity = new JpaPlatformUserEntity();
+        entity.id = domain.getUserId().id();
+        entity.userName = domain.getUserName();
+        entity.biography = domain.getBiography();
+        entity.receivedFriendRequests = new ArrayList<>();
+        entity.sentFriendRequests = new ArrayList<>();
         return entity;
     }
 
     public PlatformUser toDomain() {
-        List<PlatformUserFriend> friendList = friends.stream()
-                .map(JpaPlatformUserFriendEntity::toDomain)
+        List<PlatformFriendRequest> sentFriendRequests = this.sentFriendRequests.stream()
+                .map(JpaFriendRequestEntity::toDomain)
+                .collect(Collectors.toList());
+        List<PlatformFriendRequest> receivedFriendRequests = this.receivedFriendRequests.stream()
+                .map(JpaFriendRequestEntity::toDomain)
                 .collect(Collectors.toList());
 
-        return PlatformUser.fromDb(id, userName,biography,friendList);
+        return new PlatformUser(new UserId(id),userName,biography,sentFriendRequests,receivedFriendRequests);
+    }
+
+    public PlatformUser toDomainWithoutFriends() {
+        return new PlatformUser(new UserId(id), userName, biography, new ArrayList<>(), new ArrayList<>());
     }
 
 }
