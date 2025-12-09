@@ -95,7 +95,7 @@ public class FriendRequestTest {
             //Act
             friendService.removeFriendFromFriendList(userId,friend1Id);
             //Assert
-            Mockito.verify(platformUserFriendRepository, times(1)).remove(userId, friend1Id);
+            Mockito.verify(platformUserFriendRepository, times(1)).remove(userId, friend1Id,true);
         }
 
         @Test
