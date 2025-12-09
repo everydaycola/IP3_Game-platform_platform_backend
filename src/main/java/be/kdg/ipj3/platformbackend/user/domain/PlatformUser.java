@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.domain;
 
-import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
+import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
@@ -41,8 +41,15 @@ public class PlatformUser {
         return new PlatformUser(new UserId(userId),userName, biography, friendList, achievements);
     }
 
-    public void gainAchievement(Achievement achievement) {
-        achievements.add(new UserAchievement(new UserAchievementId(userId, achievement.getId()), LocalDateTime.now()));
+    public void unlockAchievement(AchievementId achievementId) {
+        UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
+
+        if (achievements.stream().anyMatch(userAchievement -> userAchievement.getId().equals(newUAId))){
+            log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
+            return;
+        }
+        achievements.add(new UserAchievement(newUAId, LocalDateTime.now()));
+        log.info("User {} has unlocked achievement {}", this.userId.id(), achievementId.id());
     }
 
 }

@@ -1,10 +1,13 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
+import be.kdg.ipj3.platformbackend.achievement.api.AchievementMessageDto;
+import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +23,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(), new ArrayList<>());
+        PlatformUser user = new PlatformUser(userId, userName, "", new ArrayList<>(), new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 
@@ -34,5 +37,11 @@ public class UserService {
 
     public PlatformUser findUserById(UserId userId) {
         return platformUserRepository.findUserById(userId);
+    }
+
+    public void unlockAchievement(AchievementMessageDto dto) {
+        PlatformUser user = findUserById(new UserId(dto.userId()));
+        user.unlockAchievement(new AchievementId(dto.achievementId()));
+        platformUserRepository.save(user);
     }
 }

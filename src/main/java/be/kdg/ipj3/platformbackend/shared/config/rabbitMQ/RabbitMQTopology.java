@@ -18,6 +18,7 @@ public class RabbitMQTopology {
         return new TopicExchange(properties.getExchangeName());
     }
 
+    //REGISTER GAME
     @Bean
     Queue registerGameQueue(){
         return QueueBuilder.nonDurable(properties.getRegisterGameQueue()).build();
@@ -26,5 +27,16 @@ public class RabbitMQTopology {
     @Bean
     Binding registerGameBinging(){
         return BindingBuilder.bind(registerGameQueue()).to(xivExchange()).with(properties.getRegisterGameBinding());
+    }
+
+    //GAIN ACHIEVEMENT
+    @Bean
+    Queue unlockAchievementQueue(){
+        return QueueBuilder.nonDurable(properties.getUnlockAchievementQueue()).build();
+    }
+
+    @Bean
+    Binding unlockAchievementBinding(){
+        return BindingBuilder.bind(unlockAchievementQueue()).to(xivExchange()).with(properties.getUnlockAchievementBinding());
     }
 }
