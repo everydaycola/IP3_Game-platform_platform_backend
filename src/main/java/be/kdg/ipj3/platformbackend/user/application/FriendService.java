@@ -51,7 +51,7 @@ public class FriendService {
             platformUserFriendRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
             acceptFriendRequest(userId, friendId.id());
             return;
-        }catch(NotFoundException e){
+        } catch (NotFoundException e) {
             log.info("No existing request between {} and {}", userId, friendId);
         }
         platformUserFriendRepository.validateIfFriendRelationExists(userId, friendId);
@@ -85,24 +85,13 @@ public class FriendService {
         log.info("Finding friend recommendations for user");
         List<UUID> friendIds = platformUserFriendRepository.getUniqueFriendIdsForUser(id);
         friendIds.add(id);
-        List<PlatformUser> recommendations  = new ArrayList<>();
-        if(nameQuery != null && !nameQuery.isEmpty()){
-            recommendations.addAll(
-                    platformUserRepository.findRecommendationsListOfSizeWithNameQuery(friendIds,nameQuery, size)
-                            .stream()
-                            .map(JpaPlatformUserEntity::toDomain)
-                            .toList()
-            );
+        List<PlatformUser> recommendations = new ArrayList<>();
+        if (nameQuery != null && !nameQuery.isEmpty()) {
+            recommendations.addAll(platformUserRepository.findRecommendationsListOfSizeWithNameQuery(friendIds, nameQuery, size));
         }
-        int remaining = size - recommendations.size();
-        if(remaining > 0){
+        if (size > recommendations.size()) {
             recommendations.forEach(recommendation -> friendIds.add(recommendation.getUserId().id()));
-            recommendations.addAll(
-                    platformUserRepository.findRecommendationsListOfSize(friendIds, size)
-                            .stream()
-                            .map(JpaPlatformUserEntity::toDomain)
-                            .toList()
-            );
+            recommendations.addAll(platformUserRepository.findRecommendationsListOfSize(friendIds, size));
         }
         return recommendations;
     }

@@ -76,13 +76,19 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
-    public List<JpaPlatformUserEntity> findRecommendationsListOfSize( List<UUID> excludedIds, int size) {
-        return jpaPlatformUserRepository.findUsersNotInListLimited(excludedIds, size);
+    public List<PlatformUser> findRecommendationsListOfSize( List<UUID> excludedIds, int size) {
+        return jpaPlatformUserRepository.findUsersNotInListLimited(excludedIds, size)
+                .stream()
+                .map(JpaPlatformUserEntity::toDomain)
+                .toList();
     }
 
     @Override
-    public List<JpaPlatformUserEntity> findRecommendationsListOfSizeWithNameQuery( List<UUID> excludedIds,String nameQuery, int size) {
-        return jpaPlatformUserRepository.findUsersNotInListWithNameQuery(excludedIds,nameQuery, size);
+    public List<PlatformUser> findRecommendationsListOfSizeWithNameQuery( List<UUID> excludedIds,String nameQuery, int size) {
+        return jpaPlatformUserRepository.findUsersNotInListWithNameQuery(excludedIds,nameQuery, size)
+                .stream()
+                .map(JpaPlatformUserEntity::toDomain)
+                .toList();
     }
 
 }

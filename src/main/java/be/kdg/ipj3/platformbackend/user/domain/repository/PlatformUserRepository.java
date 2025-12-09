@@ -15,6 +15,6 @@ public interface PlatformUserRepository {
     void save(PlatformUser user);
     PlatformUser createUser(PlatformUser user);
     PlatformUser findUserByUserName(String userName);
-    List<JpaPlatformUserEntity> findRecommendationsListOfSize(List<UUID> exlucdedIds, int size);
-    List<JpaPlatformUserEntity> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds,String nameQuery, int size);
+    List<PlatformUser> findRecommendationsListOfSize(List<UUID> exlucdedIds, int size);
+    List<PlatformUser> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds,String nameQuery, int size);
 }
