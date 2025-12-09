@@ -3,6 +3,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "platform_user")
 @Access(AccessType.FIELD)
+@Getter
 public class JpaPlatformUserEntity {
 
     @Id

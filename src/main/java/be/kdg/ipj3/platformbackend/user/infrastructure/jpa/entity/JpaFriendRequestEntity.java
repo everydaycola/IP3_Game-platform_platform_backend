@@ -2,12 +2,14 @@ package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "platform_user_friend")
+@Getter
 public class JpaFriendRequestEntity {
 
     @Id

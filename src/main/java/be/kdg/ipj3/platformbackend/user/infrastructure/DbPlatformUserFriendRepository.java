@@ -11,7 +11,6 @@ import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaFriendR
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatformUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +52,14 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
         JpaFriendRequestEntity friendRelation = jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(userId.id(), friendId.id(), false)
                 .or(() -> jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(friendId.id(), userId.id(), false))
                 .orElseThrow(() -> new NotFoundException("Friend request not found"));
+
+        friendRelation.getSender().getSentFriendRequests().remove(friendRelation);
+        friendRelation.getSender().getReceivedFriendRequests().remove(friendRelation);
+        friendRelation.getReceiver().getSentFriendRequests().remove(friendRelation);
+        friendRelation.getReceiver().getReceivedFriendRequests().remove(friendRelation);
+
+        jpaPlatformUserRepository.save(friendRelation.getSender());
+        jpaPlatformUserRepository.save(friendRelation.getReceiver());
         jpaFriendRepository.delete(friendRelation);
     }
 
