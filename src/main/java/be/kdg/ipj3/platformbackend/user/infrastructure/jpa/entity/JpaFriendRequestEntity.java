@@ -1,7 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -51,7 +50,7 @@ public class JpaFriendRequestEntity {
     }
 
     public static JpaFriendRequestEntity fromDomain(
-            PlatformUserFriend domain,
+            PlatformFriendRequest domain,
             JpaPlatformUserEntity sender,
             JpaPlatformUserEntity receiver
     ) {
@@ -66,7 +65,7 @@ public class JpaFriendRequestEntity {
         );
     }
 
-    public PlatformUserFriend toDomain() {
-        return PlatformUserFriend.fromDb(this.id, this.sender.toDomainWithoutFriends(), this.receiver.toDomainWithoutFriends(), this.isConfirmed, this.requestedAt, this.confirmedAt);
+    public PlatformFriendRequest toDomain() {
+        return PlatformFriendRequest.fromDb(this.id, this.sender.toDomainWithoutFriends(), this.receiver.toDomainWithoutFriends(), this.isConfirmed, this.requestedAt, this.confirmedAt);
     }
 }

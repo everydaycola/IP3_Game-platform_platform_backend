@@ -13,6 +13,8 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
 
     Optional<JpaPlatformUserEntity> findByUserName(String userName);
 
+
+
     @Query(value = """
     SELECT *
     FROM platform_user u

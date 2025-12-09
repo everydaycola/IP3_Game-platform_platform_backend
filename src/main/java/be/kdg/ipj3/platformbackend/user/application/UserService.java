@@ -22,7 +22,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>());
+        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(), new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 
@@ -30,7 +30,6 @@ public class UserService {
         List<UUID> uuids = friendIds.stream()
                 .map(UserId::id)
                 .toList();
-
         return platformUserRepository.findAllUsersByIds(uuids);
     }
 

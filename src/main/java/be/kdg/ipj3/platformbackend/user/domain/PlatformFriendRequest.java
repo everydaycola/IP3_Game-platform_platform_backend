@@ -1,12 +1,12 @@
 package be.kdg.ipj3.platformbackend.user.domain;
 
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-//Todo: rename again
 @Getter
-public class PlatformUserFriend {
+public class PlatformFriendRequest {
     private final UUID id;
     private final PlatformUser sender;
     private final PlatformUser receiver;
@@ -14,7 +14,7 @@ public class PlatformUserFriend {
     private final LocalDateTime requestedAt;
     private LocalDateTime confirmedAt;
 
-    public PlatformUserFriend(UUID id,PlatformUser sender, PlatformUser receiver, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt) {
+    public PlatformFriendRequest(UUID id, PlatformUser sender, PlatformUser receiver, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -23,7 +23,7 @@ public class PlatformUserFriend {
         this.confirmedAt = confirmedAt;
     }
 
-    public static PlatformUserFriend fromDb(
+    public static PlatformFriendRequest fromDb(
             UUID id,
             PlatformUser sender,
             PlatformUser receiver,
@@ -31,11 +31,20 @@ public class PlatformUserFriend {
             LocalDateTime requestedAt,
             LocalDateTime confirmedAt
     ) {
-        return new PlatformUserFriend(id,sender, receiver, isConfirmed, requestedAt, confirmedAt);
+        return new PlatformFriendRequest(id,sender, receiver, isConfirmed, requestedAt, confirmedAt);
     }
 
     public void accept() {
         this.isConfirmed = true;
         this.confirmedAt = LocalDateTime.now();
     }
+
+    public UserId getRequestingUserId(UserId currentUserId) {
+        UUID current = currentUserId.id();
+        if (sender.getUserId().id().equals(current)) {
+            return receiver.getUserId();
+        }
+        return sender.getUserId();
+    }
+
 }

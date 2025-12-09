@@ -4,7 +4,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,12 +37,12 @@ public class FriendRequestListTest {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UUID friend1Id = UUID.fromString("11111111-1111-1111-1111-111111111112");
-            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>());
-            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(), new ArrayList<>());
+            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>(), new ArrayList<>());
             LocalDateTime now = LocalDateTime.now();
-            List<PlatformUserFriend> friendRequestList = new ArrayList<>(
+            List<PlatformFriendRequest> friendRequestList = new ArrayList<>(
                     List.of(
-                            new PlatformUserFriend(
+                            new PlatformFriendRequest(
                                     UUID.randomUUID(),
                                     user,
                                     friend,
@@ -55,7 +55,7 @@ public class FriendRequestListTest {
             Mockito.when(platformUserFriendRepository.findAllFriendRequestsForUser(userId)).thenReturn(friendRequestList);
 
             //Act
-            List<PlatformUserFriend> result = friendService.findFriendRequestsForUser(userId);
+            List<PlatformFriendRequest> result = friendService.findFriendRequestsForUser(userId);
 
             //Assert
             assertThat(result.size()).isEqualTo(1);
@@ -75,7 +75,7 @@ public class FriendRequestListTest {
             Mockito.when(platformUserFriendRepository.findAllFriendRequestsForUser(userId)).thenReturn(new ArrayList<>());
 
             //Act
-            List<PlatformUserFriend> result = friendService.findFriendRequestsForUser(userId);
+            List<PlatformFriendRequest> result = friendService.findFriendRequestsForUser(userId);
 
             //Assert
             assertThat(result.size()).isEqualTo(0);

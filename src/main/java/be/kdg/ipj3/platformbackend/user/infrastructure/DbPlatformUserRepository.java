@@ -4,7 +4,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaFriendRequestEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaFriendRepository;
@@ -31,11 +31,16 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public PlatformUser findByIdWithFriends(UserId userId) {
-        List<JpaFriendRequestEntity> friendsDb = jpaFriendRepository.findAllByUserOrFriend(userId.id());
-        List<PlatformUserFriend> confirmedFriends = friendsDb.stream()
+        List<JpaFriendRequestEntity> sendersDb = jpaFriendRepository.findAllBySender_IdAndIsConfirmed(userId.id(), true);
+        List<JpaFriendRequestEntity> receiverDb = jpaFriendRepository.findAllByReceiver_IdAndIsConfirmed(userId.id(),true);
+        List<PlatformFriendRequest> senders = sendersDb.stream()
                 .map(JpaFriendRequestEntity::toDomain)
-                .collect(Collectors.toList());
-        return PlatformUser.fromDb(userId.id(), confirmedFriends);
+                .toList();
+        List<PlatformFriendRequest> receivers = receiverDb.stream()
+                .map(JpaFriendRequestEntity::toDomain)
+                .toList();
+
+        return new PlatformUser(userId, "","", senders, receivers);
     }
 
     @Override

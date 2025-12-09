@@ -5,13 +5,12 @@ import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendId;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class FriendService {
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         PlatformUser friend = platformUserRepository.findUserById(friendId).orElseThrow(userId::notFound);
 
-        PlatformUserFriend friendRelation = new PlatformUserFriend(
+        PlatformFriendRequest friendRelation = new PlatformFriendRequest(
                 UUID.randomUUID(),
                 user,
                 friend,
@@ -56,7 +55,7 @@ public class FriendService {
             log.info("No existing request between {} and {}", userId, friendId);
         }
         platformUserFriendRepository.validateIfFriendRelationExists(userId, friendId);
-        user.getFriends().add(friendRelation);
+        user.getSentFriendRequests().add(friendRelation);
         platformUserRepository.save(user);
     }
 
@@ -65,9 +64,9 @@ public class FriendService {
         platformUserFriendRepository.remove(userId, friendId);
     }
 
-    public PlatformUserFriend acceptFriendRequest(UserId userId, UUID friendId) {
+    public PlatformFriendRequest acceptFriendRequest(UserId userId, UUID friendId) {
         log.info("Accepting friend request between {} to user {}", friendId, userId);
-        PlatformUserFriend friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
+        PlatformFriendRequest friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
         friendRequest.accept();
         return platformUserFriendRepository.save(friendRequest);
     }
@@ -77,7 +76,7 @@ public class FriendService {
         platformUserFriendRepository.remove(userId, new UserId(friendId));
     }
 
-    public List<PlatformUserFriend> findFriendRequestsForUser(UserId userId) {
+    public List<PlatformFriendRequest> findFriendRequestsForUser(UserId userId) {
         log.info("Finding friend requests for user {}", userId);
         return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
     }

@@ -15,23 +15,36 @@ public class PlatformUser {
 
     private final String userName;
     private final String biography;
-    private final List<PlatformUserFriend> friends;
+    private List<PlatformFriendRequest> sentFriendRequests = new ArrayList<>();
+    private List<PlatformFriendRequest> receivedFriendRequests = new ArrayList<>();
 
-    public PlatformUser(UserId userId,String userName, String biography, List<PlatformUserFriend> friends) {
+    public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
-        this.friends = friends != null ? friends : new ArrayList<>();
+        this.sentFriendRequests = sentFriendRequests != null ? sentFriendRequests : new ArrayList<>();
+        this.receivedFriendRequests = receivedFriendRequests != null ? receivedFriendRequests : new ArrayList<>();
     }
 
-    public static PlatformUser fromDb(UUID userId, List<PlatformUserFriend> friends) {
-        log.info("Returning user with {} friends: {}", friends != null ? friends.size() : 0, userId);
-        List<PlatformUserFriend> friendList = friends != null ? friends : new ArrayList<>();
-        return new PlatformUser(new UserId(userId),"", "", friendList);
+    public List<UserId> getFriendIds() {
+        List<UserId> friendIds = new ArrayList<>();
+
+        friendIds.addAll(this.sentFriendRequests.stream()
+                .map(friend -> {
+                    UUID friendId = friend.getReceiver().getUserId().id();
+                    return new UserId(friendId);
+                })
+                .toList()
+        );
+
+        friendIds.addAll(this.receivedFriendRequests.stream()
+                .map(friend -> {
+                    UUID friendId = friend.getSender().getUserId().id();
+                    return new UserId(friendId);
+                })
+                .toList()
+        );
+        return friendIds;
     }
-    public static PlatformUser fromDb(UUID userId,String userName, String biography, List<PlatformUserFriend> friends) {
-        log.info("Returning user with {} friends: {}", friends != null ? friends.size() : 0, userId);
-        List<PlatformUserFriend> friendList = friends != null ? friends : new ArrayList<>();
-        return new PlatformUser(new UserId(userId),userName, biography, friendList);
-    }
+
 }
