@@ -55,7 +55,6 @@ public class FriendController {
 
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
-    //NOT USED IN UI YET.
     @DeleteMapping("/{friendUserName}")
     public ResponseEntity<FriendListDto> removeFriend(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
@@ -69,7 +68,6 @@ public class FriendController {
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
 
-    //Returns a 404.
     @PatchMapping("/{friendUserName}/accept")
     public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
