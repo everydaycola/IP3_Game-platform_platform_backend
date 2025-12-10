@@ -27,4 +27,22 @@ public class RabbitMQTopology {
     Binding registerGameBinging(){
         return BindingBuilder.bind(registerGameQueue()).to(xivExchange()).with(properties.getRegisterGameBinding());
     }
+
+    // ========== Analytics Topology ==========
+
+    @Bean
+    TopicExchange analyticsExchange() {
+        return new TopicExchange(properties.getAnalyticsExchange(), true, false);
+    }
+
+    @Bean
+    Queue analyticsQueue() {
+        return QueueBuilder.durable("analytics.queue").build();
+    }
+
+    @Bean
+    Binding analyticsBinding() {
+        // Bind with wildcard to catch all analytics events
+        return BindingBuilder.bind(analyticsQueue()).to(analyticsExchange()).with("#");
+    }
 }
