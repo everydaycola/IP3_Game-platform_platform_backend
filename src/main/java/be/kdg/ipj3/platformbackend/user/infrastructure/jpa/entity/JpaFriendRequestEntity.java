@@ -68,6 +68,6 @@ public class JpaFriendRequestEntity {
     }
 
     public PlatformFriendRequest toDomain() {
-        return PlatformFriendRequest.fromDb(this.id, this.sender.toDomainWithoutFriends(), this.receiver.toDomainWithoutFriends(), this.isConfirmed, this.requestedAt, this.confirmedAt);
+        return PlatformFriendRequest.fromDb(this.id, this.sender.toDomainWithoutFriendsAndAchievements(), this.receiver.toDomainWithoutFriendsAndAchievements(), this.isConfirmed, this.requestedAt, this.confirmedAt);
     }
 }

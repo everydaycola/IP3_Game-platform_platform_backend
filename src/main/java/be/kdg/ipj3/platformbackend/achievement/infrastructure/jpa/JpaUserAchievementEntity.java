@@ -33,8 +33,8 @@ public class JpaUserAchievementEntity {
 
     public static JpaUserAchievementEntity fromDomain(UserAchievement userAchievement) {
         return new JpaUserAchievementEntity(
-                JpaUserAchievementId.fromDomain(userAchievement.getId()),
-                userAchievement.getDateAchieved()
+                JpaUserAchievementId.fromDomain(userAchievement.id()),
+                userAchievement.dateAchieved()
         );
     }
 

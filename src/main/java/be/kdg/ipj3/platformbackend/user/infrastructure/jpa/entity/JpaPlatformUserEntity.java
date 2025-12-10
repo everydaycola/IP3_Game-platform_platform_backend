@@ -93,8 +93,8 @@ public class JpaPlatformUserEntity {
         return new PlatformUser(new UserId(id),userName,biography,sentFriendRequests,receivedFriendRequests, achievementList);
     }
 
-    public PlatformUser toDomainWithoutFriends() {
-        return new PlatformUser(new UserId(id), userName, biography, new ArrayList<>(), new ArrayList<>());
+    public PlatformUser toDomainWithoutFriendsAndAchievements() {
+        return new PlatformUser(new UserId(id), userName, biography, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
 }

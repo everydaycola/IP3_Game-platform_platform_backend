@@ -8,9 +8,9 @@ import java.util.UUID;
 public record UserAchievementDto(UUID userId, UUID achievementId, LocalDateTime dateAchieved) {
     public static UserAchievementDto from(UserAchievement userAchievement){
         return new UserAchievementDto(
-                userAchievement.getId().userId().id(),
-                userAchievement.getId().achievementId().id(),
-                userAchievement.getDateAchieved()
+                userAchievement.id().userId().id(),
+                userAchievement.id().achievementId().id(),
+                userAchievement.dateAchieved()
         );
     }
 }

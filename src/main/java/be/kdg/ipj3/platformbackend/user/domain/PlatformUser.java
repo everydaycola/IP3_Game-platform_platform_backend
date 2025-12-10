@@ -3,7 +3,6 @@ package be.kdg.ipj3.platformbackend.user.domain;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
-import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +56,7 @@ public class PlatformUser {
     public void unlockAchievement(AchievementId achievementId) {
         UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
 
-        if (achievements.stream().anyMatch(userAchievement -> userAchievement.getId().equals(newUAId))){
+        if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))){
             log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
             return;
         }

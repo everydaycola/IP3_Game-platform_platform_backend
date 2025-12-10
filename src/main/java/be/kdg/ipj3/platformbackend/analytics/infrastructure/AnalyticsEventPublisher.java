@@ -1,7 +1,7 @@
 package be.kdg.ipj3.platformbackend.analytics.infrastructure;
 
 import be.kdg.ipj3.platformbackend.analytics.events.*;
-import be.kdg.ipj3.platformbackend.config.rabbitMQ.RabbitMQProperties;
+import be.kdg.ipj3.platformbackend.shared.config.rabbitMQ.RabbitMQProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
