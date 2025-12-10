@@ -48,19 +48,13 @@ INSERT INTO achievements (id, name, description, game_id)
 VALUES
     (
         'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        'First Capture',
-        'Capture your first opponent stone',
+        'Let''s Go',
+        'Open go for the first time',
         '22222222-2222-2222-2222-222222222222'
     ),
     (
         '9b2c7e4a-3f1d-4a82-9c3b-2b8a6d4f1e57',
-        'Territory Master',
-        'Secure 30 points of territory in a single match',
+        'Go Home',
+        'Lose a game of go',
         '22222222-2222-2222-2222-222222222222'
-    ),
-    (
-        '6d8f94c3-2a41-4b9e-b5c2-7e1d8f3a92be',
-        'Perfect Endgame',
-        'Win a match without losing any stones',
-        '22222222-2222-2222-2222-222222222222'
-    );
+    )
