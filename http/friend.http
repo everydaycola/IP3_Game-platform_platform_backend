@@ -45,7 +45,7 @@ Authorization: Bearer {{access_token_player_2}}
 %}
 
 ### Add player 2 as friend of player 1 (now expected to throw 409 when trying duplicates.)
-PATCH {{baseUrl}}/friends/{{userIdPlayer2}}
+POST {{baseUrl}}/friends/{{player2username}}
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -60,7 +60,7 @@ Content-Type: application/json
 Authorization: Bearer {{access_token_player_2}}
 
 ### Accept the request as player 2 (after this the above test should now give a result with the friend)
-PATCH {{baseUrl}}/friends/{{userId}}/accept
+PATCH {{baseUrl}}/friends/{{player1username}}/accept
 Content-Type: application/json
 Authorization: Bearer {{access_token_player_2}}
 
@@ -93,3 +93,8 @@ Authorization: Bearer {{access_token}}
 ### Get platform User data
 GET {{baseUrl}}
 Authorization: Bearer {{access_token}}
+
+### Get Friend recomendations
+GET {{baseUrl}}/friends/recommendations
+Content-Type: application/json
+Authorization: Bearer {{access_token_player_2}}

@@ -1,0 +1,43 @@
+### Test Analytics Events
+@ClientId=platform-backend
+@ClientSecret=nYNwTH09AguPkCyPk6Wt6jW2xgrBXrje
+@username=123
+@password=123
+@gameId=11111111-1111-1111-1111-111111111111
+@sessionId=a1b2c3d4-e5f6-7890-abcd-ef1234567890
+@friendId=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa456
+
+### Get access token for user
+POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{username}}&password={{password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+
+### Test Game Started Event
+POST http://localhost:8080/api/analytics/test/game-started?gameId={{$uuid}}&gameName=Chess
+Authorization: Bearer {{access_token}}
+
+### Test Game Ended Event
+POST http://localhost:8080/api/analytics/test/game-ended?gameId={{gameId}}&sessionId={{sessionId}}&duration=1800&completed=true
+Authorization: Bearer {{access_token}}
+
+### Test Purchase Event
+POST http://localhost:8080/api/analytics/test/purchase?gameId={{gameId}}&amount=15.99
+Authorization: Bearer {{access_token}}
+
+### Get Game (triggers gamePage_visit event)
+GET http://localhost:8080/api/games/{{gameId}}
+Authorization: Bearer {{access_token}}
+Referer: http://localhost:5173/search
+
+### Register User (triggers user_registered event)
+POST http://localhost:8080/api/user
+Authorization: Bearer {{access_token}}
+
+#### Accept Friend Request (triggers friend_added event)
+#PATCH http://localhost:8080/api/user/friends/{{friendId}}/accept
+#Authorization: Bearer {{access_token}}

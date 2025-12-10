@@ -3,11 +3,12 @@ package be.kdg.ipj3.platformbackend.user.api;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendListDto;
+import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRecommendationListDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FriendRequestListDto;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,90 +36,76 @@ public class FriendController {
     public ResponseEntity<FriendListDto> findAllFriends(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         PlatformUser user = friendService.findUserWithFriends(userId);
-        List<UserId> friendIds = user.getFriends().stream()
-                .map(friend -> {
-                    UUID friendId = friend.getId().getUserId().equals(userId.id())
-                            ? friend.getId().getFriendId()
-                            : friend.getId().getUserId();
-                    return new UserId(friendId);
-                })
-                .toList();
-        List<PlatformUser> fullFriends =  userService.findUserListByIdList(friendIds);
+        List<PlatformUser> fullFriends =  userService.findUserListByIdList(user.getFriendIds());
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
-
-    @PatchMapping("/{friendId}")
-    public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PostMapping("/{friendUserName}")
+    public ResponseEntity<FriendListDto> addFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.addFriendRequest(userId, new UserId(friendId));
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.addFriendRequest(userId, new UserId(friend.getUserId().id()));
 
         PlatformUser user = friendService.findUserWithFriends(userId);
-        List<UserId> friendIds = extractFriendIds(user.getFriends(), userId);
+        List<UserId> friendIds = user.getFriendIds();
+        List<PlatformUser> fullFriends = userService.findUserListByIdList(friendIds);
+
+        return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
+    }
+    @DeleteMapping("/{friendUserName}")
+    public ResponseEntity<FriendListDto> removeFriend(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.removeFriendFromFriendList(userId, friend.getUserId());
+
+        PlatformUser user = friendService.findUserWithFriends(userId);
+        List<UserId> friendIds = user.getFriendIds();
         List<PlatformUser> fullFriends = userService.findUserListByIdList(friendIds);
 
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
 
-    @DeleteMapping("/{friendId}")
-    public ResponseEntity<FriendListDto> removeFriend(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PatchMapping("/{friendUserName}/accept")
+    public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.removeFriendFromFriendList(userId, new UserId(friendId));
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        PlatformFriendRequest newFriend = friendService.acceptFriendRequest(userId, friend.getUserId().id());
 
-        PlatformUser user = friendService.findUserWithFriends(userId);
-        List<UserId> friendIds = extractFriendIds(user.getFriends(), userId);
-        List<PlatformUser> fullFriends = userService.findUserListByIdList(friendIds);
-
-        return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
-    }
-
-    @PatchMapping("/{friendId}/accept")
-    public ResponseEntity<FriendDto> acceptFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
-        UserId userId = UserId.fromToken(token);
-        PlatformUserFriend newFriend = friendService.acceptFriendRequest(userId, friendId);
-
-        UUID otherUserId = newFriend.getId().getUserId().equals(userId.id())
-                ? newFriend.getId().getFriendId()
-                : newFriend.getId().getUserId();
+        UUID otherUserId = newFriend.getReceiver().getUserId().id().equals(userId.id())
+                ? newFriend.getSender().getUserId().id()
+                : newFriend.getReceiver().getUserId().id();
         PlatformUser friendUser = userService.findUserById(new UserId(otherUserId));
 
         return ResponseEntity.ok(FriendDto.from(friendUser));
     }
 
-    @PatchMapping("/{friendId}/deny")
-    public ResponseEntity denyFriendRequest(@PathVariable final UUID friendId, @AuthenticationPrincipal Jwt token) {
+    @PatchMapping("/{friendUserName}/deny")
+    public ResponseEntity<String> denyFriendRequest(@PathVariable final String friendUserName, @AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        friendService.denyFriendRequest(userId, friendId);
+        PlatformUser friend = userService.findUserByUserName(friendUserName);
+        friendService.denyFriendRequest(userId, friend.getUserId().id());
         return ResponseEntity.ok("Friendrequest succesfully denied.");
     }
 
     @GetMapping("/requests")
     public ResponseEntity<FriendRequestListDto> findAllFriendRequests(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        List<PlatformUserFriend> friendRequests = friendService.findFriendRequestsForUser(userId);
-
+        List<PlatformFriendRequest> friendRequests = friendService.findFriendRequestsForUser(userId);
         List<UserId> requestingUserIds = friendRequests.stream()
-                .map(request -> {
-                    UUID requestingUserId = request.getId().getUserId().equals(userId.id())
-                            ? request.getId().getFriendId()
-                            : request.getId().getUserId();
-                    return new UserId(requestingUserId);
-                })
+                .map(request -> request.getRequestingUserId(userId))
                 .toList();
-
         List<PlatformUser> requestingUsers = userService.findUserListByIdList(requestingUserIds);
-
         return ResponseEntity.ok(FriendRequestListDto.from(requestingUsers));
     }
 
-    private List<UserId> extractFriendIds(List<PlatformUserFriend> friends, UserId currentUserId) {
-        return friends.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getId().getUserId().equals(currentUserId.id())
-                            ? friend.getId().getFriendId()
-                            : friend.getId().getUserId();
-                    return new UserId(friendId);
-                })
-                .toList();
+    @GetMapping("/recommendations")
+    public ResponseEntity<FriendRecommendationListDto> getFriendRecommendations
+            (@AuthenticationPrincipal Jwt token,
+             @RequestParam(name = "nameQuery", required = false) String nameQuery
+             ){
+        UserId userId = UserId.fromToken(token);
+        log.info("Getting friend recomendations for user with id {} ", userId.id());
+        List<PlatformUser> friendRecommendations = friendService.getFriendRecommendations(userId.id(), nameQuery);
+        return ResponseEntity.ok(FriendRecommendationListDto.from(friendRecommendations));
     }
 
 }

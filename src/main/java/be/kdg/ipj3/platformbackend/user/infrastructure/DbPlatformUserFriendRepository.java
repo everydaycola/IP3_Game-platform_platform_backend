@@ -1,12 +1,12 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriend;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUserFriendId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendEntity;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserFriendId;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaFriendRequestEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaFriendRepository;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatformUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,51 +29,58 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
     }
 
     @Override
-    public PlatformUserFriend findFriendById(UserId userId,UserId friendId) {
-        return jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId.id(), true)
-                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId.id()).notFound())
-                .toDomain();
+    public PlatformFriendRequest save(PlatformFriendRequest user) {
+        JpaPlatformUserEntity userEntity = jpaPlatformUserRepository.findById(user.getSender().getUserId().id()).orElseThrow(user.getSender().getUserId()::notFound);
+        JpaPlatformUserEntity friendEntity = jpaPlatformUserRepository.findById(user.getReceiver().getUserId().id()).orElseThrow(user.getSender().getUserId()::notFound);
+        return jpaFriendRepository.save(JpaFriendRequestEntity.fromDomain(user, userEntity, friendEntity)).toDomain();
     }
 
     @Override
-    public PlatformUserFriend save(PlatformUserFriend user) {
-        JpaPlatformUserEntity userEntity= jpaPlatformUserRepository.findById(user.getId().getUserId()).orElseThrow();
-        JpaPlatformUserEntity friendEntity= jpaPlatformUserRepository.findById(user.getId().getFriendId()).orElseThrow();
-        return jpaFriendRepository.save(JpaPlatformUserFriendEntity.fromDomain(user, userEntity, friendEntity)).toDomain();
-    }
-
-    @Override
-    public PlatformUserFriend findFriendRequestBetween(UUID friendId, UserId userId) {
+    public PlatformFriendRequest findFriendRequestBetween(UUID friendId, UserId userId) {
         jpaPlatformUserRepository.findById(friendId).orElseThrow(userId::notFound);
-        return jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId, false)
-                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId).notFound())
-                .toDomain();
-    }
-
-    @Override
-    public void remove(UserId userId, UserId friendId) {
-        PlatformUserFriend friendRelation = jpaFriendRepository.findByUserAndFriendAndConfirmationStatus(userId.id(), friendId.id(), false)
-                .orElseThrow(() -> new PlatformUserFriendId(userId.id(), friendId.id()).notFound())
-                .toDomain();
-
-        jpaFriendRepository.removeById(JpaPlatformUserFriendId.fromDomain(friendRelation.getId()));
-    }
-
-    @Override
-    public List<PlatformUserFriend> findAllFriendRequestsForUser(UserId userId) {
         return jpaFriendRepository
-                .findAllFriendRequestByUserOrFriend(userId.id())
+                .findBySender_IdAndReceiver_IdAndIsConfirmed(userId.id(), friendId, false)
+                .or(() -> jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(friendId, userId.id(), false))
+                .orElseThrow(() -> new NotFoundException("Friend request not found"))
+                .toDomain();
+    }
+
+    @Override
+    public void remove(UserId userId, UserId friendId,boolean isConfirmed) {
+        JpaFriendRequestEntity friendRelation = jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(userId.id(), friendId.id(), isConfirmed)
+                .or(() -> jpaFriendRepository.findBySender_IdAndReceiver_IdAndIsConfirmed(friendId.id(), userId.id(), isConfirmed))
+                .orElseThrow(() -> new NotFoundException("Friend request not found"));
+
+        friendRelation.getSender().getSentFriendRequests().remove(friendRelation);
+        friendRelation.getSender().getReceivedFriendRequests().remove(friendRelation);
+        friendRelation.getReceiver().getSentFriendRequests().remove(friendRelation);
+        friendRelation.getReceiver().getReceivedFriendRequests().remove(friendRelation);
+
+        jpaPlatformUserRepository.save(friendRelation.getSender());
+        jpaPlatformUserRepository.save(friendRelation.getReceiver());
+        jpaFriendRepository.delete(friendRelation);
+    }
+
+    @Override
+    public List<PlatformFriendRequest> findAllFriendRequestsForUser(UserId userId) {
+        return jpaFriendRepository
+                .findAllByReceiver_IdAndIsConfirmed(userId.id(), false)
                 .stream()
-                .map(JpaPlatformUserFriendEntity::toDomain)
+                .map(JpaFriendRequestEntity::toDomain)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void validateIfFriendRelationExists(UserId userId, UserId friendId) {
-        jpaFriendRepository.findFriendById(JpaPlatformUserFriendId.fromDomain(new PlatformUserFriendId(userId.id(), friendId.id())))
+        jpaFriendRepository.findBySenderIdAndReceiverId(userId.id(), friendId.id())
                 .ifPresent(match -> {
-                    throw new PlatformUserFriendId(userId.id(), friendId.id()).conflict();
+                    throw new ConflictException("There already is a relation between " + userId.id() + " and " + friendId.id());
                 });
+    }
+
+    @Override
+    public List<UUID> getUniqueFriendIdsForUser(UUID userId) {
+        return jpaFriendRepository.findFriendIdsByUserId(userId);
     }
 
 }

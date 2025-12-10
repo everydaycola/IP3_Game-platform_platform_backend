@@ -44,11 +44,6 @@ VALUES ('33333333-3333-3333-3333-333333333333',
         '')
     ON CONFLICT (id) DO NOTHING;
 
--- Test users
-INSERT INTO platform_user (id)
-VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa456')
-    ON CONFLICT (id) DO NOTHING;
-
 INSERT INTO achievements (id, name, description, game_id)
 VALUES
     (
@@ -69,10 +64,3 @@ VALUES
         'Win a match without losing any stones',
         '22222222-2222-2222-2222-222222222222'
     );
-
-INSERT INTO user_achievements (achievement_id, user_id, date_achieved)
-VALUES (
-           'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-           'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaa456',
-           '2025-02-01T10:15:00'
-       );
