@@ -26,15 +26,17 @@ public class JpaUserAchievementEntity {
     public JpaUserAchievementEntity() {
     }
 
-    public JpaUserAchievementEntity(JpaUserAchievementId id, LocalDateTime dateAchieved) {
+    public JpaUserAchievementEntity(JpaUserAchievementId id, LocalDateTime dateAchieved, JpaPlatformUserEntity jpaUser) {
         this.id = id;
         this.dateAchieved = dateAchieved;
+        this.user = jpaUser;
     }
 
-    public static JpaUserAchievementEntity fromDomain(UserAchievement userAchievement) {
+    public static JpaUserAchievementEntity fromDomain(UserAchievement userAchievement, JpaPlatformUserEntity jpaUser) {
         return new JpaUserAchievementEntity(
                 JpaUserAchievementId.fromDomain(userAchievement.id()),
-                userAchievement.dateAchieved()
+                userAchievement.dateAchieved(),
+                jpaUser
         );
     }
 

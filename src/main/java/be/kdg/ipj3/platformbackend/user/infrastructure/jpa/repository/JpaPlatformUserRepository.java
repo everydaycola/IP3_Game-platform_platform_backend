@@ -14,32 +14,39 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
 
     Optional<JpaPlatformUserEntity> findByUserName(String userName);
 
+    @Query("""
+            SELECT u
+            FROM JpaPlatformUserEntity u
+            LEFT JOIN FETCH u.achievements
+            WHERE u.id = :id
+            """)
+    Optional<JpaPlatformUserEntity> findByIdWithAchievements(UUID id);
 
 
     @Query(value = """
-    SELECT *
-    FROM platform_user u
-    WHERE u.id NOT IN (:excludedIds)
-      AND LOWER(u.user_name) LIKE LOWER(CONCAT('%', :nameQuery, '%'))
-    LIMIT :size
-""", nativeQuery = true)
+                SELECT *
+                FROM platform_user u
+                WHERE u.id NOT IN (:excludedIds)
+                  AND LOWER(u.user_name) LIKE LOWER(CONCAT('%', :nameQuery, '%'))
+                LIMIT :size
+            """, nativeQuery = true)
     List<JpaPlatformUserEntity> findUsersNotInListWithNameQuery(
             @Param("excludedIds") List<UUID> excludedIds,
             @Param("nameQuery") String nameQuery,
             @Param("size") int size);
 
     @Query(value = """
-        SELECT *
-        FROM platform_user u
-        WHERE u.id NOT IN (:excludedIds)
-        LIMIT :size
-    """, nativeQuery = true)
+                SELECT *
+                FROM platform_user u
+                WHERE u.id NOT IN (:excludedIds)
+                LIMIT :size
+            """, nativeQuery = true)
     List<JpaPlatformUserEntity> findUsersNotInListLimited(
             @Param("excludedIds") List<UUID> excludedIds,
             @Param("size") int size);
 
     @Query("""
-SELECT ua FROM JpaUserAchievementEntity ua WHERE ua.id.userId = :userId
-""")
+            SELECT ua FROM JpaUserAchievementEntity ua WHERE ua.id.userId = :userId
+            """)
     List<JpaUserAchievementEntity> findUserAchievementsByUserId(UUID userId);
 }

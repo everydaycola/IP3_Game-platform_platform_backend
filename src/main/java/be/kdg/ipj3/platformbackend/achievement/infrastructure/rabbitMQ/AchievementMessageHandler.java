@@ -16,7 +16,7 @@ public class AchievementMessageHandler {
     }
 
     @RabbitListener(queues = "${spring.rabbitmq.fourteengames.unlock-achievement-queue}")
-    void onRegisterGame(AchievementMessageDto dto){
+    void onAchievementUnlock(AchievementMessageDto dto){
         log.info("Unlock achievement {} message received for user: {}",dto.achievementId(), dto.userId());
         userService.unlockAchievement(dto);
     }

@@ -1,4 +1,5 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
+
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
@@ -41,7 +42,7 @@ public class JpaPlatformUserEntity {
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id,String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements) {
+    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
@@ -66,6 +67,10 @@ public class JpaPlatformUserEntity {
                         .fromDomain(friendReq, JpaPlatformUserEntity.fromDomainWithoutFriends(friendReq.getSender()), JpaPlatformUserEntity.fromDomain(friendReq.getReceiver())
                         ))
                 .collect(Collectors.toList());
+
+        entity.achievements = domain.getAchievements().stream()
+                .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))
+                .collect(Collectors.toList());
         return entity;
     }
 
@@ -76,6 +81,7 @@ public class JpaPlatformUserEntity {
         entity.biography = domain.getBiography();
         entity.receivedFriendRequests = new ArrayList<>();
         entity.sentFriendRequests = new ArrayList<>();
+        entity.achievements = new ArrayList<>();
         return entity;
     }
 
@@ -88,9 +94,9 @@ public class JpaPlatformUserEntity {
                 .collect(Collectors.toList());
         List<UserAchievement> achievementList = achievements.stream()
                 .map(JpaUserAchievementEntity::toDomain)
-                .toList();
+                .collect(Collectors.toList());
 
-        return new PlatformUser(new UserId(id),userName,biography,sentFriendRequests,receivedFriendRequests, achievementList);
+        return new PlatformUser(new UserId(id), userName, biography, sentFriendRequests, receivedFriendRequests, achievementList);
     }
 
     public PlatformUser toDomainWithoutFriendsAndAchievements() {

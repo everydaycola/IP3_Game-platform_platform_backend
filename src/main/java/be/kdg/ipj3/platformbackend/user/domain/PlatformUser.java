@@ -21,7 +21,7 @@ public class PlatformUser {
     private final String biography;
     private List<PlatformFriendRequest> sentFriendRequests = new ArrayList<>();
     private List<PlatformFriendRequest> receivedFriendRequests = new ArrayList<>();
-    private List<UserAchievement> achievements;
+    private List<UserAchievement> achievements = new ArrayList<>();
 
     public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests, List<UserAchievement> achievements) {
         this.userId = userId;

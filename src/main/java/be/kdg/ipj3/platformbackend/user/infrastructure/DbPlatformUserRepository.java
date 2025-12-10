@@ -14,11 +14,9 @@ import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatfor
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -53,7 +51,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public Optional<PlatformUser> findUserById(UserId userId) {
-        return jpaPlatformUserRepository.findById(userId.id()).map(JpaPlatformUserEntity::toDomain);
+        return jpaPlatformUserRepository.findByIdWithAchievements(userId.id()).map(JpaPlatformUserEntity::toDomain);
     }
 
     @Override
