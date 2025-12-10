@@ -62,10 +62,6 @@ public class AnalyticsEventPublisher {
         } catch (AmqpException e) {
             log.warn("Failed to publish event: {} - RabbitMQ connection error: {}",
                     event.getEventType(), e.getMessage());
-            // Don't throw exception - allow main business logic to continue
-        } catch (Exception e) {
-            log.error("Unexpected error publishing event: {} - {}",
-                    event.getEventType(), e.getMessage(), e);
         }
     }
 }
