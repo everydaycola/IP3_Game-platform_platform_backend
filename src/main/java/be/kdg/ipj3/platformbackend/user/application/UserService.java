@@ -50,9 +50,10 @@ public class UserService {
         return platformUserRepository.findUserByUserName(userName);
     }
 
-    public void unlockAchievement(AchievementMessageDto dto) {
+    public PlatformUser unlockAchievement(AchievementMessageDto dto) {
         PlatformUser user = findUserById(new UserId(dto.userId()));
-        user.unlockAchievement(new AchievementId(dto.achievementId()));
+        user = user.unlockAchievement(new AchievementId(dto.achievementId()));
         platformUserRepository.save(user);
+        return user;
     }
 }

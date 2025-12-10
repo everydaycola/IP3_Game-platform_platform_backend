@@ -53,15 +53,16 @@ public class PlatformUser {
         return friendIds;
     }
 
-    public void unlockAchievement(AchievementId achievementId) {
+    public PlatformUser unlockAchievement(AchievementId achievementId) {
         UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
 
         if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))){
             log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
-            return;
+            return this;
         }
         achievements.add(new UserAchievement(newUAId, LocalDateTime.now()));
         log.info("User {} has unlocked achievement {}", this.userId.id(), achievementId.id());
+        return this;
     }
 
 }
