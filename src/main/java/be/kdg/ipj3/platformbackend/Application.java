@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend;
 
-import be.kdg.ipj3.platformbackend.config.rabbitMQ.RabbitMQProperties;
+import be.kdg.ipj3.platformbackend.shared.config.rabbitMQ.RabbitMQProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

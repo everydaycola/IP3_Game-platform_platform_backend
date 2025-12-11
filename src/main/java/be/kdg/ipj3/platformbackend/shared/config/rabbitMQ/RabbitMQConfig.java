@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.config.rabbitMQ;
+package be.kdg.ipj3.platformbackend.shared.config.rabbitMQ;
 
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

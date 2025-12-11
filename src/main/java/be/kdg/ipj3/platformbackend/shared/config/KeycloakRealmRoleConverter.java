@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.config;
+package be.kdg.ipj3.platformbackend.shared.config;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;

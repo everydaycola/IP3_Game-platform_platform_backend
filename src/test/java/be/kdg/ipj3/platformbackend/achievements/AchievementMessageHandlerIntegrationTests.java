@@ -1,10 +1,9 @@
-package be.kdg.ipj3.platformbackend.games;
+package be.kdg.ipj3.platformbackend.achievements;
 
-import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
-import be.kdg.ipj3.platformbackend.game.domain.Game;
-import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
-import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.RegisterGameMessage;
-import jakarta.transaction.Transactional;
+import be.kdg.ipj3.platformbackend.achievement.api.AchievementMessageDto;
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.nginx.NginxContainer;
 import org.testcontainers.utility.DockerImageName;
+
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,9 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-public class GameMessageHandlerIntegrationTests {
-
-
+public class AchievementMessageHandlerIntegrationTests {
     private static final DockerImageName NGINX_IMAGE =
             DockerImageName.parse("nginx:1.27-alpine");
 
@@ -68,66 +64,51 @@ public class GameMessageHandlerIntegrationTests {
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private GameRepository gameRepository;
+    private PlatformUserRepository userRepository;
 
     @Nested
-    class RegisterGameFlows {
+    class UnlockAchievementFlows {
         @Test
         void whenMessageSent_itIsConsumed() {
             //Arrange
-
-            String url = "http://" + nginx.getHost() + ":" + nginx.getMappedPort(80);
-
-            FullGameDto dto = new FullGameDto(
-                    UUID.randomUUID(),
-                    "Tic Tac Toe",
-                    "Game where you..",
-                    20,
-                    "testImg.png",
-                    "testicon.png",
-                    "Strategy",
-                    url,
-                    new ArrayList<>());
-            //Replicating the genre from "test_data.sql";
-
-            RegisterGameMessage message = new RegisterGameMessage(dto);
+            AchievementMessageDto dto = new AchievementMessageDto(
+                    UUID.fromString("11111111-1111-1111-1234-111111111111"),
+                    UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+            );
 
             //Act
-            //rabbitTemplate.convertAndSend("register-game-test-queue", message);
-            rabbitTemplate.convertAndSend("xivgames_exchange", "game.register", message);
+            rabbitTemplate.convertAndSend("xivgames_exchange", "achievement.unlock", dto);
 
             //Assert
             Awaitility.await()
-                            .atMost(Duration.ofSeconds(10))
-                                    .untilAsserted(() -> {
-                                        var games = gameRepository.findAll();
+                    .atMost(Duration.ofSeconds(10))
+                    .untilAsserted(() -> {
+                        PlatformUser user = userRepository.findByIdWithFriends(new UserId(dto.userId()));
 
-                                        assertEquals(2, games.size());
-                                        Game saved = games.get(1);
-
-                                        assertEquals(dto.id(), saved.getId().id());
-                                        assertEquals(dto.name(), saved.getName());
-                                        assertEquals(dto.url(), saved.getUrl());
-                                        assertEquals(dto.genre(), saved.getGenre().getName());
-                                    });
+                        assertEquals(1, user.getAchievements().size());
+                        assertEquals(dto.achievementId(), user.getAchievements().getFirst().id().achievementId().id());
+                    });
 
         }
 
         @Test
         void whenMalformedMessageIsSent_listenerDoesNotCrash() {
             //Arrange
-            List<Game> gamesList = gameRepository.findAll();
+            PlatformUser user = userRepository.findByIdWithFriends(
+                    new UserId(UUID.fromString("11111111-1111-1111-1234-111111111111")));
+
             String badJson = "{ \"invalid\": \"data\" }";
 
             //Act
-            rabbitTemplate.convertAndSend("xivgames_exchange", "game.register", badJson);
+            rabbitTemplate.convertAndSend("xivgames_exchange", "achievement.unlock", badJson);
 
             //Assert
             Awaitility.await()
                     .atMost(Duration.ofSeconds(10))
                     .untilAsserted(() -> {
-                        var games = gameRepository.findAll();
-                        assertEquals(gamesList.size(), games.size());
+                        PlatformUser postTestUser = userRepository.findByIdWithFriends(
+                                new UserId(UUID.fromString("11111111-1111-1111-1234-111111111111")));
+                        assertEquals(user.getAchievements().size(), postTestUser.getAchievements().size());
                     });
 
         }

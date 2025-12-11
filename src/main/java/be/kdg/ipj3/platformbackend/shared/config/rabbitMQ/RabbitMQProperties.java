@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.config.rabbitMQ;
+package be.kdg.ipj3.platformbackend.shared.config.rabbitMQ;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,4 +12,6 @@ public class RabbitMQProperties {
     private final String registerGameQueue;
     private final String registerGameBinding;
     private final String analyticsExchange;
+    private final String unlockAchievementQueue;
+    private final String unlockAchievementBinding;
 }

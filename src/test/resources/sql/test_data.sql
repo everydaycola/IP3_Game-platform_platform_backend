@@ -26,3 +26,12 @@ VALUES('11111111-1111-1111-aabb-111111111111','test-user-2','');
 INSERT INTO platform_user (id, user_name,biography)
 VALUES('11111111-1111-1111-aacc-111111111111','test-user-3','');
 
+INSERT INTO achievements (id, name, description, game_id)
+VALUES
+    (
+        'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        'King of the Hill',
+        'Win a game from starting in the middle',
+        '11111111-1111-1111-1111-111111111111'
+    )
+

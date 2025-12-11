@@ -1,9 +1,14 @@
 package be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity;
 
+import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
+import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaAchievementEntity;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -36,6 +41,9 @@ public class JpaGameEntity {
     @Column
     private String url;
 
+    @OneToMany(mappedBy = "game" ,orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<JpaAchievementEntity> achievements;
+
     public JpaGameEntity() {
     }
 
@@ -51,7 +59,7 @@ public class JpaGameEntity {
     }
 
     public static JpaGameEntity fromDomain(Game game) {
-        return new JpaGameEntity(
+        JpaGameEntity entity = new JpaGameEntity(
                 game.getId().id(),
                 game.getName(),
                 game.getDescription(),
@@ -61,9 +69,20 @@ public class JpaGameEntity {
                 game.getUrl(),
                 JpaGenreEntity.fromDomain(game.getGenre())
         );
+        entity.achievements = game.getAchievements().stream()
+                .map(achievement -> JpaAchievementEntity.fromDomain(achievement, entity))
+                .toList();
+
+        return entity;
     }
 
     public Game toDomain() {
+        //Necessary for testing to not fail with lazy loading
+        List<Achievement> domainAchievements = new ArrayList<>();
+        for (JpaAchievementEntity jpaAchievement : this.achievements){
+          domainAchievements.add(jpaAchievement.toDomain());
+        }
+
         return new Game(
                 new GameId(this.id),
                 this.name,
@@ -72,7 +91,8 @@ public class JpaGameEntity {
                 this.image,
                 this.icon,
                 this.url,
-                this.genre.toDomain()
+                this.genre.toDomain(),
+                domainAchievements
         );
     }
 }

@@ -1,7 +1,7 @@
 package be.kdg.ipj3.platformbackend.game.api;
 
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
-import be.kdg.ipj3.platformbackend.game.api.dtos.GameListdto;
+import be.kdg.ipj3.platformbackend.game.api.dtos.GameListDto;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
@@ -23,8 +23,8 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameListdto>> findAll(){
-        List<GameListdto> dtos = games.findAll().stream().map(GameListdto::from).toList();
+    public ResponseEntity<List<GameListDto>> findAll(){
+        List<GameListDto> dtos = games.findAll().stream().map(GameListDto::from).toList();
         return ResponseEntity.ok(dtos);
     }
 

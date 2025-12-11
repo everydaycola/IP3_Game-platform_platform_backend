@@ -35,9 +35,9 @@ public class GetGameListTest {
             Genre strategy = new Genre("Strategy","Genre where a good strategy is key.");
             List<Game> gameList = new ArrayList<>(
                     List.of(
-                            new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle),
-                            new Game(new GameId(),"Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy),
-                            new Game(new GameId(),"Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy)
+                            new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>()),
+                            new Game(new GameId(),"Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy, new ArrayList<>()),
+                            new Game(new GameId(),"Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy, new ArrayList<>())
                     )
             );
             Mockito.when(gameRepository.findAll()).thenReturn(gameList);

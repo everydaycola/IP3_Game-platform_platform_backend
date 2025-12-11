@@ -6,17 +6,14 @@ import be.kdg.ipj3.platformbackend.game.domain.Game;
 import java.util.List;
 import java.util.UUID;
 
-public record FullGameDto(UUID id, String name, String description, double price, String image, String icon, String genre, String url, List<AchievementDto> achievements) {
-    public static FullGameDto from(final Game game){
-        return new FullGameDto(
+//A dto for a limited version of a game to put in a list, not a list of game dtos
+public record GameListDto(UUID id, String name, String icon, String genre, List<AchievementDto> achievements) {
+    public static GameListDto from(final Game game){
+        return new GameListDto(
                 game.getId().id(),
                 game.getName(),
-                game.getDescription(),
-                game.getPrice(),
-                game.getImage(),
                 game.getIcon(),
                 game.getGenre().getName(),
-                game.getUrl(),
                 game.getAchievements().stream().map(AchievementDto::from).toList()
         );
     }

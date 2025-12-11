@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,7 +38,7 @@ public class GetGameTest {
             //Arrange
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
 
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle,new ArrayList<>());
 
             Mockito.when(gameRepository.findById(game1.getId().id())).thenReturn(Optional.of(game1));
 

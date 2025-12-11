@@ -1,5 +1,7 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure;
 
+import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
+import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -33,19 +34,24 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     public PlatformUser findByIdWithFriends(UserId userId) {
         List<JpaFriendRequestEntity> sendersDb = jpaFriendRepository.findAllBySender_IdAndIsConfirmed(userId.id(), true);
         List<JpaFriendRequestEntity> receiverDb = jpaFriendRepository.findAllByReceiver_IdAndIsConfirmed(userId.id(),true);
+        List<JpaUserAchievementEntity> userAchievementsDb = jpaPlatformUserRepository.findUserAchievementsByUserId(userId.id());
+
         List<PlatformFriendRequest> senders = sendersDb.stream()
                 .map(JpaFriendRequestEntity::toDomain)
                 .toList();
         List<PlatformFriendRequest> receivers = receiverDb.stream()
                 .map(JpaFriendRequestEntity::toDomain)
                 .toList();
+        List<UserAchievement> userAchievements = userAchievementsDb.stream()
+                .map(JpaUserAchievementEntity::toDomain)
+                .toList();
 
-        return new PlatformUser(userId, "","", senders, receivers);
+        return new PlatformUser(userId, "","", senders, receivers, userAchievements);
     }
 
     @Override
     public Optional<PlatformUser> findUserById(UserId userId) {
-        return jpaPlatformUserRepository.findById(userId.id()).map(JpaPlatformUserEntity::toDomain);
+        return jpaPlatformUserRepository.findByIdWithAchievements(userId.id()).map(JpaPlatformUserEntity::toDomain);
     }
 
     @Override

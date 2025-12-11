@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.games;
 
+import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.game.application.FavoriteGameService;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
@@ -18,6 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,7 +52,7 @@ public class FavoriteGameTest {
             UserId userId = new UserId(currentUserId);
             FavoriteGame returnValue = new FavoriteGame(currentUserId, selectedGameId);
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
             Mockito.when(favoriteGameRepository.save(Mockito.any(FavoriteGame.class)))
                     .thenReturn(returnValue);
             Mockito.when(gameRepository.findById(selectedGameId))
@@ -77,7 +81,7 @@ public class FavoriteGameTest {
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle);
+            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
 
             Mockito.when(gameRepository.findById(selectedGameId))
                     .thenReturn(Optional.of(game1));
