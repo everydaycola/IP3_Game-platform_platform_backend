@@ -39,6 +39,7 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.testcontainers:rabbitmq"
     testImplementation "org.testcontainers:testcontainers-nginx:2.0.2"
+    implementation "io.micrometer:micrometer-registry-prometheus"
 }
 
 tasks.named('test') {
