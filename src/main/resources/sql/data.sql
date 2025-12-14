@@ -30,7 +30,7 @@ VALUES ('22222222-2222-2222-2222-222222222222',
         'go.png',
         '',
         'Strategy',
-        '')
+        'http://localhost:5175/')
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
