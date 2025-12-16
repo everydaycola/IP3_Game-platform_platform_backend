@@ -16,41 +16,19 @@ import java.util.UUID;
 @Slf4j
 public class PlatformUser {
     private final UserId userId;
-
     private final String userName;
     private final String biography;
-    private List<PlatformFriendRequest> sentFriendRequests = new ArrayList<>();
-    private List<PlatformFriendRequest> receivedFriendRequests = new ArrayList<>();
     private List<UserAchievement> achievements = new ArrayList<>();
+    private final String profilePictureUrl;
+    private final String bannerUrl;
 
-    public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests, List<UserAchievement> achievements) {
+    public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
-        this.sentFriendRequests = sentFriendRequests != null ? sentFriendRequests : new ArrayList<>();
-        this.receivedFriendRequests = receivedFriendRequests != null ? receivedFriendRequests : new ArrayList<>();
         this.achievements = achievements != null ? achievements : new ArrayList<>();
-    }
-
-    public List<UserId> getFriendIds() {
-        List<UserId> friendIds = new ArrayList<>();
-
-        friendIds.addAll(this.sentFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getReceiver().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-
-        friendIds.addAll(this.receivedFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getSender().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-        return friendIds;
+        this.profilePictureUrl = profilePictureUrl;
+        this.bannerUrl = bannerUrl;
     }
 
     public PlatformUser unlockAchievement(AchievementId achievementId) {

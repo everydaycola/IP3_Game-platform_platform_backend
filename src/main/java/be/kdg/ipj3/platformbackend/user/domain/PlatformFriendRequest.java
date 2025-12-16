@@ -8,13 +8,13 @@ import java.util.UUID;
 @Getter
 public class PlatformFriendRequest {
     private final UUID id;
-    private final PlatformUser sender;
-    private final PlatformUser receiver;
-    private Boolean isConfirmed;
+    private final UserId sender;
+    private final UserId receiver;
+    private boolean isConfirmed;
     private final LocalDateTime requestedAt;
     private LocalDateTime confirmedAt;
 
-    public PlatformFriendRequest(UUID id, PlatformUser sender, PlatformUser receiver, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt) {
+    public PlatformFriendRequest(UUID id, UserId sender, UserId receiver, Boolean isConfirmed, LocalDateTime requestedAt, LocalDateTime confirmedAt) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -25,8 +25,8 @@ public class PlatformFriendRequest {
 
     public static PlatformFriendRequest fromDb(
             UUID id,
-            PlatformUser sender,
-            PlatformUser receiver,
+            UserId sender,
+            UserId receiver,
             Boolean isConfirmed,
             LocalDateTime requestedAt,
             LocalDateTime confirmedAt
@@ -41,10 +41,10 @@ public class PlatformFriendRequest {
 
     public UserId getRequestingUserId(UserId currentUserId) {
         UUID current = currentUserId.id();
-        if (sender.getUserId().id().equals(current)) {
-            return receiver.getUserId();
+        if (sender.id().equals(current)) {
+            return receiver;
         }
-        return sender.getUserId();
+        return sender;
     }
 
 }
