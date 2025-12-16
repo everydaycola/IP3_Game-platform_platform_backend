@@ -47,13 +47,6 @@ public class DbPlatformUserFriendRepository implements PlatformUserFriendReposit
         JpaFriendRequestEntity friendRelation = jpaFriendRepository.findBySenderAndReceiverAndIsConfirmed(userId.id(), friendId.id(), isConfirmed)
                 .or(() -> jpaFriendRepository.findBySenderAndReceiverAndIsConfirmed(friendId.id(), userId.id(), isConfirmed))
                 .orElseThrow(() -> new NotFoundException("Friend request not found"));
-        /*
-        //TODO: REMOVE IF WORKS
-        friendRelation.getSender().getSentFriendRequests().remove(friendRelation);
-        friendRelation.getSender().getReceivedFriendRequests().remove(friendRelation);
-        friendRelation.getReceiver().getSentFriendRequests().remove(friendRelation);
-        friendRelation.getReceiver().getReceivedFriendRequests().remove(friendRelation);
-         */
 
         jpaFriendRepository.delete(friendRelation);
     }

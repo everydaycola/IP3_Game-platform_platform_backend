@@ -2,7 +2,6 @@ package be.kdg.ipj3.platformbackend.user.domain.repository;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 
 import java.util.Collection;
 import java.util.List;
