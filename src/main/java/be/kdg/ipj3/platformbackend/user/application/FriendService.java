@@ -41,7 +41,7 @@ public class FriendService {
         return platformUserRepository.findByIdIn(friendIds);
     }
 
-    public void addFriendRequest(UserId userId, UserId friendId) {
+    public PlatformFriendRequest addFriendRequest(UserId userId, UserId friendId) {
         log.info("Adding friend {} to user {}", friendId, userId);
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         PlatformUser friend = platformUserRepository.findUserById(friendId).orElseThrow(userId::notFound);
@@ -57,12 +57,13 @@ public class FriendService {
         try {
             platformUserFriendRepository.findFriendRequestBetween(friend.getUserId().id(), user.getUserId());
             acceptFriendRequest(userId, friendId.id());
-            return;
+            return null;
         } catch (NotFoundException e) {
             log.info("No existing request between {} and {}", userId, friendId);
         }
         platformUserFriendRepository.validateIfFriendRelationExists(userId, friendId);
         platformUserFriendRepository.save(friendRelation);
+        return friendRelation;
     }
 
     public void removeFriendFromFriendList(UserId userId, UserId friendId) {

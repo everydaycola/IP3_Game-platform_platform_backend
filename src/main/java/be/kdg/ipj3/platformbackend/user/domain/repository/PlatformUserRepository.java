@@ -4,12 +4,12 @@ import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface PlatformUserRepository {
-    PlatformUser findByIdWithFriends(UserId userId);
     Optional<PlatformUser> findUserById(UserId userId);
     List<PlatformUser> findAllUsersByIds(List<UUID> idList);
     void save(PlatformUser user);
@@ -17,4 +17,5 @@ public interface PlatformUserRepository {
     PlatformUser findUserByUserName(String userName);
     List<PlatformUser> findRecommendationsListOfSize(List<UUID> exlucdedIds, int size);
     List<PlatformUser> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds,String nameQuery, int size);
+    List<PlatformUser> findByIdIn(Collection<UUID> ids);
 }
