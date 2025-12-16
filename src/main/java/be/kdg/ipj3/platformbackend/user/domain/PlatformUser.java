@@ -60,7 +60,7 @@ public class PlatformUser {
     public PlatformUser unlockAchievement(AchievementId achievementId) {
         UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
 
-        if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))){
+        if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))) {
             log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
             return this;
         }
@@ -69,7 +69,7 @@ public class PlatformUser {
         return this;
     }
 
-    public void updateProfileDetails(String biography, String profilePictureUrl, String bannerUrl){
+    public void updateProfileDetails(String biography, String profilePictureUrl, String bannerUrl) {
         this.biography = biography;
         this.profilePictureUrl = profilePictureUrl;
         this.bannerUrl = bannerUrl;
