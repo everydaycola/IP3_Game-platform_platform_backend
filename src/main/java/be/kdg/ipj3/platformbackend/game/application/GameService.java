@@ -7,7 +7,6 @@ import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
-import be.kdg.ipj3.platformbackend.shared.api.UrlChecker;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,11 +18,9 @@ import java.util.List;
 @Transactional
 public class GameService {
     private final GameRepository gameRepository;
-    private final UrlChecker urlChecker;
 
-    public GameService(GameRepository games, UrlChecker urlChecker) {
+    public GameService(GameRepository games) {
         this.gameRepository = games;
-        this.urlChecker = urlChecker;
     }
 
     public List<Game> findAll() {
@@ -43,7 +40,7 @@ public class GameService {
 
     public Game registerGame(FullGameDto gameDto) {
         log.info("Registering Game: {}, id: {}", gameDto.name(), gameDto.id());
-        Game game = new Game(
+        return new Game(
                 new GameId(gameDto.id()),
                 gameDto.name(),
                 gameDto.description(),
@@ -57,11 +54,5 @@ public class GameService {
                                 new AchievementId(dto.id()), dto.name(), dto.description()))
                         .toList()
         );
-        if (urlChecker.isUrlReachable(game.getUrl())) {
-            gameRepository.save(game);
-        } else {
-            log.error("Game: {} not registered due to url not being reachable", game.getUrl());
-        }
-        return game;
     }
 }
