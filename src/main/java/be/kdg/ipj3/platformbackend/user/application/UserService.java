@@ -62,6 +62,6 @@ public class UserService {
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         user.updateProfileDetails(request.biography(), request.profilePictureUrl(), request.bannerUrl());
         platformUserRepository.save(user);
-        return platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        return user;
     }
 }

@@ -37,8 +37,8 @@ public class FriendRequestListTest {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UUID friend1Id = UUID.fromString("11111111-1111-1111-1111-111111111112");
-            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "","");
+            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "","");
             LocalDateTime now = LocalDateTime.now();
             List<PlatformFriendRequest> friendRequestList = new ArrayList<>(
                     List.of(
