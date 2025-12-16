@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.achievements;
 
-import be.kdg.ipj3.platformbackend.achievement.api.AchievementMessageDto;
+import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
