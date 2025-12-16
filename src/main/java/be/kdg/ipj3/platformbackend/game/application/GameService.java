@@ -40,7 +40,7 @@ public class GameService {
 
     public Game registerGame(FullGameDto gameDto) {
         log.info("Registering Game: {}, id: {}", gameDto.name(), gameDto.id());
-        return new Game(
+        final var game = new Game(
                 new GameId(gameDto.id()),
                 gameDto.name(),
                 gameDto.description(),
@@ -54,5 +54,7 @@ public class GameService {
                                 new AchievementId(dto.id()), dto.name(), dto.description()))
                         .toList()
         );
+        gameRepository.save(game);
+        return game;
     }
 }
