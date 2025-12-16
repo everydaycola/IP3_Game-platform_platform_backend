@@ -2,6 +2,7 @@ package be.kdg.ipj3.platformbackend.user.api;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.PlatformUserDto;
+import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.helpers.JwtHelpers;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,18 @@ public class UserController {
     public ResponseEntity<PlatformUserDto> addUser(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         String userName = JwtHelpers.userNameFromToken(token);
-        log.info("User with id {} was recognized by the platform", userId);
+        log.info("User with id {} is requesting to be added to the platform", userId);
         return ResponseEntity.ok(PlatformUserDto.from(userService.findOrCreateUserById(userId, userName)));
+    }
+
+    @PatchMapping
+    public ResponseEntity<PlatformUserDto> updateUser(
+            @AuthenticationPrincipal Jwt token,
+            @RequestBody UpdateUserProfileRequestDto request
+    ){
+        UserId userId = UserId.fromToken(token);
+        log.info("User with id {} is updating their profile", userId);
+        return ResponseEntity.ok(PlatformUserDto.from(userService.updateUserProfile(userId, request)));
     }
 
 }

@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.user.application;
 import be.kdg.ipj3.platformbackend.achievement.api.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.transaction.Transactional;
@@ -55,5 +56,12 @@ public class UserService {
         user = user.unlockAchievement(new AchievementId(dto.achievementId()));
         platformUserRepository.save(user);
         return user;
+    }
+
+    public PlatformUser updateUserProfile(UserId userId, UpdateUserProfileRequestDto request) {
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        user.updateProfileDetails(request.biography(), request.profilePictureUrl(), request.biography());
+        platformUserRepository.save(user);
+        return platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
     }
 }

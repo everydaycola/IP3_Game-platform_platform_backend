@@ -18,12 +18,12 @@ public class PlatformUser {
     private final UserId userId;
 
     private final String userName;
-    private final String biography;
+    private String biography;
     private final List<PlatformFriendRequest> sentFriendRequests;
     private final List<PlatformFriendRequest> receivedFriendRequests;
     private final List<UserAchievement> achievements;
-    private final String profilePictureUrl;
-    private final String bannerUrl;
+    private String profilePictureUrl;
+    private String bannerUrl;
 
     public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
         this.userId = userId;
@@ -67,6 +67,12 @@ public class PlatformUser {
         achievements.add(new UserAchievement(newUAId, LocalDateTime.now()));
         log.info("User {} has unlocked achievement {}", this.userId.id(), achievementId.id());
         return this;
+    }
+
+    public void updateProfileDetails(String biography, String profilePictureUrl, String bannerUrl){
+        this.biography = biography;
+        this.profilePictureUrl = profilePictureUrl;
+        this.bannerUrl = bannerUrl;
     }
 
 }
