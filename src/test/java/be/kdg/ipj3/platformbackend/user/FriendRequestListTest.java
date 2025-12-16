@@ -37,15 +37,15 @@ public class FriendRequestListTest {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UUID friend1Id = UUID.fromString("11111111-1111-1111-1111-111111111112");
-            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(),"","");
+            PlatformUser friend = new PlatformUser(new UserId(friend1Id), "TestUser2", "", new ArrayList<>(),"","");
             LocalDateTime now = LocalDateTime.now();
             List<PlatformFriendRequest> friendRequestList = new ArrayList<>(
                     List.of(
                             new PlatformFriendRequest(
                                     UUID.randomUUID(),
-                                    user,
-                                    friend,
+                                    user.getUserId(),
+                                    friend.getUserId(),
                                     false,
                                     now,
                                     null
@@ -59,9 +59,9 @@ public class FriendRequestListTest {
 
             //Assert
             assertThat(result.size()).isEqualTo(1);
-            assertThat(result.getFirst().getSender().getUserId()).isEqualTo(userId);
-            assertThat(result.getFirst().getReceiver().getUserId().id()).isEqualTo(friend1Id);
-            assertThat(result.getFirst().getIsConfirmed()).isEqualTo(false);
+            assertThat(result.getFirst().getSender()).isEqualTo(userId);
+            assertThat(result.getFirst().getReceiver().id()).isEqualTo(friend1Id);
+            assertThat(result.getFirst().isConfirmed()).isEqualTo(false);
             assertThat(result.getFirst().getRequestedAt()).isEqualTo(now);
             assertThat(result.getFirst().getConfirmedAt()).isNull();
             Mockito.verify(platformUserFriendRepository, times(1)).findAllFriendRequestsForUser(userId);

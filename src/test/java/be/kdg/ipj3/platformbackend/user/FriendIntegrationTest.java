@@ -38,9 +38,9 @@ class FriendIntegrationTest {
         UUID userId = UUID.fromString("11111111-1111-1111-1234-111111111111");
         UUID friendId = UUID.fromString("11111111-1111-1111-aaaa-111111111111");
         UUID friendId2 = UUID.fromString("11111111-1111-1111-aabb-111111111111");
-        user = new PlatformUser(new UserId(userId), "test-host","",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        friend1 = new PlatformUser(new UserId(friendId), "test-user-1","",new ArrayList<>(), new ArrayList<>(),new ArrayList<>());
-        friend2 = new PlatformUser(new UserId(friendId2), "test-user-2","",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        user = new PlatformUser(new UserId(userId), "test-host","",new ArrayList<>(),"","" );
+        friend1 = new PlatformUser(new UserId(friendId), "test-user-1","",new ArrayList<>(),"","");
+        friend2 = new PlatformUser(new UserId(friendId2), "test-user-2","",new ArrayList<>(), "","");
     }
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor authJwt(UUID id, String givenName, String familyName, String email) {

@@ -83,7 +83,8 @@ public class AchievementMessageHandlerIntegrationTests {
             Awaitility.await()
                     .atMost(Duration.ofSeconds(10))
                     .untilAsserted(() -> {
-                        PlatformUser user = userRepository.findByIdWithFriends(new UserId(dto.userId()));
+                        UserId userId = new UserId(dto.userId());
+                        PlatformUser user = userRepository.findUserById(userId).orElseThrow(userId::notFound);
 
                         assertEquals(1, user.getAchievements().size());
                         assertEquals(dto.achievementId(), user.getAchievements().getFirst().id().achievementId().id());
@@ -94,8 +95,8 @@ public class AchievementMessageHandlerIntegrationTests {
         @Test
         void whenMalformedMessageIsSent_listenerDoesNotCrash() {
             //Arrange
-            PlatformUser user = userRepository.findByIdWithFriends(
-                    new UserId(UUID.fromString("11111111-1111-1111-1234-111111111111")));
+            UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1234-111111111111"));
+            PlatformUser user = userRepository.findUserById(userId).orElseThrow(userId::notFound);
 
             String badJson = "{ \"invalid\": \"data\" }";
 
@@ -106,8 +107,7 @@ public class AchievementMessageHandlerIntegrationTests {
             Awaitility.await()
                     .atMost(Duration.ofSeconds(10))
                     .untilAsserted(() -> {
-                        PlatformUser postTestUser = userRepository.findByIdWithFriends(
-                                new UserId(UUID.fromString("11111111-1111-1111-1234-111111111111")));
+                        PlatformUser postTestUser = userRepository.findUserById(userId).orElseThrow(userId::notFound);
                         assertEquals(user.getAchievements().size(), postTestUser.getAchievements().size());
                     });
 
