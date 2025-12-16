@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,9 +29,16 @@ public class FriendService {
         this.platformUserFriendRepository = platformUserFriendRepository;
     }
 
-    public PlatformUser findUserWithFriends(UserId userId) {
-        log.info("Returning all Games");
-        return platformUserRepository.findByIdWithFriends(userId);
+    public List<PlatformUser> findAllFriendsOfUserWithId(UserId userId) {
+        List<PlatformFriendRequest> friendRequests = platformUserFriendRepository.findAllFriendsForUser(userId);
+
+        List<UUID> friendIds = friendRequests.stream()
+                .map(fr -> fr.getSender().id() != userId.id()
+                                ? fr.getSender().id()
+                                : fr.getReceiver().id())
+                .collect(Collectors.toList());
+
+        return platformUserRepository.findByIdIn(friendIds);
     }
 
     public void addFriendRequest(UserId userId, UserId friendId) {
@@ -40,8 +48,8 @@ public class FriendService {
 
         PlatformFriendRequest friendRelation = new PlatformFriendRequest(
                 UUID.randomUUID(),
-                user,
-                friend,
+                user.getUserId(),
+                friend.getUserId(),
                 false,
                 LocalDateTime.now(),
                 null
@@ -54,8 +62,7 @@ public class FriendService {
             log.info("No existing request between {} and {}", userId, friendId);
         }
         platformUserFriendRepository.validateIfFriendRelationExists(userId, friendId);
-        user.getSentFriendRequests().add(friendRelation);
-        platformUserRepository.save(user);
+        platformUserFriendRepository.save(friendRelation);
     }
 
     public void removeFriendFromFriendList(UserId userId, UserId friendId) {
@@ -80,7 +87,7 @@ public class FriendService {
         return platformUserFriendRepository.findAllFriendRequestsForUser(userId);
     }
 
-    public List<PlatformUser> getFriendRecommendations(UUID id,  String nameQuery) {
+    public List<PlatformUser> getFriendRecommendations(UUID id, String nameQuery) {
         log.info("Finding friend recommendations for user");
         int size = 10;
         List<UUID> friendIds = platformUserFriendRepository.getUniqueFriendIdsForUser(id);
