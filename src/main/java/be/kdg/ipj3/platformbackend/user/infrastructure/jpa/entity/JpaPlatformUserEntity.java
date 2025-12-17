@@ -61,6 +61,8 @@ public class JpaPlatformUserEntity {
         entity.id = domain.getUserId().id();
         entity.userName = domain.getUserName();
         entity.biography = domain.getBiography();
+        entity.profilePictureUrl = domain.getProfilePictureUrl();
+        entity.bannerUrl = domain.getBannerUrl();
 
         entity.achievements = domain.getAchievements().stream()
                 .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))

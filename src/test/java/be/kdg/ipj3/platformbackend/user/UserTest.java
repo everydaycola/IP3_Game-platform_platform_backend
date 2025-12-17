@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.user;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
@@ -18,9 +19,10 @@ import java.util.UUID;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class RegisteringNewUserTest {
+public class UserTest {
 
     @Mock
     PlatformUserRepository platformUserRepository;
@@ -85,6 +87,77 @@ public class RegisteringNewUserTest {
             assertThat(userList.size()).isEqualTo(list.size());
             assertThat(userList.getFirst().getUserName()).isEqualTo(list.getFirst().getUserName());
             assertThat(userList.getFirst().getUserId().id()).isEqualTo(list.getFirst().getUserId().id());
+        }
+
+
+        @Nested
+        class UpdateFlows {
+
+            @Test
+            void updateUsersBiograhpy_shouldreturn_ValidPlatformUser_WithCorrectUpdatedField() {
+                //Arrange
+                UserId userId = new UserId(UUID.randomUUID());
+                String userName1 = "TestUser1";
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("test biography", "", "");
+                Mockito.when(platformUserRepository.findUserById(userId))
+                        .thenReturn(Optional.of(mockUser));
+                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+
+                // Act
+                PlatformUser result =
+                        userService.updateUserProfile(userId, payload);
+
+                // Assert
+                assertEquals("test biography", result.getBiography());
+                assertEquals("", result.getProfilePictureUrl());
+                assertEquals("", result.getBannerUrl());
+                Mockito.verify(platformUserRepository).findUserById(userId);
+            }
+
+            @Test
+            void updateUsersProfilePicture_shouldreturn_ValidPlatformUser_WithCorrectUpdatedField() {
+                //Arrange
+                UserId userId = new UserId(UUID.randomUUID());
+                String userName1 = "TestUser1";
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "website.com/testimg.jpg", "");
+                Mockito.when(platformUserRepository.findUserById(userId))
+                        .thenReturn(Optional.of(mockUser));
+                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+
+                // Act
+                PlatformUser result =
+                        userService.updateUserProfile(userId, payload);
+
+                // Assert
+                assertEquals("", result.getBiography());
+                assertEquals("website.com/testimg.jpg", result.getProfilePictureUrl());
+                assertEquals("", result.getBannerUrl());
+                Mockito.verify(platformUserRepository).findUserById(userId);
+            }
+
+            @Test
+            void updateUsersBannerImageUrl_shouldreturn_ValidPlatformUser_WithCorrectUpdatedField() {
+                //Arrange
+                UserId userId = new UserId(UUID.randomUUID());
+                String userName1 = "TestUser1";
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "", "website.com/testimg.jpg");
+                Mockito.when(platformUserRepository.findUserById(userId))
+                        .thenReturn(Optional.of(mockUser));
+                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+
+                // Act
+                PlatformUser result =
+                        userService.updateUserProfile(userId, payload);
+
+                // Assert
+                assertEquals("", result.getBiography());
+                assertEquals("", result.getProfilePictureUrl());
+                assertEquals("website.com/testimg.jpg", result.getBannerUrl());
+                Mockito.verify(platformUserRepository).findUserById(userId);
+            }
 
         }
 

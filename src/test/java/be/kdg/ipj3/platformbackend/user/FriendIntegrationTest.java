@@ -1,7 +1,9 @@
 package be.kdg.ipj3.platformbackend.user;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ class FriendIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private PlatformUser user;
     private PlatformUser friend1;
@@ -335,6 +340,69 @@ class FriendIntegrationTest {
         }
     }
 
+    @Nested
+    class UpdateUserProfileDataFlows {
+        @Test
+        void updateUserData_shouldReturn200_whenValidBodyIsSent() throws Exception {
+            //Arrange
+            UpdateUserProfileRequestDto requestData = new UpdateUserProfileRequestDto(
+                    "My bio",
+                    "https://example.com/profile.jpg",
+                    "https://example.com/banner.jpg"
+            );
+            //Act
+            //Assert
+            mockMvc.perform(patch("/api/user")
+                            .with(authJwt(
+                                    user.getUserId().id(),
+                                    "test_user",
+                                    "user",
+                                    "test_user@test.be"
+                            ))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(requestData)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        void updateUserData_shouldReturn400_whenBodyIsEmpty() throws Exception {
+            //Arrange
+            //Act
+            //Assert
+            mockMvc.perform(patch("/api/user")
+                            .with(authJwt(
+                                    user.getUserId().id(),
+                                    "test_user",
+                                    "user",
+                                    "test_user@test.be"
+                            ))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                    )
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void updateUserData_shouldReturn401_whenNotAuthenticated() throws Exception {
+            //Arrange
+            UpdateUserProfileRequestDto requestData = new UpdateUserProfileRequestDto(
+                    "My bio",
+                    "https://example.com/profile.jpg",
+                    "https://example.com/banner.jpg"
+            );
+            //Act
+            //Assert
+            mockMvc.perform(patch("/api/user")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(requestData))
+                    )
+                    .andExpect(status().isUnauthorized());
+        }
+
+
+    }
 }
 
 
