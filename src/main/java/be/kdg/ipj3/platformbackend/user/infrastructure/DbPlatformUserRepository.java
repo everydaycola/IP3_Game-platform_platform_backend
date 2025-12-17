@@ -32,6 +32,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public PlatformUser findByIdWithFriends(UserId userId) {
+        JpaPlatformUserEntity user = jpaPlatformUserRepository.findById(userId.id()).orElseThrow(userId::notFound);
         List<JpaFriendRequestEntity> sendersDb = jpaFriendRepository.findAllBySender_IdAndIsConfirmed(userId.id(), true);
         List<JpaFriendRequestEntity> receiverDb = jpaFriendRepository.findAllByReceiver_IdAndIsConfirmed(userId.id(),true);
         List<JpaUserAchievementEntity> userAchievementsDb = jpaPlatformUserRepository.findUserAchievementsByUserId(userId.id());
@@ -46,7 +47,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
                 .map(JpaUserAchievementEntity::toDomain)
                 .toList();
 
-        return new PlatformUser(userId, "","", senders, receivers, userAchievements);
+        return new PlatformUser(userId, "","", senders, receivers, userAchievements, user.getProfilePictureUrl(), user.getBannerUrl());
     }
 
     @Override

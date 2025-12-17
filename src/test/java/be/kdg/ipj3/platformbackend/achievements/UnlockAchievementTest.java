@@ -43,7 +43,9 @@ public class UnlockAchievementTest {
                     "Lives for the test, test is life",
                     new ArrayList<>(),
                     new ArrayList<>(),
-                    new ArrayList<>());
+                    new ArrayList<>(),
+                    "",
+                    "");
 
             AchievementId achievementId = new AchievementId(UUID.fromString("11111111-1111-1111-1111-111111111123"));
 
@@ -73,7 +75,10 @@ public class UnlockAchievementTest {
                     "Lives for the test, test is life",
                     new ArrayList<>(),
                     new ArrayList<>(),
-                    new ArrayList<>());
+                    new ArrayList<>(),
+                    "",
+                    ""
+            );
 
             AchievementId achievementId = new AchievementId(UUID.fromString("11111111-1111-1111-1111-111111111123"));
 
