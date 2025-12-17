@@ -98,7 +98,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "",  new ArrayList<>(), "", "");
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("test biography", "", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
@@ -120,7 +120,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "");
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "website.com/testimg.jpg", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
@@ -142,7 +142,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "");
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "", "website.com/testimg.jpg");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));

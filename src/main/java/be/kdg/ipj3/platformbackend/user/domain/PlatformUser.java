@@ -17,10 +17,10 @@ public class PlatformUser {
     private final UserId userId;
 
     private final String userName;
-    private final String biography;
+    private String biography;
     private List<UserAchievement> achievements = new ArrayList<>();
-    private final String profilePictureUrl;
-    private final String bannerUrl;
+    private String profilePictureUrl;
+    private String bannerUrl;
 
     public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
         this.userId = userId;
