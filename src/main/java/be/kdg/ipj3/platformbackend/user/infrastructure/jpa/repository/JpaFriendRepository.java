@@ -12,26 +12,32 @@ import java.util.Optional;
 
 public interface JpaFriendRepository extends JpaRepository<JpaFriendRequestEntity, UUID> {
 
-    List<JpaFriendRequestEntity> findALlBySender_IdOrReceiver_IdAndIsConfirmed(UUID senderId, UUID receiverId, Boolean isConfirmed);
-    List<JpaFriendRequestEntity> findAllBySender_IdAndIsConfirmed(UUID senderId,boolean isConfirmed);
-    List<JpaFriendRequestEntity> findAllByReceiver_IdAndIsConfirmed(UUID senderId, boolean isConfirmed);
-    Optional<JpaFriendRequestEntity> findBySender_IdAndReceiver_IdAndIsConfirmed(UUID senderId, UUID receiverId, Boolean isConfirmed);
-    Optional<JpaFriendRequestEntity> findBySenderIdAndReceiverId(UUID senderId, UUID receiverId);
+    List<JpaFriendRequestEntity> findALlBySenderOrReceiverAndIsConfirmed(UUID senderId, UUID receiverId, boolean isConfirmed);
+    List<JpaFriendRequestEntity> findAllBySenderAndIsConfirmed(UUID senderId,boolean isConfirmed);
+    List<JpaFriendRequestEntity> findAllByReceiverAndIsConfirmed(UUID senderId, boolean isConfirmed);
+    Optional<JpaFriendRequestEntity> findBySenderAndReceiverAndIsConfirmed(UUID senderId, UUID receiverId, boolean isConfirmed);
+    Optional<JpaFriendRequestEntity> findBySenderAndReceiver(UUID senderId, UUID receiverId);
 
     @Query("SELECT f FROM JpaFriendRequestEntity f " +
-            "WHERE ((f.sender.id = :userId AND f.receiver.id = :friendId) " +
-            "   OR (f.sender.id = :friendId AND f.receiver.id = :userId)) " +
+            "WHERE ((f.sender = :userId AND f.receiver = :friendId) " +
+            "   OR (f.sender = :friendId AND f.receiver= :userId)) " +
             "AND f.isConfirmed = false")
     Optional<JpaFriendRequestEntity> findPendingFriendRequest(@Param("userId") UUID userId,
                                                               @Param("friendId") UUID friendId);
 
+    @Query("SELECT f FROM JpaFriendRequestEntity f " +
+            "WHERE (f.sender = :userId " +
+            "   OR (f.receiver = :userId)) " +
+            "AND f.isConfirmed = true")
+    List<JpaFriendRequestEntity> findAcceptedFriendRequestForUser(@Param("userId") UUID userId);
+
     @Query("""
     SELECT DISTINCT CASE
-           WHEN f.sender.id = :userId THEN f.receiver.id
-           ELSE f.sender.id
+           WHEN f.sender = :userId THEN f.receiver
+           ELSE f.sender
            END
     FROM JpaFriendRequestEntity f
-    WHERE (:userId = f.sender.id OR :userId = f.receiver.id)
+    WHERE (:userId = f.sender OR :userId = f.receiver)
 """)
     List<UUID> findFriendIdsByUserId(@Param("userId") UUID userId);
 

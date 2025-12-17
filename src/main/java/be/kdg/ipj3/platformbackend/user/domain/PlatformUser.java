@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Slf4j
@@ -18,51 +17,36 @@ public class PlatformUser {
     private final UserId userId;
 
     private final String userName;
-    private final String biography;
-    private List<PlatformFriendRequest> sentFriendRequests = new ArrayList<>();
-    private List<PlatformFriendRequest> receivedFriendRequests = new ArrayList<>();
+    private String biography;
     private List<UserAchievement> achievements = new ArrayList<>();
+    private String profilePictureUrl;
+    private String bannerUrl;
 
-    public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests, List<UserAchievement> achievements) {
+    public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
-        this.sentFriendRequests = sentFriendRequests != null ? sentFriendRequests : new ArrayList<>();
-        this.receivedFriendRequests = receivedFriendRequests != null ? receivedFriendRequests : new ArrayList<>();
         this.achievements = achievements != null ? achievements : new ArrayList<>();
-    }
-
-    public List<UserId> getFriendIds() {
-        List<UserId> friendIds = new ArrayList<>();
-
-        friendIds.addAll(this.sentFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getReceiver().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-
-        friendIds.addAll(this.receivedFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getSender().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-        return friendIds;
+        this.profilePictureUrl = profilePictureUrl;
+        this.bannerUrl = bannerUrl;
     }
 
     public PlatformUser unlockAchievement(AchievementId achievementId) {
         UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
 
-        if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))){
+        if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))) {
             log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
             return this;
         }
         achievements.add(new UserAchievement(newUAId, LocalDateTime.now()));
         log.info("User {} has unlocked achievement {}", this.userId.id(), achievementId.id());
         return this;
+    }
+
+    public void updateProfileDetails(String biography, String profilePictureUrl, String bannerUrl) {
+        this.biography = biography;
+        this.profilePictureUrl = profilePictureUrl;
+        this.bannerUrl = bannerUrl;
     }
 
 }

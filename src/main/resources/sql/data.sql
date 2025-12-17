@@ -22,16 +22,16 @@ VALUES ('11111111-1111-1111-1111-111111111111',
         'http://localhost:5174/')
     ON CONFLICT (id) DO NOTHING;
 
--- INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
--- VALUES ('22222222-2222-2222-2222-222222222222',
---         'Go',
---         'An ancient abstract strategy board game originating from East Asia.',
---         29.99,
---         'go.png',
---         '',
---         'Strategy',
---         '')
---     ON CONFLICT (id) DO NOTHING;
+/*INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
+VALUES ('22222222-2222-2222-2222-222222222222',
+        'Go',
+        'An ancient abstract strategy board game originating from East Asia.',
+        29.99,
+        'go.png',
+        '',
+        'Strategy',
+        '')
+    ON CONFLICT (id) DO NOTHING;*/
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
 VALUES ('33333333-3333-3333-3333-333333333333',
@@ -44,17 +44,17 @@ VALUES ('33333333-3333-3333-3333-333333333333',
         '')
     ON CONFLICT (id) DO NOTHING;
 
--- INSERT INTO achievements (id, name, description, game_id)
--- VALUES
---     (
---         'f47ac10b-58cc-4372-a567-0e02b2c3d479',
---         'Let''s Go',
---         'Open go for the first time',
---         '22222222-2222-2222-2222-222222222222'
---     ),
---     (
---         '9b2c7e4a-3f1d-4a82-9c3b-2b8a6d4f1e57',
---         'Go Home',
---         'Lose a game of go',
---         '22222222-2222-2222-2222-222222222222'
---     )
+/*INSERT INTO achievements (id, name, description, game_id)
+VALUES
+    (
+        'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        'Let''s Go',
+        'Open go for the first time',
+        '22222222-2222-2222-2222-222222222222'
+    ),
+    (
+        '9b2c7e4a-3f1d-4a82-9c3b-2b8a6d4f1e57',
+        'Go Home',
+        'Lose a game of go',
+        '22222222-2222-2222-2222-222222222222'
+    )*/

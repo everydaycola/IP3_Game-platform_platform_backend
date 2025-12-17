@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.user.application;
 import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.transaction.Transactional;
@@ -25,7 +26,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(),"","");
         return platformUserRepository.createUser(user);
     }
 
@@ -53,6 +54,13 @@ public class UserService {
     public PlatformUser unlockAchievement(AchievementMessageDto dto) {
         PlatformUser user = findUserById(new UserId(dto.userId()));
         user = user.unlockAchievement(new AchievementId(dto.achievementId()));
+        platformUserRepository.save(user);
+        return user;
+    }
+
+    public PlatformUser updateUserProfile(UserId userId, UpdateUserProfileRequestDto request) {
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        user.updateProfileDetails(request.biography(), request.profilePictureUrl(), request.bannerUrl());
         platformUserRepository.save(user);
         return user;
     }

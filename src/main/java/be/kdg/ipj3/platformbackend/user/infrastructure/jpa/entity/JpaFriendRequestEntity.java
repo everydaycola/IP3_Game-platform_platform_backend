@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,19 +16,17 @@ public class JpaFriendRequestEntity {
     @Id
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
-    private JpaPlatformUserEntity sender;
+    private UUID sender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id", nullable = false)
-    private JpaPlatformUserEntity receiver;
+    private UUID receiver;
 
     @Column(name = "requested_at")
     private LocalDateTime requestedAt;
 
     @Column(name = "is_confirmed")
-    private Boolean isConfirmed;
+    private boolean isConfirmed;
 
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
@@ -37,8 +36,8 @@ public class JpaFriendRequestEntity {
 
     private JpaFriendRequestEntity(
             UUID id,
-            JpaPlatformUserEntity sender,
-            JpaPlatformUserEntity receiver,
+            UUID sender,
+            UUID receiver,
             LocalDateTime requestedAt,
             Boolean isConfirmed,
             LocalDateTime confirmedAt
@@ -53,8 +52,8 @@ public class JpaFriendRequestEntity {
 
     public static JpaFriendRequestEntity fromDomain(
             PlatformFriendRequest domain,
-            JpaPlatformUserEntity sender,
-            JpaPlatformUserEntity receiver
+            UUID sender,
+            UUID receiver
     ) {
 
         return new JpaFriendRequestEntity(
@@ -62,12 +61,12 @@ public class JpaFriendRequestEntity {
                 sender,
                 receiver,
                 domain.getRequestedAt(),
-                domain.getIsConfirmed(),
+                domain.isConfirmed(),
                 domain.getConfirmedAt()
         );
     }
 
     public PlatformFriendRequest toDomain() {
-        return PlatformFriendRequest.fromDb(this.id, this.sender.toDomainWithoutFriendsAndAchievements(), this.receiver.toDomainWithoutFriendsAndAchievements(), this.isConfirmed, this.requestedAt, this.confirmedAt);
+        return PlatformFriendRequest.fromDb(this.id, new UserId(sender), new UserId(receiver), this.isConfirmed, this.requestedAt, this.confirmedAt);
     }
 }

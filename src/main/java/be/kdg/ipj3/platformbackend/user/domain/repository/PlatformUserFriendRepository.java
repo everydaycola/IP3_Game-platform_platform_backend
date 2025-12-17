@@ -14,4 +14,5 @@ public interface PlatformUserFriendRepository {
     List<PlatformFriendRequest> findAllFriendRequestsForUser(UserId userId);
     void validateIfFriendRelationExists(UserId userId, UserId friendId);
     List<UUID> getUniqueFriendIdsForUser(UUID userId);
+    List<PlatformFriendRequest> findAllFriendsForUser(UserId id);
 }
