@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
@@ -49,4 +50,6 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
             SELECT ua FROM JpaUserAchievementEntity ua WHERE ua.id.userId = :userId
             """)
     List<JpaUserAchievementEntity> findUserAchievementsByUserId(UUID userId);
+
+    List<JpaPlatformUserEntity> findByIdIn(Collection<UUID> ids);
 }

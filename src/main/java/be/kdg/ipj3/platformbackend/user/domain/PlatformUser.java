@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Slf4j
@@ -19,42 +18,17 @@ public class PlatformUser {
 
     private final String userName;
     private String biography;
-    private final List<PlatformFriendRequest> sentFriendRequests;
-    private final List<PlatformFriendRequest> receivedFriendRequests;
-    private final List<UserAchievement> achievements;
+    private List<UserAchievement> achievements = new ArrayList<>();
     private String profilePictureUrl;
     private String bannerUrl;
 
-    public PlatformUser(UserId userId, String userName, String biography, List<PlatformFriendRequest> sentFriendRequests, List<PlatformFriendRequest> receivedFriendRequests, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
+    public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
-        this.sentFriendRequests = sentFriendRequests != null ? sentFriendRequests : new ArrayList<>();
-        this.receivedFriendRequests = receivedFriendRequests != null ? receivedFriendRequests : new ArrayList<>();
         this.achievements = achievements != null ? achievements : new ArrayList<>();
         this.profilePictureUrl = profilePictureUrl;
         this.bannerUrl = bannerUrl;
-    }
-
-    public List<UserId> getFriendIds() {
-        List<UserId> friendIds = new ArrayList<>();
-
-        friendIds.addAll(this.sentFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getReceiver().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-
-        friendIds.addAll(this.receivedFriendRequests.stream()
-                .map(friend -> {
-                    UUID friendId = friend.getSender().getUserId().id();
-                    return new UserId(friendId);
-                })
-                .toList()
-        );
-        return friendIds;
     }
 
     public PlatformUser unlockAchievement(AchievementId achievementId) {
