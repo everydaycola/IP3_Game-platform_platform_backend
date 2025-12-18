@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.achievement.api;
+package be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages;
 
 import java.util.UUID;
 
