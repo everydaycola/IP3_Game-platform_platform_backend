@@ -19,7 +19,7 @@ VALUES ('11111111-1111-1111-1111-111111111111',
         'tictactoe.png',
         'https://www.svgrepo.com/show/143264/tic-tac-toe-game.svg',
         'Strategy',
-        'http://localhost:5174/')
+        'team14-tictactoe-frontend.civato.org')
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
@@ -30,7 +30,7 @@ VALUES ('22222222-2222-2222-2222-222222222222',
         'go.png',
         '',
         'Strategy',
-        'http://localhost:5175/')
+        'team14-go-frontend.civato.org')
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
