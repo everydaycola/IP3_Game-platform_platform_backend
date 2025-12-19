@@ -11,11 +11,11 @@ import java.util.UUID;
 
 @Embeddable
 @Slf4j
-public record OwnedCopyId(GameId gameId) implements Serializable {
+public record OwnedCopyId(UUID id) implements Serializable {
 
     public NotFoundException notFound() {
-        log.error("Game with id {} not found in favorites.", gameId);
-        return new NotFoundException("Game [" + gameId + "] not found as favorites");
+        log.error("Owned game with id {} not found.", id);
+        return new NotFoundException("Owned Game [" + id + "] not found.");
     }
 
 }

@@ -1,6 +1,5 @@
 package be.kdg.ipj3.platformbackend.games;
 
-import be.kdg.ipj3.platformbackend.game.application.FavoriteGameService;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;

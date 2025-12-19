@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaOwnedCopyEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatformUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -83,12 +84,15 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public List<OwnedCopy> findFavoriteGames(UUID id) {
-        return List.of();
+        return jpaPlatformUserRepository.findFavoriteGames(id).stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<OwnedCopy> findFavoriteGameByGameId(UUID id) {
-        return List.of();
+    public Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId) {
+        return jpaPlatformUserRepository.findFavoriteGameByGameId(userId, gameId)
+                .map(JpaOwnedCopyEntity::toDomain);
     }
 
 }

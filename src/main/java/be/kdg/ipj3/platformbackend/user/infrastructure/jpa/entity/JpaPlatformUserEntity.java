@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -46,6 +47,9 @@ public class JpaPlatformUserEntity {
     @Column
     private double credits;
 
+    @OneToMany()
+    private List<JpaOwnedCopyEntity> ownedGames;
+
     protected JpaPlatformUserEntity() {
     }
 
@@ -72,6 +76,10 @@ public class JpaPlatformUserEntity {
         entity.achievements = domain.getAchievements().stream()
                 .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))
                 .collect(Collectors.toList());
+
+        entity.ownedGames = domain.getOwnedGames().stream()
+                .map(JpaOwnedCopyEntity::fromDomain)
+                .collect(Collectors.toList());
         return entity;
     }
 
@@ -79,7 +87,9 @@ public class JpaPlatformUserEntity {
         List<UserAchievement> achievementList = achievements.stream()
                 .map(JpaUserAchievementEntity::toDomain)
                 .collect(Collectors.toList());
-
-        return new PlatformUser(new UserId(id), userName, biography, achievementList, profilePictureUrl, bannerUrl, credits);
+        List<OwnedCopy> ownedGamesDomain = this.ownedGames.stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
+        return new PlatformUser(new UserId(id), userName, biography, achievementList, profilePictureUrl, bannerUrl, credits, ownedGamesDomain);
     }
 }

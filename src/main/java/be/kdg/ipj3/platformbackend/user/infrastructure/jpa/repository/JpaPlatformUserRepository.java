@@ -1,6 +1,8 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository;
 
 import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaOwnedCopyEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,6 +52,25 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
             SELECT ua FROM JpaUserAchievementEntity ua WHERE ua.id.userId = :userId
             """)
     List<JpaUserAchievementEntity> findUserAchievementsByUserId(UUID userId);
+
+    @Query("""
+            SELECT og
+            FROM JpaPlatformUserEntity u
+            JOIN u.ownedGames og
+            WHERE u.id = :userId
+            AND og.isFavorite = true
+            """)
+    List<JpaOwnedCopyEntity> findFavoriteGames(UUID userId);
+
+    @Query("""
+            SELECT og
+            FROM JpaPlatformUserEntity u
+            JOIN u.ownedGames og
+            WHERE u.id = :userId
+            AND og.isFavorite = true
+            AND og.gameId = :gameId
+            """)
+    Optional<JpaOwnedCopyEntity> findFavoriteGameByGameId(UUID userId,UUID gameId);
 
     List<JpaPlatformUserEntity> findByIdIn(Collection<UUID> ids);
 }

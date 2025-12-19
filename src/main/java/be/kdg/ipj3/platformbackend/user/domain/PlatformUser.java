@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Slf4j
@@ -61,12 +62,12 @@ public class PlatformUser {
     }
 
     public void addOwnedGame(GameId gameId) {
-        this.ownedGames.add(new OwnedCopy(new OwnedCopyId(gameId), false));
+        this.ownedGames.add(new OwnedCopy(new OwnedCopyId(UUID.randomUUID()),gameId, false));
     }
 
-    public void favoriteGame(GameId gameId, boolean favorite) {
+    public void favoriteGame(OwnedCopyId ocId, boolean favorite) {
         this.ownedGames.stream()
-                .filter(g -> g.getId().gameId().id().equals(gameId.id()))
-                .findFirst().orElseThrow(gameId::notFound).setFavorite(favorite);
+                .filter(oc -> oc.getId().id().equals(ocId.id()))
+                .findFirst().orElseThrow(ocId::notFound).setFavorite(favorite);
     }
 }

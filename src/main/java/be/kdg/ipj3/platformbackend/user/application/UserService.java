@@ -1,10 +1,13 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
+import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
+import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.transaction.Transactional;
@@ -21,9 +24,11 @@ import java.util.UUID;
 public class UserService {
 
     private final PlatformUserRepository platformUserRepository;
+    private final GameRepository gameRepository;
 
-    public UserService(PlatformUserRepository platformUserRepository) {
+    public UserService(PlatformUserRepository platformUserRepository, GameRepository gameRepository) {
         this.platformUserRepository = platformUserRepository;
+        this.gameRepository = gameRepository;
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
@@ -66,11 +71,34 @@ public class UserService {
         return user;
     }
 
-    public PlatformUser addFavoriteGame(UserId userId, GameId gameId){
-        log.info("User: " + userId + " added game with id" + gameId + "to their favorites.");
+    public Game addFavoriteGame(UserId userId, GameId gameId){
+        log.info("User: " + userId + " added game with id" + gameId.id() + "to their favorites.");
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        user.favoriteGame(gameId,true);
+        Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
+        OwnedCopy oc = findFavoriteGameByGameId(user.getUserId(),gameId);
+
+        user.favoriteGame(oc.getId(),true);
         platformUserRepository.save(user);
-        return user;
+        return game;
+    }
+
+    public void removeFavoriteGame(UserId userId, GameId gameId){
+        log.info("User: " + userId + " removed game with id" + gameId.id() + "from their favorites.");
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        OwnedCopy oc = findFavoriteGameByGameId(user.getUserId(),gameId);
+
+        user.favoriteGame(oc.getId(),false);
+        platformUserRepository.save(user);
+    }
+
+    public List<OwnedCopy> findAllFavoriteGames(UserId id){
+        log.info("Finding all favorite games of user {}",id);
+        return platformUserRepository.findFavoriteGames(id.id());
+    }
+
+    public OwnedCopy findFavoriteGameByGameId(UserId userId, GameId gameId){
+        log.info("Finding favorite game {} of user {}",gameId.id(),userId.id());
+        platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        return platformUserRepository.findFavoriteGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
     }
 }
