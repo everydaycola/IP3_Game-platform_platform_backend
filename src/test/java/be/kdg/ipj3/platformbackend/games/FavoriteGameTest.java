@@ -1,14 +1,10 @@
 package be.kdg.ipj3.platformbackend.games;
 
-import be.kdg.ipj3.platformbackend.achievement.domain.Achievement;
 import be.kdg.ipj3.platformbackend.game.application.FavoriteGameService;
-import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
-import be.kdg.ipj3.platformbackend.game.domain.FavoriteGame;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
-import be.kdg.ipj3.platformbackend.game.domain.repository.FavoriteGameRepository;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

@@ -3,7 +3,6 @@ package be.kdg.ipj3.platformbackend.game.api;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FavoriteGameDto;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.application.GameService;
-import be.kdg.ipj3.platformbackend.game.domain.FavoriteGame;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;

@@ -2,6 +2,7 @@ package be.kdg.ipj3.platformbackend.user.infrastructure;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
@@ -78,6 +79,16 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
         return jpaPlatformUserRepository.findByIdIn(ids).stream()
                 .map(JpaPlatformUserEntity::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OwnedCopy> findFavoriteGames(UUID id) {
+        return List.of();
+    }
+
+    @Override
+    public List<OwnedCopy> findFavoriteGameByGameId(UUID id) {
+        return List.of();
     }
 
 }

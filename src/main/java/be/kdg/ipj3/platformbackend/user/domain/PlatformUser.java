@@ -3,6 +3,8 @@ package be.kdg.ipj3.platformbackend.user.domain;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
+import be.kdg.ipj3.platformbackend.game.domain.Game;
+import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +23,19 @@ public class PlatformUser {
     private List<UserAchievement> achievements = new ArrayList<>();
     private String profilePictureUrl;
     private String bannerUrl;
+    private double credits;
 
-    public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl) {
+    private List<OwnedCopy> ownedGames;
+
+    public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl, double credits, List<OwnedCopy> ownedGames) {
         this.userId = userId;
         this.userName = userName;
         this.biography = biography;
         this.achievements = achievements != null ? achievements : new ArrayList<>();
         this.profilePictureUrl = profilePictureUrl;
         this.bannerUrl = bannerUrl;
+        this.credits = credits;
+        this.ownedGames = ownedGames;
     }
 
     public PlatformUser unlockAchievement(AchievementId achievementId) {
@@ -49,4 +56,17 @@ public class PlatformUser {
         this.bannerUrl = bannerUrl;
     }
 
+    public void addCredits(double credits) {
+        this.credits += credits;
+    }
+
+    public void addOwnedGame(GameId gameId) {
+        this.ownedGames.add(new OwnedCopy(new OwnedCopyId(gameId), false));
+    }
+
+    public void favoriteGame(GameId gameId, boolean favorite) {
+        this.ownedGames.stream()
+                .filter(g -> g.getId().gameId().id().equals(gameId.id()))
+                .findFirst().orElseThrow(gameId::notFound).setFavorite(favorite);
+    }
 }

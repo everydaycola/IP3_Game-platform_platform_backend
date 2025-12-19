@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
+import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
@@ -26,7 +27,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(),"","");
+        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(),"","",0.0,new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 
@@ -61,6 +62,14 @@ public class UserService {
     public PlatformUser updateUserProfile(UserId userId, UpdateUserProfileRequestDto request) {
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         user.updateProfileDetails(request.biography(), request.profilePictureUrl(), request.bannerUrl());
+        platformUserRepository.save(user);
+        return user;
+    }
+
+    public PlatformUser addFavoriteGame(UserId userId, GameId gameId){
+        log.info("User: " + userId + " added game with id" + gameId + "to their favorites.");
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        user.favoriteGame(gameId,true);
         platformUserRepository.save(user);
         return user;
     }

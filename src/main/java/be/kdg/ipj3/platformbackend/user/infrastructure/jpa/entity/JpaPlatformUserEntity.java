@@ -43,10 +43,13 @@ public class JpaPlatformUserEntity {
     @Column
     private String bannerUrl;
 
+    @Column
+    private double credits;
+
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements, String profilePictureUrl, String bannerUrl) {
+    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements, String profilePictureUrl, String bannerUrl, double credits) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
@@ -54,6 +57,7 @@ public class JpaPlatformUserEntity {
         this.achievements = achievements;
         this.profilePictureUrl = profilePictureUrl;
         this.bannerUrl = bannerUrl;
+        this.credits = credits;
     }
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser domain) {
@@ -63,6 +67,7 @@ public class JpaPlatformUserEntity {
         entity.biography = domain.getBiography();
         entity.profilePictureUrl = domain.getProfilePictureUrl();
         entity.bannerUrl = domain.getBannerUrl();
+        entity.credits = domain.getCredits();
 
         entity.achievements = domain.getAchievements().stream()
                 .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))
@@ -75,6 +80,6 @@ public class JpaPlatformUserEntity {
                 .map(JpaUserAchievementEntity::toDomain)
                 .collect(Collectors.toList());
 
-        return new PlatformUser(new UserId(id), userName, biography, achievementList, profilePictureUrl, bannerUrl);
+        return new PlatformUser(new UserId(id), userName, biography, achievementList, profilePictureUrl, bannerUrl, credits);
     }
 }

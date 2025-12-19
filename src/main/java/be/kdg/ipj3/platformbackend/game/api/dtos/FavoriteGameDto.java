@@ -1,7 +1,5 @@
 package be.kdg.ipj3.platformbackend.game.api.dtos;
 
-import be.kdg.ipj3.platformbackend.game.domain.FavoriteGame;
-
 import java.util.UUID;
 
 public record FavoriteGameDto(UUID id, UUID gameId) {
