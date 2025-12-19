@@ -1,7 +1,6 @@
 package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
-import be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity.JpaGameEntity;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
 import jakarta.persistence.*;

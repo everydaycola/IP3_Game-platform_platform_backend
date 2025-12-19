@@ -1,6 +1,5 @@
 package be.kdg.ipj3.platformbackend.user.api;
 
-import be.kdg.ipj3.platformbackend.game.application.GameService;
 import be.kdg.ipj3.platformbackend.user.api.dtos.FavoriteGameDto;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
@@ -10,7 +9,6 @@ import be.kdg.ipj3.platformbackend.user.api.dtos.PlatformUserDto;
 import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
-import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
 import be.kdg.ipj3.platformbackend.user.helpers.JwtHelpers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

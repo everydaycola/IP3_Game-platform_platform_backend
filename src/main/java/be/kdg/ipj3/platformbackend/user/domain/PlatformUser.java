@@ -3,7 +3,6 @@ package be.kdg.ipj3.platformbackend.user.domain;
 import be.kdg.ipj3.platformbackend.achievement.domain.AchievementId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
-import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.Getter;
@@ -26,7 +25,7 @@ public class PlatformUser {
     private String bannerUrl;
     private double credits;
 
-    private List<OwnedCopy> ownedGames;
+    private final List<OwnedCopy> ownedGames;
 
     public PlatformUser(UserId userId, String userName, String biography, List<UserAchievement> achievements, String profilePictureUrl, String bannerUrl, double credits, List<OwnedCopy> ownedGames) {
         this.userId = userId;
