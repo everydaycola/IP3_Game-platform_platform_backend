@@ -6,6 +6,11 @@ import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.application.UserService;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
+import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,41 +34,41 @@ public class FavoriteGameTest {
     @Mock
     GameRepository gameRepository;
     @Mock
-    FavoriteGameRepository favoriteGameRepository;
+    PlatformUserRepository platformUserRepository;
 
     @InjectMocks
-    FavoriteGameService favoriteGameService;
+    UserService userService;
 
     @Nested
     class SuccessFlows {
         @Test
         void addFavoriteExistingGame_Should_return_Game() {
             // Arrange
-            ArgumentCaptor<FavoriteGame> favoriteGameCaptor = ArgumentCaptor.forClass(FavoriteGame.class);
+            ArgumentCaptor<OwnedCopy> favoriteGameCaptor = ArgumentCaptor.forClass(OwnedCopy.class);
             UUID selectedGameId = UUID.randomUUID();
             UUID currentUserId = UUID.randomUUID();
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
-            FavoriteGame returnValue = new FavoriteGame(currentUserId, selectedGameId);
+            PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>());
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
             Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
-            Mockito.when(favoriteGameRepository.save(Mockito.any(FavoriteGame.class)))
+            Mockito.when(platformUserRepository.save(Mockito.any(PlatformUser.class)))
                     .thenReturn(returnValue);
             Mockito.when(gameRepository.findById(selectedGameId))
                     .thenReturn(Optional.of(game1));
 
             // Act
-            Game result = favoriteGameService.addFavoriteGame(gameId, userId);
+            Game result = userService.addFavoriteGame(gameId, userId);
             //Assert
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo("Tic Tac Toe");
-            Mockito.verify(favoriteGameRepository).save(favoriteGameCaptor.capture());
+            Mockito.verify(platformUserRepository).save(favoriteGameCaptor.capture());
             FavoriteGame captured = favoriteGameCaptor.getValue();
             assertThat(captured.getFavoriteGameId().getUserId()).isEqualTo(currentUserId);
             assertThat(captured.getFavoriteGameId().getGameId()).isEqualTo(selectedGameId);
             Mockito.verify(gameRepository, times(2)).findById(selectedGameId);
             Mockito.verifyNoMoreInteractions(gameRepository);
-            Mockito.verifyNoMoreInteractions(favoriteGameRepository);
+            Mockito.verifyNoMoreInteractions(platformUserRepository);
         }
 
         @Test
@@ -81,11 +86,11 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.of(game1));
 
             // Act
-            favoriteGameService.removeFavoriteGame(gameId, userId);
+            userService.removeFavoriteGame(gameId, userId);
 
             //assert
             Mockito.verify(gameRepository, times(1)).findById(selectedGameId);
-            Mockito.verify(favoriteGameRepository).remove(favoriteGameCaptor.capture());
+            Mockito.verify(platformUserRepository).remove(favoriteGameCaptor.capture());
         }
     }
 
@@ -102,11 +107,11 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> favoriteGameService.addFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> userService.addFavoriteGame(invalidGameId,new UserId(userId)))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());
-            Mockito.verifyNoInteractions(favoriteGameRepository);
+            Mockito.verifyNoInteractions(platformUserRepository);
             Mockito.verifyNoMoreInteractions(gameRepository);
         }
 
@@ -120,11 +125,11 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> favoriteGameService.removeFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> userService.removeFavoriteGame(invalidGameId,new UserId(userId)))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());
-            Mockito.verifyNoInteractions(favoriteGameRepository);
+            Mockito.verifyNoInteractions(platformUserRepository);
             Mockito.verifyNoMoreInteractions(gameRepository);
         }
     }
