@@ -103,11 +103,12 @@ public class UserService {
         return platformUserRepository.findFavoriteGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
     }
 
-    public void addCredit(UserId userId, double amount) {
+    public PlatformUser addCredit(UserId userId, double amount) {
         log.info("Adding credit amount of {} to user {}", amount, userId.id());
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         user.addCredits(amount);
         platformUserRepository.save(user);
+        return user;
     }
 
     public List<OwnedCopy> findAllOwnedCopies(UserId userId) {

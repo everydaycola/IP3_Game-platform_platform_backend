@@ -159,6 +159,24 @@ public class UserTest {
                 Mockito.verify(platformUserRepository).findUserById(userId);
             }
 
+            @Test
+            void addCredit_shouldAddAmountGivenToUsersCredit(){
+                //Arrange
+                double amount = 50.0;
+                UserId userId = new UserId(UUID.randomUUID());
+                PlatformUser mockUser = new PlatformUser(userId, "userName1", "", new ArrayList<>(), "", "",0.0,new ArrayList<>());
+
+                Mockito.when(platformUserRepository.findUserById(userId))
+                        .thenReturn(Optional.of(mockUser));
+
+                //Act
+                PlatformUser result = userService.addCredit(userId, amount);
+
+                //Assert
+                assertEquals(50, result.getCredits());
+                Mockito.verify(platformUserRepository).save(mockUser);
+            }
+
         }
 
 
