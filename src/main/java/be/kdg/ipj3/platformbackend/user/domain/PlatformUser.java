@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.GameAlreadyOwnedException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.InsufficientCreditsException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class PlatformUser {
         }
         if (ownedGames.stream().anyMatch(ownedCopy -> ownedCopy.getGameId().id().equals(gameId.id()))) {
            log.error("User {} allready owns game {}", this.userId.id(), gameId.id());
-            throw new RuntimeException("Game " + gameId.id() + " already owned");
+            throw new GameAlreadyOwnedException(gameId.id());
         }
 
         removeCredits(price);

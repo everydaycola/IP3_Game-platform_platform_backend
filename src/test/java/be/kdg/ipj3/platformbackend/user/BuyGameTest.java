@@ -5,9 +5,11 @@ import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.GameAlreadyOwnedException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.InsufficientCreditsException;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -108,6 +111,33 @@ public class BuyGameTest {
                     .hasMessageContaining("Not enough credits");
             assertThat(mockUser.getOwnedGames().size()).isEqualTo(0);
             assertThat(mockUser.getCredits()).isEqualTo(10);
+        }
+
+        @Test
+        void buyGame_shouldThrowException_whenUserAlreadyOwnsGame() {
+            // Arrange
+            UserId userId = new UserId(UUID.randomUUID());
+            GameId gameId = new GameId(UUID.randomUUID());
+
+            OwnedCopy existingOwnedCopy = new OwnedCopy(new OwnedCopyId(UUID.randomUUID()),gameId,false);
+
+            PlatformUser mockUser = new PlatformUser(
+                    userId,
+                    "userName1",
+                    "",
+                    new ArrayList<>(),
+                    "",
+                    "",
+                    50.0,
+                    new ArrayList<>(List.of(existingOwnedCopy))
+            );
+
+            // Act + Assert
+            assertThatThrownBy(() -> mockUser.buyGame(gameId, 20.0))
+                    .isInstanceOf(GameAlreadyOwnedException.class)
+                    .hasMessageContaining("already owned");
+            assertThat(mockUser.getCredits()).isEqualTo(50.0);
+            assertThat(mockUser.getOwnedGames().size()).isEqualTo(1);
         }
     }
 }
