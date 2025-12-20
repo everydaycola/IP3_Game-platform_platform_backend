@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId,userName, "", new ArrayList<>(),"","",0.0,new ArrayList<>());
+        PlatformUser user = new PlatformUser(userId, userName, "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 
@@ -71,29 +71,29 @@ public class UserService {
         return user;
     }
 
-    public Game addFavoriteGame(UserId userId, GameId gameId){
+    public Game addFavoriteGame(UserId userId, GameId gameId) {
         log.info("User: " + userId + " added game with id" + gameId.id() + "to their favorites.");
         Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
+        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
 
-        user.favoriteGame(oc.getId(),true);
+        user.favoriteGame(oc.getId(), true);
         platformUserRepository.save(user);
         return game;
     }
 
-    public void removeFavoriteGame(UserId userId, GameId gameId){
+    public void removeFavoriteGame(UserId userId, GameId gameId) {
         log.info("User: " + userId + " removed game with id" + gameId.id() + "from their favorites.");
         gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
+        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
 
-        user.favoriteGame(oc.getId(),false);
+        user.favoriteGame(oc.getId(), false);
         platformUserRepository.save(user);
     }
 
-    public List<OwnedCopy> findAllFavoriteGames(UserId id){
-        log.info("Finding all favorite games of user {}",id);
+    public List<OwnedCopy> findAllFavoriteGames(UserId id) {
+        log.info("Finding all favorite games of user {}", id);
         return platformUserRepository.findFavoriteGames(id.id());
     }
 
@@ -101,5 +101,26 @@ public class UserService {
         log.info("Finding favorite game {} of user {}", gameId.id(), userId.id());
         platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         return platformUserRepository.findFavoriteGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
+    }
+
+    public void addCredit(UserId userId, double amount) {
+        log.info("Adding credit amount of {} to user {}", amount, userId.id());
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        user.addCredits(amount);
+        platformUserRepository.save(user);
+    }
+
+    public List<OwnedCopy> findAllOwnedCopies(UserId userId) {
+        log.info("Finding owned games of user {}", userId.id());
+        return platformUserRepository.findOwnedGames(userId.id());
+    }
+
+    public OwnedCopy buyGame(UserId userId, GameId gameId) {
+        log.info("User {} buying Game {}", userId.id(), gameId.id());
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
+        OwnedCopy oc = user.buyGame(gameId,game.getPrice());
+        platformUserRepository.save(user);
+        return oc;
     }
 }

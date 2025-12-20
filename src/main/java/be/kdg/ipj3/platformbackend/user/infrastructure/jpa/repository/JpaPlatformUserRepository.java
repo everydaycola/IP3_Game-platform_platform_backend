@@ -66,6 +66,14 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
             FROM JpaPlatformUserEntity u
             JOIN u.ownedGames og
             WHERE u.id = :userId
+            """)
+    List<JpaOwnedCopyEntity> findOwnedGames(UUID userId);
+
+    @Query("""
+            SELECT og
+            FROM JpaPlatformUserEntity u
+            JOIN u.ownedGames og
+            WHERE u.id = :userId
             AND og.isFavorite = true
             AND og.gameId = :gameId
             """)

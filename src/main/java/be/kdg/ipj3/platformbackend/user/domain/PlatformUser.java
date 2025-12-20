@@ -60,8 +60,19 @@ public class PlatformUser {
         this.credits += credits;
     }
 
-    public void addOwnedGame(GameId gameId) {
-        this.ownedGames.add(new OwnedCopy(new OwnedCopyId(UUID.randomUUID()),gameId, false));
+    public void removeCredits(double credits) {
+        this.credits -= credits;
+    }
+
+    public OwnedCopy buyGame(GameId gameId, double price) {
+        removeCredits(price);
+        return addOwnedGame(gameId);
+    }
+
+    public OwnedCopy addOwnedGame(GameId gameId) {
+        OwnedCopy oc = new OwnedCopy(new OwnedCopyId(UUID.randomUUID()), gameId, false);
+        this.ownedGames.add(oc);
+        return oc;
     }
 
     public void favoriteGame(OwnedCopyId ocId, boolean favorite) {

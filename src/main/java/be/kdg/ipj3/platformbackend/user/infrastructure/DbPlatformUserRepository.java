@@ -90,6 +90,13 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
+    public List<OwnedCopy> findOwnedGames(UUID id) {
+        return jpaPlatformUserRepository.findOwnedGames(id).stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId) {
         return jpaPlatformUserRepository.findFavoriteGameByGameId(userId, gameId)
                 .map(JpaOwnedCopyEntity::toDomain);

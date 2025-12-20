@@ -1,12 +1,10 @@
 package be.kdg.ipj3.platformbackend.user.api;
 
-import be.kdg.ipj3.platformbackend.user.api.dtos.FavoriteGameDto;
+import be.kdg.ipj3.platformbackend.user.api.dtos.*;
 import be.kdg.ipj3.platformbackend.game.api.dtos.FullGameDto;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
-import be.kdg.ipj3.platformbackend.user.api.dtos.PlatformUserDto;
-import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.helpers.JwtHelpers;
@@ -89,5 +87,27 @@ public class UserController {
         GameId gameId = new GameId(selectedGameId);
         userService.removeFavoriteGame(userId, gameId);
         return ResponseEntity.ok("Favorite game removed successfully.");
+    }
+
+    @PostMapping("/credit")
+    public ResponseEntity<String> addCredit(@AuthenticationPrincipal Jwt token, @RequestBody AddCreditRequestDto requestDto) {
+        UserId userId = UserId.fromToken(token);
+        userService.addCredit(userId, requestDto.amount());
+        return ResponseEntity.ok("Added " + requestDto.amount() + " credit to user " + userId.id());
+    }
+
+    @GetMapping("/library")
+    public ResponseEntity<List<OwnedCopyDto>> getOwnedCopies(@AuthenticationPrincipal Jwt token) {
+        UserId userId = UserId.fromToken(token);
+        List<OwnedCopy> games = userService.findAllOwnedCopies(userId);
+        return ResponseEntity.ok(games.stream().map(OwnedCopyDto::from).toList());
+    }
+
+    @PostMapping("/buy")
+    public ResponseEntity<OwnedCopyDto> buyGame(@AuthenticationPrincipal Jwt token, @RequestBody BuyGameRequestDto requestDto) {
+        UserId userId = UserId.fromToken(token);
+        GameId gameId = new GameId(requestDto.gameId());
+        OwnedCopy oc = userService.buyGame(userId,gameId);
+        return ResponseEntity.ok(OwnedCopyDto.from(oc));
     }
 }

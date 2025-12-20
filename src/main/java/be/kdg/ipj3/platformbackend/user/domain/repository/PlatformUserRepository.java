@@ -19,6 +19,7 @@ public interface PlatformUserRepository {
     List<PlatformUser> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds,String nameQuery, int size);
     List<PlatformUser> findByIdIn(Collection<UUID> ids);
     List<OwnedCopy> findFavoriteGames(UUID id);
+    List<OwnedCopy> findOwnedGames(UUID id);
     Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId);
     Optional<OwnedCopy> findOwnedGameByGameId(UUID userId, UUID gameId);
 }
