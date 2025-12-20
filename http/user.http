@@ -81,8 +81,6 @@ Content-Type: application/json
   "amount": 50
 }
 
-###
-
 ### Get owned game library
 GET {{baseUrl}}/library
 Authorization: Bearer {{access_token}}

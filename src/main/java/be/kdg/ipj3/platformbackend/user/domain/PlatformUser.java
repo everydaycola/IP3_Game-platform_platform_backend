@@ -66,10 +66,15 @@ public class PlatformUser {
     }
 
     public OwnedCopy buyGame(GameId gameId, double price) {
-        if (price > this.credits){
+        if (price > this.credits) {
             log.error("User {} does not have enough credits", this.userId.id());
-            throw  new InsufficientCreditsException(credits, price);
+            throw new InsufficientCreditsException(credits, price);
         }
+        if (ownedGames.stream().anyMatch(ownedCopy -> ownedCopy.getGameId().id().equals(gameId.id()))) {
+           log.error("User {} allready owns game {}", this.userId.id(), gameId.id());
+            throw new RuntimeException("Game " + gameId.id() + " already owned");
+        }
+
         removeCredits(price);
         return addOwnedGame(gameId);
     }
