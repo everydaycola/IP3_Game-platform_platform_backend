@@ -20,4 +20,5 @@ public interface PlatformUserRepository {
     List<PlatformUser> findByIdIn(Collection<UUID> ids);
     List<OwnedCopy> findFavoriteGames(UUID id);
     Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId);
+    Optional<OwnedCopy> findOwnedGameByGameId(UUID userId, UUID gameId);
 }

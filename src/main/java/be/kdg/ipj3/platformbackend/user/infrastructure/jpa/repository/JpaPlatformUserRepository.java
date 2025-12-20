@@ -20,10 +20,10 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
             SELECT u
             FROM JpaPlatformUserEntity u
             LEFT JOIN FETCH u.achievements
+            LEFT JOIN FETCH u.ownedGames
             WHERE u.id = :id
             """)
-    Optional<JpaPlatformUserEntity> findByIdWithAchievements(UUID id);
-
+    Optional<JpaPlatformUserEntity> findByIdWithAchievementsAndOwnedGames(UUID id);
 
     @Query(value = """
                 SELECT *
@@ -70,6 +70,15 @@ public interface JpaPlatformUserRepository extends JpaRepository<JpaPlatformUser
             AND og.gameId = :gameId
             """)
     Optional<JpaOwnedCopyEntity> findFavoriteGameByGameId(UUID userId,UUID gameId);
+
+    @Query("""
+            SELECT og
+            FROM JpaPlatformUserEntity u
+            JOIN u.ownedGames og
+            WHERE u.id = :userId
+            AND og.gameId = :gameId
+            """)
+    Optional<JpaOwnedCopyEntity> findOwnedGameByGameId(UUID userId,UUID gameId);
 
     List<JpaPlatformUserEntity> findByIdIn(Collection<UUID> ids);
 }

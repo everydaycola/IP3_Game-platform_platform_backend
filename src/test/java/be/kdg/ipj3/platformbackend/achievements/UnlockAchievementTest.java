@@ -32,7 +32,7 @@ public class UnlockAchievementTest {
     @Nested
     class SuccessFlows {
         @Test
-        void unlockAchievement_adds_new_achievement_to_user(){
+        void unlockAchievement_adds_new_achievement_to_user() {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             String userName = "TestUser";
@@ -43,11 +43,14 @@ public class UnlockAchievementTest {
                     "Lives for the test, test is life",
                     new ArrayList<>(),
                     "",
-                    "");
+                    "",
+                    0.0,
+                    new ArrayList<>()
+            );
 
             AchievementId achievementId = new AchievementId(UUID.fromString("11111111-1111-1111-1111-111111111123"));
 
-            AchievementMessageDto dto = new AchievementMessageDto(userId.id(),achievementId.id());
+            AchievementMessageDto dto = new AchievementMessageDto(userId.id(), achievementId.id());
 
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
             //Act
@@ -60,9 +63,9 @@ public class UnlockAchievementTest {
     }
 
     @Nested
-    class ErrorFlows{
+    class ErrorFlows {
         @Test
-        void unlockAchievement_adds_no_achievement_already_earned_to_user(){
+        void unlockAchievement_adds_no_achievement_already_earned_to_user() {
             //Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             String userName = "TestUser";
@@ -73,11 +76,14 @@ public class UnlockAchievementTest {
                     "Lives for the test, test is life",
                     new ArrayList<>(),
                     "",
-                    "");
+                    "",
+                    0.0,
+                    new ArrayList<>()
+            );
 
             AchievementId achievementId = new AchievementId(UUID.fromString("11111111-1111-1111-1111-111111111123"));
 
-            AchievementMessageDto dto = new AchievementMessageDto(userId.id(),achievementId.id());
+            AchievementMessageDto dto = new AchievementMessageDto(userId.id(), achievementId.id());
 
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
             //Act

@@ -73,9 +73,9 @@ public class UserService {
 
     public Game addFavoriteGame(UserId userId, GameId gameId){
         log.info("User: " + userId + " added game with id" + gameId.id() + "to their favorites.");
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
-        OwnedCopy oc = findFavoriteGameByGameId(user.getUserId(),gameId);
+        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
 
         user.favoriteGame(oc.getId(),true);
         platformUserRepository.save(user);
@@ -84,8 +84,9 @@ public class UserService {
 
     public void removeFavoriteGame(UserId userId, GameId gameId){
         log.info("User: " + userId + " removed game with id" + gameId.id() + "from their favorites.");
+        gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        OwnedCopy oc = findFavoriteGameByGameId(user.getUserId(),gameId);
+        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
 
         user.favoriteGame(oc.getId(),false);
         platformUserRepository.save(user);
@@ -96,9 +97,9 @@ public class UserService {
         return platformUserRepository.findFavoriteGames(id.id());
     }
 
-    public OwnedCopy findFavoriteGameByGameId(UserId userId, GameId gameId){
-        log.info("Finding favorite game {} of user {}",gameId.id(),userId.id());
+    public OwnedCopy findFavoriteGameByGameId(UserId userId, GameId gameId) {
+        log.info("Finding favorite game {} of user {}", gameId.id(), userId.id());
         platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        return platformUserRepository.findFavoriteGameByGameId(userId.id(),gameId.id()).orElseThrow(gameId::notFound);
+        return platformUserRepository.findFavoriteGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
     }
 }

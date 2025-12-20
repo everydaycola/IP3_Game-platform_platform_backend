@@ -11,26 +11,32 @@ import java.util.UUID;
 @Entity
 @Table(name = "owned_copies")
 public class JpaOwnedCopyEntity {
-    @EmbeddedId
+    @Id
+    @Column(nullable = false)
     private UUID id;
 
-    @JoinColumn(name = "game_id", nullable = false)
+    @Column(name = "game_id", nullable = false)
     private UUID gameId;
 
     @Column
     private boolean isFavorite;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private JpaPlatformUserEntity user;
+
     public JpaOwnedCopyEntity() {
     }
 
-    public JpaOwnedCopyEntity(UUID id, UUID gameId, boolean isFavorite) {
+    public JpaOwnedCopyEntity(UUID id, UUID gameId, boolean isFavorite, JpaPlatformUserEntity user) {
         this.id = id;
         this.gameId = gameId;
         this.isFavorite = isFavorite;
+        this.user = user;
     }
 
-    public static JpaOwnedCopyEntity fromDomain(OwnedCopy ownedCopy) {
-        return new JpaOwnedCopyEntity(ownedCopy.getId().id(), ownedCopy.getGameId().id(), ownedCopy.isFavorite());
+    public static JpaOwnedCopyEntity fromDomain(OwnedCopy ownedCopy, JpaPlatformUserEntity user) {
+        return new JpaOwnedCopyEntity(ownedCopy.getId().id(), ownedCopy.getGameId().id(), ownedCopy.isFavorite(), user);
     }
 
     public OwnedCopy toDomain() {

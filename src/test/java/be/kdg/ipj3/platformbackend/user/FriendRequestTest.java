@@ -47,8 +47,8 @@ public class FriendRequestTest {
             UserId friend1Id = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
             String userName2 = "TestUser2";
 
-            PlatformUser user = new PlatformUser(userId, userName1, "", new ArrayList<>(),"","");
-            PlatformUser friend = new PlatformUser(friend1Id, userName2, "", new ArrayList<>(),"","");
+            PlatformUser user = new PlatformUser(userId, userName1, "", new ArrayList<>(),"","",0.0,new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friend1Id, userName2, "", new ArrayList<>(),"","",0.0,new ArrayList<>());
             Mockito.when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
             Mockito.when(platformUserRepository.findUserById(friend1Id)).thenReturn(Optional.of(friend));
             Mockito.when(platformUserFriendRepository.findFriendRequestBetween(friend1Id.id(), userId))
@@ -69,8 +69,8 @@ public class FriendRequestTest {
             // Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UserId friendId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111112"));
-            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(),"","");
-            PlatformUser friend = new PlatformUser(friendId, "TestUser2", "", new ArrayList<>(),"","");
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(),"","",0.0,new ArrayList<>());
+            PlatformUser friend = new PlatformUser(friendId, "TestUser2", "", new ArrayList<>(),"","",0.0,new ArrayList<>());
             PlatformFriendRequest existingRequest = new PlatformFriendRequest(
                     UUID.randomUUID(), friend.getUserId(), user.getUserId(), false, LocalDateTime.now(), null
             );
@@ -103,8 +103,8 @@ public class FriendRequestTest {
             // Arrange
             UserId userId = new UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
             UUID friendId = UUID.fromString("11111111-1111-1111-1111-111111111112");
-            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(),"","");
-            PlatformUser friend = new PlatformUser(new UserId(friendId), "TestUser2", "", new ArrayList<>(),"","");
+            PlatformUser user = new PlatformUser(userId, "TestUser1", "", new ArrayList<>(),"","",0.0,new ArrayList<>());
+            PlatformUser friend = new PlatformUser(new UserId(friendId), "TestUser2", "", new ArrayList<>(),"","",0.0,new ArrayList<>());
             LocalDateTime now = LocalDateTime.now();
 
             PlatformFriendRequest existingRequest = new PlatformFriendRequest(

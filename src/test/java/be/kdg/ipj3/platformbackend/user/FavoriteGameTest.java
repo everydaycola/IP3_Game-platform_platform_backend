@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.games;
+package be.kdg.ipj3.platformbackend.user;
 
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,53 +45,85 @@ public class FavoriteGameTest {
         @Test
         void addFavoriteExistingGame_Should_return_Game() {
             // Arrange
-            ArgumentCaptor<OwnedCopy> favoriteGameCaptor = ArgumentCaptor.forClass(OwnedCopy.class);
+            ArgumentCaptor<PlatformUser> userCaptor = ArgumentCaptor.forClass(PlatformUser.class);
             UUID selectedGameId = UUID.randomUUID();
             UUID currentUserId = UUID.randomUUID();
+            UUID ownedCopyUUID= UUID.randomUUID();
+
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
-            PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>());
+            OwnedCopyId ownedCopyId = new OwnedCopyId(ownedCopyUUID);
+
+            OwnedCopy ownedCopy = new OwnedCopy(ownedCopyId,gameId,false);
+            PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>(List.of(ownedCopy)));
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
-            Mockito.when(platformUserRepository.save(Mockito.any(PlatformUser.class)))
-                    .thenReturn(returnValue);
-            Mockito.when(gameRepository.findById(selectedGameId))
+            Game game1 = new Game(gameId,"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
+
+            Mockito.when(platformUserRepository.findUserById(userId))
+                    .thenReturn(Optional.of(returnValue));
+
+            Mockito.when(platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()))
+                            .thenReturn(Optional.of(ownedCopy));
+
+            Mockito.when(gameRepository.findById(gameId.id()))
                     .thenReturn(Optional.of(game1));
 
             // Act
-            Game result = userService.addFavoriteGame(gameId, userId);
+            Game result = userService.addFavoriteGame(userId,gameId);
             //Assert
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo("Tic Tac Toe");
-            Mockito.verify(platformUserRepository).save(favoriteGameCaptor.capture());
-            FavoriteGame captured = favoriteGameCaptor.getValue();
-            assertThat(captured.getFavoriteGameId().getUserId()).isEqualTo(currentUserId);
-            assertThat(captured.getFavoriteGameId().getGameId()).isEqualTo(selectedGameId);
-            Mockito.verify(gameRepository, times(2)).findById(selectedGameId);
+
+            Mockito.verify(platformUserRepository).save(userCaptor.capture());
+            PlatformUser captured = userCaptor.getValue();
+
+            assertThat(captured.getOwnedGames().size()).isEqualTo(1);
+            assertThat(captured.getOwnedGames().getFirst().getGameId()).isEqualTo(result.getId());
+            assertThat(captured.getOwnedGames().getFirst().isFavorite()).isEqualTo(true);
+
             Mockito.verifyNoMoreInteractions(gameRepository);
             Mockito.verifyNoMoreInteractions(platformUserRepository);
         }
 
+
         @Test
         void removeExistingGameFavorite_Should_not_throw_error() {
             // Arrange
-            ArgumentCaptor<FavoriteGame> favoriteGameCaptor = ArgumentCaptor.forClass(FavoriteGame.class);
+            ArgumentCaptor<PlatformUser> userCaptor = ArgumentCaptor.forClass(PlatformUser.class);
             UUID selectedGameId = UUID.randomUUID();
             UUID currentUserId = UUID.randomUUID();
+            UUID ownedCopyUUID= UUID.randomUUID();
+
             GameId gameId = new GameId(selectedGameId);
             UserId userId = new UserId(currentUserId);
-            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
+            OwnedCopyId ownedCopyId = new OwnedCopyId(ownedCopyUUID);
 
-            Mockito.when(gameRepository.findById(selectedGameId))
+            OwnedCopy ownedCopy = new OwnedCopy(ownedCopyId,gameId,false);
+            PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>(List.of(ownedCopy)));
+            Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
+            Game game1 = new Game(gameId,"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
+
+            Mockito.when(platformUserRepository.findUserById(userId))
+                    .thenReturn(Optional.of(returnValue));
+
+            Mockito.when(platformUserRepository.findOwnedGameByGameId(userId.id(),gameId.id()))
+                    .thenReturn(Optional.of(ownedCopy));
+
+            Mockito.when(gameRepository.findById(gameId.id()))
                     .thenReturn(Optional.of(game1));
 
             // Act
-            userService.removeFavoriteGame(gameId, userId);
+            userService.removeFavoriteGame(userId,gameId);
+            //Assert
+            Mockito.verify(platformUserRepository).save(userCaptor.capture());
+            PlatformUser captured = userCaptor.getValue();
 
-            //assert
-            Mockito.verify(gameRepository, times(1)).findById(selectedGameId);
-            Mockito.verify(platformUserRepository).remove(favoriteGameCaptor.capture());
+            assertThat(captured.getOwnedGames().size()).isEqualTo(1);
+            assertThat(captured.getOwnedGames().getFirst().isFavorite()).isEqualTo(false);
+
+
+            Mockito.verifyNoMoreInteractions(gameRepository);
+            Mockito.verifyNoMoreInteractions(platformUserRepository);
         }
     }
 
@@ -107,7 +140,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> userService.addFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> userService.addFavoriteGame(new UserId(userId), invalidGameId))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());
@@ -115,8 +148,10 @@ public class FavoriteGameTest {
             Mockito.verifyNoMoreInteractions(gameRepository);
         }
 
+
         @Test
         void removeNonExistingGameFavorite_Should_throw_404() {
+            // Arrange
             String uuid = "00000000-0000-0000-0000-000000000000";
             UUID userId  = UUID.randomUUID();
             GameId invalidGameId = new GameId(UUID.fromString(uuid));
@@ -125,7 +160,7 @@ public class FavoriteGameTest {
                     .thenReturn(Optional.empty());
 
             // Act & Assert
-            assertThatThrownBy(() -> userService.removeFavoriteGame(invalidGameId,new UserId(userId)))
+            assertThatThrownBy(() -> userService.removeFavoriteGame(new UserId(userId), invalidGameId))
                     .isInstanceOf(NotFoundException.class);
 
             Mockito.verify(gameRepository, times(1)).findById(invalidGameId.id());

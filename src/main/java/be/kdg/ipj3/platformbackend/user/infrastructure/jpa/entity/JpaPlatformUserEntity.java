@@ -8,9 +8,7 @@ import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -36,8 +34,7 @@ public class JpaPlatformUserEntity {
     private List<JpaFriendRequestEntity> receivedFriendRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JpaUserAchievementEntity> achievements = new ArrayList<>();
-
+    private Set<JpaUserAchievementEntity> achievements = new HashSet<>();
     @Column
     private String profilePictureUrl;
 
@@ -47,13 +44,13 @@ public class JpaPlatformUserEntity {
     @Column
     private double credits;
 
-    @OneToMany()
-    private List<JpaOwnedCopyEntity> ownedGames;
+    @OneToMany(mappedBy = "user" ,orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<JpaOwnedCopyEntity> ownedGames;
 
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements, String profilePictureUrl, String bannerUrl, double credits) {
+    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, Set<JpaUserAchievementEntity> achievements, String profilePictureUrl, String bannerUrl, double credits) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
@@ -75,11 +72,11 @@ public class JpaPlatformUserEntity {
 
         entity.achievements = domain.getAchievements().stream()
                 .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         entity.ownedGames = domain.getOwnedGames().stream()
-                .map(JpaOwnedCopyEntity::fromDomain)
-                .collect(Collectors.toList());
+                .map(oc -> JpaOwnedCopyEntity.fromDomain(oc, entity))
+                .collect(Collectors.toSet());
         return entity;
     }
 

@@ -37,7 +37,7 @@ public class UserTest {
             //Arrange
             UserId userId = new UserId(UUID.randomUUID());
             String userName1 = "TestUser1";
-            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(),"" ,"");
+            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(),"" ,"",0.0,new ArrayList<>());
             Mockito.when(platformUserRepository.createUser(Mockito.any(PlatformUser.class)))
                     .thenReturn(mockUser);
             // Act
@@ -52,7 +52,7 @@ public class UserTest {
             //Arrange
             UserId userId = new UserId(UUID.randomUUID());
             String userName1 = "TestUser1";
-            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(), "","");
+            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(), "","",0.0,new ArrayList<>());
             Mockito.when(platformUserRepository.findUserById(userId))
                     .thenReturn(Optional.of(mockUser));
             //Act
@@ -70,9 +70,9 @@ public class UserTest {
             UserId testUser1Id = new UserId(UUID.randomUUID());
             UserId testUser2Id = new UserId(UUID.randomUUID());
             String userName1 = "TestUser1";
-            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(), "","");
-            PlatformUser testUser1 = new PlatformUser(testUser1Id, "test-user-1","",  new ArrayList<>(), "","");
-            PlatformUser testUser2 = new PlatformUser(testUser2Id, "test-user-2","", new ArrayList<>(),"","");
+            PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(), "","",0.0,new ArrayList<>());
+            PlatformUser testUser1 = new PlatformUser(testUser1Id, "test-user-1","",  new ArrayList<>(), "","",0.0,new ArrayList<>());
+            PlatformUser testUser2 = new PlatformUser(testUser2Id, "test-user-2","", new ArrayList<>(),"","",0.0,new ArrayList<>());
 
             List<PlatformUser> list = List.of(mockUser,testUser1,testUser2);
             List<UserId> idList = List.of(userId, testUser1Id, testUser2Id);
@@ -98,7 +98,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "",  new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "",  new ArrayList<>(), "", "",0.0,new ArrayList<>());
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("test biography", "", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
@@ -120,7 +120,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "",0.0,new ArrayList<>());
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "website.com/testimg.jpg", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
@@ -142,7 +142,7 @@ public class UserTest {
                 //Arrange
                 UserId userId = new UserId(UUID.randomUUID());
                 String userName1 = "TestUser1";
-                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "");
+                PlatformUser mockUser = new PlatformUser(userId, userName1, "", new ArrayList<>(), "", "",0.0,new ArrayList<>());
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "", "website.com/testimg.jpg");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));

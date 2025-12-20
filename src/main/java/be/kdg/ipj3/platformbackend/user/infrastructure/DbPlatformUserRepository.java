@@ -29,7 +29,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public Optional<PlatformUser> findUserById(UserId userId) {
-        return jpaPlatformUserRepository.findByIdWithAchievements(userId.id()).map(JpaPlatformUserEntity::toDomain);
+        return jpaPlatformUserRepository.findByIdWithAchievementsAndOwnedGames(userId.id()).map(JpaPlatformUserEntity::toDomain);
     }
 
     @Override
@@ -92,6 +92,12 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     @Override
     public Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId) {
         return jpaPlatformUserRepository.findFavoriteGameByGameId(userId, gameId)
+                .map(JpaOwnedCopyEntity::toDomain);
+    }
+
+    @Override
+    public Optional<OwnedCopy> findOwnedGameByGameId(UUID userId, UUID gameId) {
+        return jpaPlatformUserRepository.findOwnedGameByGameId(userId, gameId)
                 .map(JpaOwnedCopyEntity::toDomain);
     }
 
