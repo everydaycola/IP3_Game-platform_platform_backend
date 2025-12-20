@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.InsufficientCreditsException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,6 +66,10 @@ public class PlatformUser {
     }
 
     public OwnedCopy buyGame(GameId gameId, double price) {
+        if (price > this.credits){
+            log.error("User {} does not have enough credits", this.userId.id());
+            throw  new InsufficientCreditsException(credits, price);
+        }
         removeCredits(price);
         return addOwnedGame(gameId);
     }
