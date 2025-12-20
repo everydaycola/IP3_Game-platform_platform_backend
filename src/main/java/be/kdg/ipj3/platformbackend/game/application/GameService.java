@@ -7,8 +7,6 @@ import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
-import be.kdg.ipj3.platformbackend.shared.domain.UserId;
-import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
