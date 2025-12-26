@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.user.domain.repository;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 
 import java.util.Collection;
@@ -17,4 +18,8 @@ public interface PlatformUserRepository {
     List<PlatformUser> findRecommendationsListOfSize(List<UUID> exlucdedIds, int size);
     List<PlatformUser> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds,String nameQuery, int size);
     List<PlatformUser> findByIdIn(Collection<UUID> ids);
+    List<OwnedCopy> findFavoriteGames(UUID id);
+    List<OwnedCopy> findOwnedGames(UUID id);
+    Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId);
+    Optional<OwnedCopy> findOwnedGameByGameId(UUID userId, UUID gameId);
 }

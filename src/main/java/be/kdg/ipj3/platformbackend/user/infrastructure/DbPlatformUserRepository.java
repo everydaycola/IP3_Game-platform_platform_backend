@@ -2,8 +2,10 @@ package be.kdg.ipj3.platformbackend.user.infrastructure;
 
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaOwnedCopyEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
 import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.repository.JpaPlatformUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
 
     @Override
     public Optional<PlatformUser> findUserById(UserId userId) {
-        return jpaPlatformUserRepository.findByIdWithAchievements(userId.id()).map(JpaPlatformUserEntity::toDomain);
+        return jpaPlatformUserRepository.findByIdWithAchievementsAndOwnedGames(userId.id()).map(JpaPlatformUserEntity::toDomain);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
-    public List<PlatformUser> findRecommendationsListOfSize( List<UUID> excludedIds, int size) {
+    public List<PlatformUser> findRecommendationsListOfSize(List<UUID> excludedIds, int size) {
         return jpaPlatformUserRepository.findUsersNotInListLimited(excludedIds, size)
                 .stream()
                 .map(JpaPlatformUserEntity::toDomain)
@@ -66,8 +68,8 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
     }
 
     @Override
-    public List<PlatformUser> findRecommendationsListOfSizeWithNameQuery( List<UUID> excludedIds,String nameQuery, int size) {
-        return jpaPlatformUserRepository.findUsersNotInListWithNameQuery(excludedIds,nameQuery, size)
+    public List<PlatformUser> findRecommendationsListOfSizeWithNameQuery(List<UUID> excludedIds, String nameQuery, int size) {
+        return jpaPlatformUserRepository.findUsersNotInListWithNameQuery(excludedIds, nameQuery, size)
                 .stream()
                 .map(JpaPlatformUserEntity::toDomain)
                 .toList();
@@ -78,6 +80,32 @@ public class DbPlatformUserRepository implements PlatformUserRepository {
         return jpaPlatformUserRepository.findByIdIn(ids).stream()
                 .map(JpaPlatformUserEntity::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OwnedCopy> findFavoriteGames(UUID id) {
+        return jpaPlatformUserRepository.findFavoriteGames(id).stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OwnedCopy> findOwnedGames(UUID id) {
+        return jpaPlatformUserRepository.findOwnedGames(id).stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<OwnedCopy> findFavoriteGameByGameId(UUID userId, UUID gameId) {
+        return jpaPlatformUserRepository.findFavoriteGameByGameId(userId, gameId)
+                .map(JpaOwnedCopyEntity::toDomain);
+    }
+
+    @Override
+    public Optional<OwnedCopy> findOwnedGameByGameId(UUID userId, UUID gameId) {
+        return jpaPlatformUserRepository.findOwnedGameByGameId(userId, gameId)
+                .map(JpaOwnedCopyEntity::toDomain);
     }
 
 }
