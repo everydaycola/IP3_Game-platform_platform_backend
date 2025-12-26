@@ -4,7 +4,7 @@ import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public record PlayerLobbyId(UserId userId, LobbyId lobbyId) {
+public record Player(UserId userId, LobbyId lobbyId) {
 
     public NotFoundException notFound() {
         log.error("No relation between user {} and lobby {}", userId.id(), lobbyId.id());
