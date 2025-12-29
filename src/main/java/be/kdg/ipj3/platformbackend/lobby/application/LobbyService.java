@@ -2,7 +2,6 @@ package be.kdg.ipj3.platformbackend.lobby.application;
 
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
-import be.kdg.ipj3.platformbackend.lobby.domain.Player;
 import be.kdg.ipj3.platformbackend.lobby.infrastructure.DbLobbyRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class LobbyService {
 
     public Lobby createNewLobby(UserId userId, int maxPlayerCount) {
         Lobby newLobby = new Lobby(new LobbyId(UUID.randomUUID()),new ArrayList<>(), LocalDateTime.now(), maxPlayerCount);
-        newLobby.getPlayers().add(new Player(userId, newLobby.getId()));
+        newLobby.addPlayer(userId);
         return lobbyRepository.createNewLobby(newLobby);
     }
 }
