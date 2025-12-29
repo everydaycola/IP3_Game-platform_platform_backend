@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 public class Lobby {
     LobbyId id;
-    List<Player> player;
+    List<Player> players;
     LocalDateTime creationDate;
     int maxPlayerCount;
     //Todo: correctly map game settings.
