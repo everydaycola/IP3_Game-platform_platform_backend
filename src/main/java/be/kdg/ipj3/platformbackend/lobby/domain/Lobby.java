@@ -1,8 +1,8 @@
 package be.kdg.ipj3.platformbackend.lobby.domain;
 
 import be.kdg.ipj3.platformbackend.game.domain.Game;
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ import java.util.List;
 @Slf4j
 public class Lobby {
     LobbyId id;
+    //Todo: dit moet een ID zijn.
     Game game;
     List<Player> players;
     LocalDateTime creationDate;
@@ -26,8 +27,8 @@ public class Lobby {
         return new ConflictException("Lobby is already full [" + id + "]");
     }
 
-    public void addPlayer(PlatformUser user ){
-        this.players.add(new Player(user));
+    public void addPlayer(UserId userId ){
+        this.players.add(new Player(userId));
     }
 
     public void removePlayer(Player player){

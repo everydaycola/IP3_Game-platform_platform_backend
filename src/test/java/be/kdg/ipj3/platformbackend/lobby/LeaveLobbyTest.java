@@ -46,8 +46,8 @@ public class LeaveLobbyTest {
             Lobby lobby = new Lobby(lobbyId, null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser user1 = new PlatformUser(userId1, "u1", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
             PlatformUser user2 = new PlatformUser(userId2, "u2", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
-            lobby.addPlayer(user1);
-            lobby.addPlayer(user2);
+            lobby.addPlayer(user1.getUserId());
+            lobby.addPlayer(user2.getUserId());
             Mockito.when(lobbyRepository.findLobbyById(lobbyId))
                     .thenReturn(Optional.of(lobby));
 
@@ -68,7 +68,7 @@ public class LeaveLobbyTest {
             UserId userId = new UserId(UUID.randomUUID());
             Lobby lobby = new Lobby(lobbyId, null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser user = new PlatformUser(userId, "u1", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
-            lobby.addPlayer(user);
+            lobby.addPlayer(user.getUserId());
             Mockito.when(lobbyRepository.findLobbyById(lobbyId))
                     .thenReturn(Optional.of(lobby));
             Mockito.when(platformUserRepository.findUserById(userId))
@@ -92,7 +92,7 @@ public class LeaveLobbyTest {
             UserId otherId = new UserId(UUID.randomUUID());
             Lobby lobby = new Lobby(lobbyId, null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser otherUser = new PlatformUser(otherId, "u2", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
-            lobby.addPlayer(otherUser);
+            lobby.addPlayer(otherUser.getUserId());
             Mockito.when(lobbyRepository.findLobbyById(lobbyId))
                     .thenReturn(Optional.of(lobby));
             PlatformUser requestingUser = new PlatformUser(userId, "u1", "", null, "", "", 0.0, null);

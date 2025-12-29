@@ -40,7 +40,7 @@ public class JpaLobbyEntity {
 
         entity.players = domain.getPlayers()
                 .stream()
-                .map(player -> JpaPlayerEntity.fromDomain(player, entity))
+                .map(player -> JpaPlayerEntity.fromDomain(player,entity))
                 .collect(Collectors.toList());
 
         return entity;

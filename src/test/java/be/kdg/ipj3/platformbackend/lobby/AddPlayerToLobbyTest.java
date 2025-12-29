@@ -64,7 +64,7 @@ public class AddPlayerToLobbyTest {
             UserId userId = new UserId(UUID.randomUUID());
             Lobby lobby = new Lobby(lobbyId, null, new ArrayList<>(), LocalDateTime.now(), 1);
             PlatformUser existingUser = new PlatformUser(new UserId(UUID.randomUUID()), "existing", "", null, "", "", 0.0, null);
-            lobby.addPlayer(existingUser);
+            lobby.addPlayer(existingUser.getUserId());
             Mockito.when(lobbyRepository.findLobbyById(lobbyId))
                     .thenReturn(Optional.of(lobby));
 
@@ -83,7 +83,7 @@ public class AddPlayerToLobbyTest {
             UserId userId = new UserId(UUID.randomUUID());
             Lobby lobby = new Lobby(lobbyId, null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser user = new PlatformUser(userId, "u", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
-            lobby.addPlayer(user);
+            lobby.addPlayer(user.getUserId());
             Mockito.when(lobbyRepository.findLobbyById(lobbyId))
                     .thenReturn(Optional.of(lobby));
 

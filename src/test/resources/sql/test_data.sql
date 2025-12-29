@@ -88,7 +88,7 @@ VALUES ('11111111-ffff-1111-1111-111111111111',
         now(),
         2);
 
-INSERT INTO players(lobby_id, platform_user_id)
+INSERT INTO players(lobby_id, user_id)
 VALUES ( '11111111-ffff-1111-1111-111111111111'
        , '11111111-1111-1111-aabb-111111111111');
 
@@ -98,10 +98,10 @@ VALUES ('11111111-ffee-1111-1111-111111111111',
         now(),
         1);
 
-INSERT INTO players(lobby_id, platform_user_id)
+INSERT INTO players(lobby_id, user_id)
 VALUES ( '11111111-ffee-1111-1111-111111111111'
        , '11111111-1111-1111-aaaa-111111111111');
 
-INSERT INTO players(lobby_id, platform_user_id)
+INSERT INTO players(lobby_id, user_id)
 VALUES ( '11111111-ffee-1111-1111-111111111111'
        , '11111111-1111-1111-aacc-111111111111');

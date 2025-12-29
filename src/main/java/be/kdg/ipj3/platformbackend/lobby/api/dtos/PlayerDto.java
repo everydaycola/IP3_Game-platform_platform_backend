@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public record PlayerDto(UUID userId) {
     public static PlayerDto from(final Player player){
-        return new PlayerDto(player.user().getUserId().id());
+        return new PlayerDto(player.userId().id());
     }
 }

@@ -42,7 +42,7 @@ public class LobbyService {
         Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         Lobby newLobby = new Lobby(new LobbyId(UUID.randomUUID()),game, new ArrayList<>(), LocalDateTime.now(), maxPlayerCount);
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        newLobby.addPlayer(platformUser);
+        newLobby.addPlayer(platformUser.getUserId());
         return lobbyRepository.createNewLobby(newLobby);
     }
 
@@ -51,9 +51,9 @@ public class LobbyService {
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         Player player = lobby.getPlayers()
                 .stream()
-                .filter(p -> p.user().getUserId().id().equals(userId.id()))
+                .filter(p -> p.userId().id().equals(userId.id()))
                 .findFirst()
-                .orElseThrow(() -> new Player(platformUser).notFound());
+                .orElseThrow(() -> new Player(platformUser.getUserId()).notFound());
         lobby.removePlayer(player);
         if(lobby.getPlayers().isEmpty()){
             removeLobby(lobby);
@@ -70,14 +70,14 @@ public class LobbyService {
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         lobby.getPlayers()
                 .stream()
-                .filter(p -> p.user().getUserId().id().equals(userId.id()))
+                .filter(p -> p.userId().id().equals(userId.id()))
                 .findAny()
-                .ifPresent(p -> { throw new Player(platformUser).conflict();});
+                .ifPresent(p -> { throw new Player(platformUser.getUserId()).conflict();});
         if(lobby.isLobbyFull()){
             throw lobby.conflict();
         }
         platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        lobby.addPlayer(platformUser);
+        lobby.addPlayer(platformUser.getUserId());
         lobbyRepository.save(lobby);
         return lobby;
     }
