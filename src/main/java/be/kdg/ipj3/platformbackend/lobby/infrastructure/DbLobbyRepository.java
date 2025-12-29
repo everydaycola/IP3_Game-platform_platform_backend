@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.lobby.infrastructure;
 
+import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.domain.repository.LobbyRepository;
@@ -28,15 +29,10 @@ public class DbLobbyRepository implements LobbyRepository {
 
     //TODO: Make sure the max players is set based on what the game expects.
     @Override
-    public Lobby createNewLobby(Lobby newLobby) {
-        JpaLobbyEntity createdLobby=jpaLobbyRepository.save(JpaLobbyEntity.fromDomain(newLobby));
+    public Lobby createNewLobby(Lobby newLobby, Game game) {
+        JpaLobbyEntity createdLobby=jpaLobbyRepository.save(JpaLobbyEntity.fromDomain(newLobby, game));
         return createdLobby.toDomain();
     }
-
-    // @Override
-    //    public Optional<PlatformUser> findUserById(UserId userId) {
-    //        return jpaPlatformUserRepository.findByIdWithAchievementsAndOwnedGames(userId.id()).map(JpaPlatformUserEntity::toDomain);
-    //    }
 
     @Override
     public Optional<Lobby> findLobbyById(LobbyId lobbyId) {
@@ -44,12 +40,12 @@ public class DbLobbyRepository implements LobbyRepository {
     }
 
     @Override
-    public void save(Lobby lobby) {
-        jpaLobbyRepository.save(JpaLobbyEntity.fromDomain(lobby));
+    public void save(Lobby lobby, Game game) {
+        jpaLobbyRepository.save(JpaLobbyEntity.fromDomain(lobby, game));
     }
 
     @Override
-    public void remove(Lobby lobby) {
-        jpaLobbyRepository.delete(JpaLobbyEntity.fromDomain(lobby));
+    public void remove(Lobby lobby, Game game) {
+        jpaLobbyRepository.delete(JpaLobbyEntity.fromDomain(lobby, game));
     }
 }

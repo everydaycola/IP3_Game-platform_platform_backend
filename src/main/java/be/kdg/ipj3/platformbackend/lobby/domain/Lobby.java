@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.lobby.domain;
 
-import be.kdg.ipj3.platformbackend.game.domain.Game;
+import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
 import lombok.AllArgsConstructor;
@@ -15,8 +15,7 @@ import java.util.List;
 @Slf4j
 public class Lobby {
     LobbyId id;
-    //Todo: dit moet een ID zijn.
-    Game game;
+    GameId gameId;
     List<Player> players;
     LocalDateTime creationDate;
     int maxPlayerCount;

@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.lobby.infrastructure.jpa.entity;
 
+import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity.JpaGameEntity;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
@@ -28,15 +29,15 @@ public class JpaLobbyEntity {
 
     public Lobby toDomain(){
         List<Player> domainPlayers = this.players.stream().map(JpaPlayerEntity::toDomain).collect(Collectors.toList());
-        return new Lobby(new LobbyId(id),game.toDomain(), domainPlayers,this.creationDate, this.maxPlayerCount );
+        return new Lobby(new LobbyId(id),game.toDomain().getId(), domainPlayers,this.creationDate, this.maxPlayerCount );
     }
 
-    public static JpaLobbyEntity fromDomain(Lobby domain) {
+    public static JpaLobbyEntity fromDomain(Lobby domain, Game game) {
         JpaLobbyEntity entity = new JpaLobbyEntity();
         entity.id = domain.getId().id();
         entity.creationDate = domain.getCreationDate();
         entity.maxPlayerCount = domain.getMaxPlayerCount();
-        entity.game = JpaGameEntity.fromDomain(domain.getGame());
+        entity.game = JpaGameEntity.fromDomain(game);
 
         entity.players = domain.getPlayers()
                 .stream()

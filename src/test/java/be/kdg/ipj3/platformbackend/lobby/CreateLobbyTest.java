@@ -48,16 +48,16 @@ public class CreateLobbyTest {
             int maxPlayerCount = 4;
             Game mockGame = new Game(gameId, "Test Game", "Desc", 10.0, "img", "icon", "url", null, new ArrayList<>());
             PlatformUser mockUser = new PlatformUser(userId, "user1", "email", new ArrayList<>(), "", "", 100.0, new ArrayList<>());
-            Lobby expectedLobby = new Lobby(null, mockGame, new ArrayList<>(), null, maxPlayerCount);
+            Lobby expectedLobby = new Lobby(null, mockGame.getId(), new ArrayList<>(), null, maxPlayerCount);
             when(gameRepository.findById(gameId.id())).thenReturn(Optional.of(mockGame));
             when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(mockUser));
-            when(lobbyRepository.createNewLobby(any(Lobby.class))).thenReturn(expectedLobby);
+            when(lobbyRepository.createNewLobby(any(Lobby.class), any(Game.class))).thenReturn(expectedLobby);
             // Act
             Lobby result = lobbyService.createNewLobby(userId, maxPlayerCount, gameId);
             // Assert
             assertThat(result).isNotNull();
             assertThat(result.getMaxPlayerCount()).isEqualTo(maxPlayerCount);
-            verify(lobbyRepository).createNewLobby(any(Lobby.class));
+            verify(lobbyRepository).createNewLobby(any(Lobby.class), any(Game.class));
         }
     }
 

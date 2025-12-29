@@ -10,7 +10,7 @@ public record LobbyDto(UUID id,UUID gameId, List<PlayerDto> players, LocalDateTi
     public static LobbyDto from(final Lobby lobby) {
         return new LobbyDto(
                 lobby.getId().id(),
-                lobby.getGame().getId().id(),
+                lobby.getGameId().id(),
                 lobby.getPlayers()
                         .stream()
                         .map(PlayerDto::from)
