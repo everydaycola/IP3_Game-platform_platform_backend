@@ -72,8 +72,7 @@ INSERT INTO owned_copies (id,
 VALUES ('22222222-2222-2222-2222-222222222222',
         '11111111-1111-1111-1111-111111111111',
         false,
-        '11111111-1111-1111-aaaa-111111111111'
-        );
+        '11111111-1111-1111-aaaa-111111111111');
 
 
 
@@ -81,5 +80,28 @@ INSERT INTO achievements (id, name, description, game_id)
 VALUES ('f47ac10b-58cc-4372-a567-0e02b2c3d479',
         'King of the Hill',
         'Win a game from starting in the middle',
-        '11111111-1111-1111-1111-111111111111')
+        '11111111-1111-1111-1111-111111111111');
 
+INSERT INTO lobbies (id, game_id, creation_date, max_player_count)
+VALUES ('11111111-ffff-1111-1111-111111111111',
+        '11111111-1111-1111-1111-111111111111',
+        now(),
+        2);
+
+INSERT INTO players(lobby_id, platform_user_id)
+VALUES ( '11111111-ffff-1111-1111-111111111111'
+       , '11111111-1111-1111-aabb-111111111111');
+
+INSERT INTO lobbies (id, game_id, creation_date, max_player_count)
+VALUES ('11111111-ffee-1111-1111-111111111111',
+        '11111111-1111-1111-1111-111111111111',
+        now(),
+        1);
+
+INSERT INTO players(lobby_id, platform_user_id)
+VALUES ( '11111111-ffee-1111-1111-111111111111'
+       , '11111111-1111-1111-aaaa-111111111111');
+
+INSERT INTO players(lobby_id, platform_user_id)
+VALUES ( '11111111-ffee-1111-1111-111111111111'
+       , '11111111-1111-1111-aacc-111111111111');

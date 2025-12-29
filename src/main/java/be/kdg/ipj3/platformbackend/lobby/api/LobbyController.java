@@ -1,18 +1,20 @@
 package be.kdg.ipj3.platformbackend.lobby.api;
 
+import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.LobbyDto;
+import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.LobbyCreationRequestDto;
 import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
+import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
+import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -32,9 +34,23 @@ public class LobbyController {
     }
 
     @PostMapping
-    public ResponseEntity<LobbyDto> createNewLobby(@AuthenticationPrincipal Jwt token){
+    public ResponseEntity<LobbyDto> createNewLobby(@AuthenticationPrincipal Jwt token, @RequestBody LobbyCreationRequestDto requestDto) {
         UserId userId = UserId.fromToken(token);
-        return ResponseEntity.ok(LobbyDto.from(lobbyService.createNewLobby(userId,2)));
+        return ResponseEntity.ok(LobbyDto.from(lobbyService.createNewLobby(userId, 2, new GameId(requestDto.gameId()))));
+    }
+
+    @PatchMapping("/{lobbyId}")
+    public ResponseEntity<LobbyDto> joinLobby(@AuthenticationPrincipal Jwt token, @PathVariable UUID lobbyId){
+        UserId userId = UserId.fromToken(token);
+        Lobby lobby = lobbyService.addPlayerToLobby(new LobbyId(lobbyId), userId);
+        return ResponseEntity.ok(LobbyDto.from(lobby));
+    }
+
+    @DeleteMapping("/{lobbyId}")
+    public ResponseEntity<String> leaveLobby(@AuthenticationPrincipal Jwt token, @PathVariable UUID lobbyId){
+        UserId userId = UserId.fromToken(token);
+        lobbyService.leaveLobby(userId, new LobbyId(lobbyId));
+        return ResponseEntity.ok("Succesfully left the lobby.");
     }
 
 }

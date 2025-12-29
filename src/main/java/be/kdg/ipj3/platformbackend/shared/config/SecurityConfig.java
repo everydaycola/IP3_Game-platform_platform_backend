@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/games/favorite/**").authenticated()
+                        .requestMatchers("/api/lobby","/api/lobby/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/user/friends/**").authenticated()
                         .anyRequest().permitAll()

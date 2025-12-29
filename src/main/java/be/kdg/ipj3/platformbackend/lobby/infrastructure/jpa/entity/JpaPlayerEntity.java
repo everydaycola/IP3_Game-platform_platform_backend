@@ -1,27 +1,30 @@
 package be.kdg.ipj3.platformbackend.lobby.infrastructure.jpa.entity;
 
-import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Player;
-import be.kdg.ipj3.platformbackend.shared.domain.UserId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity.JpaPlatformUserEntity;
+import jakarta.persistence.*;
 
 
 @Entity
+@Table(name = "players")
 public class JpaPlayerEntity {
     @Id
-    private JpaPlayerId id;
+    @ManyToOne
+    @JoinColumn(name = "platform_user_id", nullable = false)
+    private JpaPlatformUserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "lobby_id", nullable = false)
+    private JpaLobbyEntity lobby;
 
     public Player toDomain() {
-        return new Player(new UserId(this.id.getUserId()), new LobbyId(this.id.getLobbyId()));
+        return new Player(user.toDomain());
     }
 
-    public static JpaPlayerEntity fromDomain(Player domain) {
+    public static JpaPlayerEntity fromDomain(Player domain, JpaLobbyEntity lobby) {
         JpaPlayerEntity entity = new JpaPlayerEntity();
-        entity.id = new JpaPlayerId(
-                domain.userId().id(),
-                domain.lobbyId().id()
-        );
+        entity.user = JpaPlatformUserEntity.fromDomain(domain.user());
+        entity.lobby = lobby;
         return entity;
     }
 }

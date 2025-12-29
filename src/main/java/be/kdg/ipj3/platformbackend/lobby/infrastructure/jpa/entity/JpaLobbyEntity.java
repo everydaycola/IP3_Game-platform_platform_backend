@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.lobby.infrastructure.jpa.entity;
 
+import be.kdg.ipj3.platformbackend.game.infrastructure.jpa.entity.JpaGameEntity;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Player;
@@ -7,31 +8,41 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "lobbies")
 public class JpaLobbyEntity {
     @Id
     private UUID id;
-    LocalDateTime creationDate;
-    int maxPlayerCount;
-    @OneToMany(cascade = CascadeType.ALL)
-    List<JpaPlayerEntity> players;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id", nullable = false)
+    private JpaGameEntity game;
+
+    private LocalDateTime creationDate;
+    private int maxPlayerCount;
+
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JpaPlayerEntity> players;
 
     public Lobby toDomain(){
-        List<Player> domainPlayers = this.players.stream().map(JpaPlayerEntity::toDomain).toList();
-        return new Lobby(new LobbyId(id), domainPlayers,this.creationDate, this.maxPlayerCount );
+        List<Player> domainPlayers = this.players.stream().map(JpaPlayerEntity::toDomain).collect(Collectors.toList());
+        return new Lobby(new LobbyId(id),game.toDomain(), domainPlayers,this.creationDate, this.maxPlayerCount );
     }
 
-    public static JpaLobbyEntity fromDomain(Lobby domain){
+    public static JpaLobbyEntity fromDomain(Lobby domain) {
         JpaLobbyEntity entity = new JpaLobbyEntity();
         entity.id = domain.getId().id();
         entity.creationDate = domain.getCreationDate();
         entity.maxPlayerCount = domain.getMaxPlayerCount();
+        entity.game = JpaGameEntity.fromDomain(domain.getGame());
+
         entity.players = domain.getPlayers()
                 .stream()
-                .map(JpaPlayerEntity::fromDomain)
-                .toList();
+                .map(player -> JpaPlayerEntity.fromDomain(player, entity))
+                .collect(Collectors.toList());
+
         return entity;
     }
 
