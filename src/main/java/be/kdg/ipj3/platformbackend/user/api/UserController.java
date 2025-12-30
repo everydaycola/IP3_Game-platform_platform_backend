@@ -28,8 +28,16 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<MinimalPlatformUserDto> getAnotherUsersInfo(@AuthenticationPrincipal Jwt token , @PathVariable UUID userId){
+        UserId requestingUserId = UserId.fromToken(token);
+        UserId requestedUserId = new UserId(userId);
+        log.info("User with id {} was requested by {}", requestedUserId, requestingUserId);
+        return ResponseEntity.ok(MinimalPlatformUserDto.from(userService.findUserById(requestedUserId)));
+    }
+
     @GetMapping
-    public ResponseEntity<PlatformUserDto> getUserData(@AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<PlatformUserDto> getAnotherUsersInfo(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         log.info("User with id {} was recognized by the platform", userId);
         return ResponseEntity.ok(PlatformUserDto.from(userService.findUserById(userId)));

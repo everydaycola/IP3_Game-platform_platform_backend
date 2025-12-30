@@ -5,7 +5,6 @@ import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaAchievement
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import jakarta.persistence.*;
-import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +43,16 @@ public class JpaGameEntity {
     @OneToMany(mappedBy = "game" ,orphanRemoval = true, cascade = CascadeType.ALL)
     private List<JpaAchievementEntity> achievements;
 
+    @Column
+    private String aiGameStartEndpoint;
+
+    @Column
+    private String gameStartEndpoint;
+
     public JpaGameEntity() {
     }
 
-    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre) {
+    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre, String aiGameStartEndPoint, String gameStartEndpoint) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -56,6 +61,8 @@ public class JpaGameEntity {
         this.icon = icon;
         this.url = url;
         this.genre = genre;
+        this.aiGameStartEndpoint = aiGameStartEndPoint;
+        this.gameStartEndpoint = gameStartEndpoint;
     }
 
     public static JpaGameEntity fromDomain(Game game) {
@@ -67,7 +74,9 @@ public class JpaGameEntity {
                 game.getImage(),
                 game.getIcon(),
                 game.getUrl(),
-                JpaGenreEntity.fromDomain(game.getGenre())
+                JpaGenreEntity.fromDomain(game.getGenre()),
+                game.getAiGameStartEndpoint(),
+                game.getGameStartEndpoint()
         );
         entity.achievements = game.getAchievements().stream()
                 .map(achievement -> JpaAchievementEntity.fromDomain(achievement, entity))
@@ -77,7 +86,6 @@ public class JpaGameEntity {
     }
 
     public Game toDomain() {
-        //Necessary for testing to not fail with lazy loading
         List<Achievement> domainAchievements = new ArrayList<>();
         for (JpaAchievementEntity jpaAchievement : this.achievements){
           domainAchievements.add(jpaAchievement.toDomain());
@@ -92,7 +100,9 @@ public class JpaGameEntity {
                 this.icon,
                 this.url,
                 this.genre.toDomain(),
-                domainAchievements
+                domainAchievements,
+                this.aiGameStartEndpoint,
+                this.gameStartEndpoint
         );
     }
 }

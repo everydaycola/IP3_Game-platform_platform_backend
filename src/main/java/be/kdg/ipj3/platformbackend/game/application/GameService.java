@@ -52,7 +52,9 @@ public class GameService {
                 gameDto.achievements().stream()
                         .map(dto -> new Achievement(
                                 new AchievementId(dto.id()), dto.name(), dto.description()))
-                        .toList()
+                        .toList(),
+                gameDto.aiGameStartEndpoint(),
+                gameDto.gameStartEndpoint()
         );
         gameRepository.save(game);
         return game;

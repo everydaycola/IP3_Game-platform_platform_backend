@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/lobby","/api/lobby/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/user/friends/**").authenticated()
+                        .requestMatchers("/api/games").permitAll()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(mgmt -> mgmt.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

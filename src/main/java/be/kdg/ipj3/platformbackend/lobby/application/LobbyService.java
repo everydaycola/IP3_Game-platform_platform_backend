@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.lobby.application;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
+import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.StartGameRequest;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Player;
@@ -10,9 +11,13 @@ import be.kdg.ipj3.platformbackend.lobby.infrastructure.DbLobbyRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,11 +31,13 @@ public class LobbyService {
     private final DbLobbyRepository lobbyRepository;
     private final GameRepository gameRepository;
     private final PlatformUserRepository platformUserRepository;
+    private final RestClient restClient;
 
-    public LobbyService(DbLobbyRepository lobbyRepository, GameRepository gameRepository, PlatformUserRepository platformUserRepository) {
+    public LobbyService(DbLobbyRepository lobbyRepository, GameRepository gameRepository, PlatformUserRepository platformUserRepository, RestClient.Builder restClientBuilder) {
         this.lobbyRepository = lobbyRepository;
         this.gameRepository = gameRepository;
         this.platformUserRepository = platformUserRepository;
+        this.restClient = restClientBuilder.build();
     }
 
     public List<Lobby> findAllLobbies() {
@@ -85,5 +92,38 @@ public class LobbyService {
         lobby.addPlayer(platformUser.getUserId());
         lobbyRepository.save(lobby,game);
         return lobby;
+    }
+
+    public Lobby findLobby(LobbyId lobbyId) {
+        return lobbyRepository.findLobbyById(lobbyId).orElseThrow(lobbyId::notFound);
+    }
+
+    //Todo: validate if the lobby is actualy full.
+    public UUID startGame(UserId userId, LobbyId lobbyId, Jwt token) {
+        Lobby lobby = lobbyRepository.findLobbyById(lobbyId)
+                .orElseThrow(lobbyId::notFound);
+        Game game = gameRepository.findById(lobby.getGameId().id())
+                .orElseThrow(lobby.getGameId()::notFound);
+        try {
+            JsonNode responseBody = restClient.post()
+                    .uri(game.getGameStartEndpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue())
+                    .body(new StartGameRequest(userId.id(), UUID.randomUUID()))
+                    .retrieve()
+                    .body(JsonNode.class);
+            if (responseBody == null || !responseBody.has("id")) {
+                throw new IllegalStateException(
+                        "Game started but no 'id' field returned from " + game.getGameStartEndpoint()
+                );
+            }
+            UUID gameSessionId = UUID.fromString(responseBody.get("id").asText());
+            log.info("Started game {} on server {}. Returned Session ID: {}",
+                    game.getName(), game.getGameStartEndpoint(), gameSessionId);
+
+            return gameSessionId;
+        } catch (Exception e) {
+            log.error("Failed to start game on remote server", e);
+            throw new RuntimeException("Could not start game session", e);
+        }
     }
 }

@@ -101,3 +101,8 @@ Authorization: Bearer {{access_token}}
 DELETE {{baseUrl}}/{{lobbyId}}
 Content-Type: application/json
 Authorization: Bearer {{access_token_2}}
+
+### (THIS REQUIRES A LOBBY!)Starting a NON ai game from a lobby
+POST {{baseUrl}}/{{lobbyId}}/start
+Content-Type: application/json
+Authorization: Bearer {{access_token_2}}

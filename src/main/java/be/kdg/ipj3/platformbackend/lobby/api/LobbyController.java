@@ -2,6 +2,7 @@ package be.kdg.ipj3.platformbackend.lobby.api;
 
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.LobbyDto;
+import be.kdg.ipj3.platformbackend.lobby.api.dtos.StartGameResponseDto;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.LobbyCreationRequestDto;
 import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
@@ -25,6 +26,12 @@ public class LobbyController {
 
     public LobbyController(LobbyService lobbyService) {
         this.lobbyService = lobbyService;
+    }
+
+    @GetMapping("/{lobbyId}")
+    public ResponseEntity<LobbyDto> findLobby(@PathVariable UUID lobbyId){
+        LobbyDto lobbyDto = LobbyDto.from(lobbyService.findLobby(new LobbyId(lobbyId)));
+        return ResponseEntity.ok(lobbyDto);
     }
 
     @GetMapping
@@ -51,6 +58,16 @@ public class LobbyController {
         UserId userId = UserId.fromToken(token);
         lobbyService.leaveLobby(userId, new LobbyId(lobbyId));
         return ResponseEntity.ok("Succesfully left the lobby.");
+    }
+
+    @PostMapping("/{lobbyId}/start")
+    public ResponseEntity<StartGameResponseDto> startGame(
+            @AuthenticationPrincipal Jwt token,
+            @PathVariable UUID lobbyId
+    ){
+        UserId userId = UserId.fromToken(token);
+        UUID gameId = lobbyService.startGame(userId, new LobbyId(lobbyId),token);
+        return ResponseEntity.ok(new StartGameResponseDto(gameId));
     }
 
 }

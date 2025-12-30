@@ -20,4 +20,6 @@ public class Game {
     private final String url;
     private final Genre genre;
     private List<Achievement> achievements;
+    private String aiGameStartEndpoint;
+    private String gameStartEndpoint;
 }
