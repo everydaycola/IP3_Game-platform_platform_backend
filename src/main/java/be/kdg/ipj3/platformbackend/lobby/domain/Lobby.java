@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
@@ -16,6 +17,7 @@ import java.util.List;
 public class Lobby {
     LobbyId id;
     GameId gameId;
+    UUID currentGameSessionId;
     List<Player> players;
     LocalDateTime creationDate;
     int maxPlayerCount;
@@ -42,5 +44,8 @@ public class Lobby {
         return players.size() == maxPlayerCount;
     }
 
+    public void setCurrentGameSession(UUID gameSessionId){
+        this.currentGameSessionId = gameSessionId;
+    }
 
 }

@@ -47,7 +47,7 @@ public class LobbyService {
 
     public Lobby createNewLobby(UserId userId, int maxPlayerCount, GameId gameId) {
         Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
-        Lobby newLobby = new Lobby(new LobbyId(UUID.randomUUID()), gameId, new ArrayList<>(), LocalDateTime.now(), maxPlayerCount);
+        Lobby newLobby = new Lobby(new LobbyId(UUID.randomUUID()), gameId,null, new ArrayList<>(), LocalDateTime.now(), maxPlayerCount);
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         newLobby.addPlayer(platformUser.getUserId());
         return lobbyRepository.createNewLobby(newLobby, game);
@@ -99,7 +99,9 @@ public class LobbyService {
     }
 
     //Todo: validate if the lobby is actualy full.
-    public UUID startGame(UserId userId, LobbyId lobbyId, Jwt token) {
+    public UUID startGame(UserId player1Id,UserId player2Id, LobbyId lobbyId, Jwt token) {
+        PlatformUser user1 = platformUserRepository.findUserById(player1Id).orElseThrow(player1Id::notFound);
+        PlatformUser user2 = platformUserRepository.findUserById(player2Id).orElseThrow(player2Id::notFound);
         Lobby lobby = lobbyRepository.findLobbyById(lobbyId)
                 .orElseThrow(lobbyId::notFound);
         Game game = gameRepository.findById(lobby.getGameId().id())
@@ -108,7 +110,7 @@ public class LobbyService {
             JsonNode responseBody = restClient.post()
                     .uri(game.getGameStartEndpoint())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getTokenValue())
-                    .body(new StartGameRequest(userId.id(), UUID.randomUUID()))
+                    .body(new StartGameRequest(user1.getUserId().id(), user2.getUserId().id()))
                     .retrieve()
                     .body(JsonNode.class);
             if (responseBody == null || !responseBody.has("id")) {
@@ -117,8 +119,10 @@ public class LobbyService {
                 );
             }
             UUID gameSessionId = UUID.fromString(responseBody.get("id").asText());
-            log.info("Started game {} on server {}. Returned Session ID: {}",
-                    game.getName(), game.getGameStartEndpoint(), gameSessionId);
+            lobby.setCurrentGameSession(gameSessionId);
+            lobbyRepository.save(lobby,game);
+            log.info("Started game {} on server {}. Set Session ID: {} in lobby {}",
+                    game.getName(), game.getGameStartEndpoint(), gameSessionId, lobby.getId());
 
             return gameSessionId;
         } catch (Exception e) {

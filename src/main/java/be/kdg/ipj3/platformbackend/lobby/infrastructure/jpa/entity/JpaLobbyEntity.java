@@ -21,6 +21,8 @@ public class JpaLobbyEntity {
     @JoinColumn(name = "game_id", nullable = false)
     private JpaGameEntity game;
 
+    private UUID currentGameSessionId;
+
     private LocalDateTime creationDate;
     private int maxPlayerCount;
 
@@ -29,7 +31,7 @@ public class JpaLobbyEntity {
 
     public Lobby toDomain(){
         List<Player> domainPlayers = this.players.stream().map(JpaPlayerEntity::toDomain).collect(Collectors.toList());
-        return new Lobby(new LobbyId(id),game.toDomain().getId(), domainPlayers,this.creationDate, this.maxPlayerCount );
+        return new Lobby(new LobbyId(id),game.toDomain().getId(),this.currentGameSessionId, domainPlayers,this.creationDate, this.maxPlayerCount );
     }
 
     public static JpaLobbyEntity fromDomain(Lobby domain, Game game) {
@@ -38,6 +40,7 @@ public class JpaLobbyEntity {
         entity.creationDate = domain.getCreationDate();
         entity.maxPlayerCount = domain.getMaxPlayerCount();
         entity.game = JpaGameEntity.fromDomain(game);
+        entity.currentGameSessionId = domain.getCurrentGameSessionId();
 
         entity.players = domain.getPlayers()
                 .stream()

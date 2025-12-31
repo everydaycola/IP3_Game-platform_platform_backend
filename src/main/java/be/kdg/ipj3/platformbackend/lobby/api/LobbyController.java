@@ -4,6 +4,7 @@ import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.LobbyDto;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.StartGameResponseDto;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.LobbyCreationRequestDto;
+import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.StartGameRequest;
 import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
@@ -60,13 +61,16 @@ public class LobbyController {
         return ResponseEntity.ok("Succesfully left the lobby.");
     }
 
+    //Todo: validate if the lobby is actualy full.
     @PostMapping("/{lobbyId}/start")
     public ResponseEntity<StartGameResponseDto> startGame(
             @AuthenticationPrincipal Jwt token,
-            @PathVariable UUID lobbyId
-    ){
+            @PathVariable UUID lobbyId,
+            @RequestBody StartGameRequest requestData
+            ){
         UserId userId = UserId.fromToken(token);
-        UUID gameId = lobbyService.startGame(userId, new LobbyId(lobbyId),token);
+        UserId player2Id= new UserId(requestData.player2Id());
+        UUID gameId = lobbyService.startGame(userId, player2Id, new LobbyId(lobbyId),token);
         return ResponseEntity.ok(new StartGameResponseDto(gameId));
     }
 
