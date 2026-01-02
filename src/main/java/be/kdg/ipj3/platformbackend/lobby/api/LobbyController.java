@@ -69,7 +69,7 @@ public class LobbyController {
             ){
         UserId userId = UserId.fromToken(token);
         UserId player2Id= new UserId(requestData.player2Id());
-        UUID gameId = lobbyService.startGame(userId, player2Id, new LobbyId(lobbyId),token);
+        UUID gameId = lobbyService.startGame(userId, player2Id, new LobbyId(lobbyId),token, requestData.settings());
         return ResponseEntity.ok(new StartGameResponseDto(gameId));
     }
 

@@ -2,6 +2,7 @@ package be.kdg.ipj3.platformbackend.lobby.domain;
 
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.BadRequestException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,11 @@ public class Lobby {
         log.error("Non lobby manager attempted a game start for lobby {}", id);
         return new ForbiddenException("Non lobby manager attempted a game start for lobby ["+id + "]");
     }
+    public BadRequestException notAllGameSettingsWereSet(){
+        log.error("Not all game settings were set when starting game for lobby {}", id);
+        return new BadRequestException("Not all game settings were set for starting the game in lobby " + id);
+    }
+
 
     public void addPlayer(UserId userId ){
         this.players.add(new Player(userId));

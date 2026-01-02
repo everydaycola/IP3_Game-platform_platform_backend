@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -22,13 +23,13 @@ public class ExternalGameApiCatalog implements GameApiCatalog {
     }
 
     @Override
-    public UUID startGameSession(Game game, String authToken, UUID player1Id, UUID player2Id) {
+    public UUID startGameSession(Game game, String authToken, UUID player1Id, UUID player2Id, Map<String, Object> settings) {
         log.info("Requesting a new game session");
         try{
             JsonNode responseBody = restClient.post()
                     .uri(game.getGameStartEndpoint())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
-                    .body(new StartGameRequest(player1Id, player2Id))
+                    .body(new StartGameRequest(player1Id, player2Id, settings))
                     .retrieve()
                     .body(JsonNode.class);
 

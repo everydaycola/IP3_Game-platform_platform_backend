@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -95,7 +96,7 @@ public class LobbyService {
         return lobbyRepository.findLobbyById(lobbyId).orElseThrow(lobbyId::notFound);
     }
 
-    public UUID startGame(UserId player1Id, UserId player2Id, LobbyId lobbyId, Jwt token) {
+    public UUID startGame(UserId player1Id, UserId player2Id, LobbyId lobbyId, Jwt token, Map<String, Object> settings) {
         Lobby lobby = lobbyRepository.findLobbyById(lobbyId)
                 .orElseThrow(lobbyId::notFound);
         if (!lobby.getLobbyManager().userId().id().equals(player1Id.id())) {
@@ -108,11 +109,15 @@ public class LobbyService {
         PlatformUser user2 = platformUserRepository.findUserById(player2Id).orElseThrow(player2Id::notFound);
         Game game = gameRepository.findById(lobby.getGameId().id())
                 .orElseThrow(lobby.getGameId()::notFound);
+        if(game.getGameSettings().size() != settings.size()){
+            throw lobby.notAllGameSettingsWereSet();
+        }
         UUID gameSessionId = gameApiCatalog.startGameSession(
                 game,
                 token.getTokenValue(),
                 user1.getUserId().id(),
-                user2.getUserId().id()
+                user2.getUserId().id(),
+                settings
         );
         lobby.setCurrentGameSession(gameSessionId);
         lobbyRepository.save(lobby, game);

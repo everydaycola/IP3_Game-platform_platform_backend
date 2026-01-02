@@ -1,5 +1,6 @@
 package be.kdg.ipj3.platformbackend.shared.api;
 
+import be.kdg.ipj3.platformbackend.shared.domain.exception.BadRequestException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
@@ -23,5 +24,9 @@ public class PlatformExceptionHandler {
     @ExceptionHandler(ForbiddenException.class)
     public static ResponseEntity<String> handleForbiddenConflict(ForbiddenException ex){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public static ResponseEntity<String> handleBadRequest(BadRequestException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
