@@ -1,4 +1,4 @@
-package be.kdg.ipj3.platformbackend.lobby.config;
+package be.kdg.ipj3.platformbackend.shared.config.rest;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

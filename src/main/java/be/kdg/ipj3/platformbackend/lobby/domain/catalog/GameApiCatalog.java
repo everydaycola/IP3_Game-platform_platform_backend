@@ -6,5 +6,4 @@ import java.util.UUID;
 
 public interface GameApiCatalog {
     UUID startGameSession(Game game, String authToken, UUID player1Id, UUID player2Id);
-    UUID startAiGameSession(Game game, String authToken);
 }

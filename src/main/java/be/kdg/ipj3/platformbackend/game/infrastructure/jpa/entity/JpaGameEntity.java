@@ -5,9 +5,12 @@ import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaAchievement
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -49,10 +52,14 @@ public class JpaGameEntity {
     @Column
     private String gameStartEndpoint;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private Map<String, Object> gameSettings;
+
     public JpaGameEntity() {
     }
 
-    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre, String aiGameStartEndPoint, String gameStartEndpoint) {
+    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre, String aiGameStartEndPoint, String gameStartEndpoint,Map<String, Object> gameSettings) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -63,6 +70,7 @@ public class JpaGameEntity {
         this.genre = genre;
         this.aiGameStartEndpoint = aiGameStartEndPoint;
         this.gameStartEndpoint = gameStartEndpoint;
+        this.gameSettings = gameSettings;
     }
 
     public static JpaGameEntity fromDomain(Game game) {
@@ -76,7 +84,8 @@ public class JpaGameEntity {
                 game.getUrl(),
                 JpaGenreEntity.fromDomain(game.getGenre()),
                 game.getAiGameStartEndpoint(),
-                game.getGameStartEndpoint()
+                game.getGameStartEndpoint(),
+                game.getGameSettings()
         );
         entity.achievements = game.getAchievements().stream()
                 .map(achievement -> JpaAchievementEntity.fromDomain(achievement, entity))
@@ -102,7 +111,8 @@ public class JpaGameEntity {
                 this.genre.toDomain(),
                 domainAchievements,
                 this.aiGameStartEndpoint,
-                this.gameStartEndpoint
+                this.gameStartEndpoint,
+                this.gameSettings
         );
     }
 }

@@ -54,7 +54,8 @@ public class GameService {
                                 new AchievementId(dto.id()), dto.name(), dto.description()))
                         .toList(),
                 gameDto.aiGameStartEndpoint(),
-                gameDto.gameStartEndpoint()
+                gameDto.gameStartEndpoint(),
+                gameDto.configurableSettings()
         );
         gameRepository.save(game);
         return game;

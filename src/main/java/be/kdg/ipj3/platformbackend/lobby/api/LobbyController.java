@@ -61,7 +61,6 @@ public class LobbyController {
         return ResponseEntity.ok("Succesfully left the lobby.");
     }
 
-    //Todo: validate if the lobby is actualy full.
     @PostMapping("/{lobbyId}/start")
     public ResponseEntity<StartGameResponseDto> startGame(
             @AuthenticationPrincipal Jwt token,

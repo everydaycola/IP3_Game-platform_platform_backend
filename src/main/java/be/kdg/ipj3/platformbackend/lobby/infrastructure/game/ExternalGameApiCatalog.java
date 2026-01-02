@@ -45,28 +45,4 @@ public class ExternalGameApiCatalog implements GameApiCatalog {
         }
         return null;
     }
-
-    @Override
-    public UUID startAiGameSession(Game game, String authToken ) {
-        log.info("Starting a AI game session");
-        try{
-            JsonNode responseBody = restClient.post()
-                    .uri(game.getAiGameStartEndpoint())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
-                    .retrieve()
-                    .body(JsonNode.class);
-
-            if (responseBody == null || !responseBody.has("id")) {
-                throw new IllegalStateException(
-                        "Game started but no 'id' field returned from " + game.getAiGameStartEndpoint()
-                );
-            }
-
-            return UUID.fromString(responseBody.get("id").asText());
-
-        }catch(HttpStatusCodeException e){
-            log.warn("Http error while asking {} to start a new game session.", game.getName());
-        }
-        return null;
-    }
 }
