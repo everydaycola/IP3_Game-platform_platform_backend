@@ -1,6 +1,7 @@
 package be.kdg.ipj3.platformbackend.shared.api;
 
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,5 +19,9 @@ public class PlatformExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public static ResponseEntity<String> handleFriendConflict(ConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(ForbiddenException.class)
+    public static ResponseEntity<String> handleForbiddenConflict(ForbiddenException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }

@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.lobby.domain;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,17 @@ public class Lobby {
     int maxPlayerCount;
     //Todo: correctly map game settings.
 
-    public ConflictException conflict(){
+    public ConflictException fullConflict(){
         log.error("Lobby is already full {}",id);
         return new ConflictException("Lobby is already full [" + id + "]");
+    }
+    public ConflictException notFullConflict(){
+        log.error("Lobby {} is trying to start with a non full lobby", id);
+        return new ConflictException("Lobby is not full yet [" + id +"]");
+    }
+    public ForbiddenException notLobbyHostForbidden(){
+        log.error("Non lobby manager attempted a game start for lobby {}", id);
+        return new ForbiddenException("Non lobby manager attempted a game start for lobby ["+id + "]");
     }
 
     public void addPlayer(UserId userId ){
