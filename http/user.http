@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:8080/api/user
+@baseUrl = http://localhost:8070/api/user
 @ClientId=go-backend
 @ClientSecret=b0ZVXfrGkyFlgXTPXtvCBOM4TLZzc9UY
 @player1username=123
