@@ -26,8 +26,16 @@ public class Conversation {
         );
     }
 
-    public void sendMessage(UUID sender, String text, LocalDateTime sendOn) {
-        ChatMessage message = new ChatMessage(new ChatMessageId(), sender,text,sendOn);
+    public static Conversation startNewWithoutUser() {
+        return new Conversation(
+                new ConversationId(),
+                null,
+                new ArrayList<>()
+        );
+    }
+
+    public void sendMessage(UUID sender, String text, LocalDateTime sentTime) {
+        ChatMessage message = new ChatMessage(new ChatMessageId(), sender,text,sentTime);
         this.messages.add(message);
         log.info("Message {} added to conversation {}", message.getId().id(), this.id.id());
     }

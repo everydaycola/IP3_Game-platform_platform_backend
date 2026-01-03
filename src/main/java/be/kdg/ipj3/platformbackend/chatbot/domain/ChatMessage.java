@@ -14,5 +14,5 @@ public class ChatMessage {
     private final ChatMessageId id;
     private final UUID sender;
     private final String text;
-    private final LocalDateTime sendOn;
+    private final LocalDateTime sentTme;
 }

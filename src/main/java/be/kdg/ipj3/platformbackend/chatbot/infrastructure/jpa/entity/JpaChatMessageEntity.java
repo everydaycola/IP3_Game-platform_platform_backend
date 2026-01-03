@@ -24,7 +24,7 @@ public class JpaChatMessageEntity {
     private String text;
 
     @Column
-    private LocalDateTime sendOn;
+    private LocalDateTime sentTime;
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
@@ -39,7 +39,7 @@ public class JpaChatMessageEntity {
         entity.id = domain.getId().id();
         entity.sender = domain.getSender();
         entity.text = domain.getText();
-        entity.sendOn = domain.getSendOn();
+        entity.sentTime = domain.getSentTme();
         entity.conversation = jpaConversation;
 
         return entity;
@@ -50,7 +50,7 @@ public class JpaChatMessageEntity {
                 new ChatMessageId(this.id),
                 this.sender,
                 this.text,
-                this.sendOn
+                this.sentTime
         );
     }
 }

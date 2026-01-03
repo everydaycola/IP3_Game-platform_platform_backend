@@ -19,25 +19,32 @@ public class ConversationService {
         this.repository = repository;
     }
 
-    Conversation find(ConversationId id){
+    public Conversation find(ConversationId id){
         return repository.findById(id).orElseThrow(id::notFound);
     }
 
-    Conversation startNew(UserId userId){
+    public Conversation startNew(UserId userId){
         Conversation newConversation = Conversation.startNew(userId);
-        log.info("New Conversation {} stated", newConversation.getId().id());
+        log.info("New Conversation {} started for user {}", newConversation.getId().id(), userId.id());
         repository.save(newConversation);
         return newConversation;
     }
 
-    Conversation sendMessage(ConversationId id, UUID sender, String text, LocalDateTime sendOn){
+    public Conversation startNewWithoutUser(){
+        Conversation newConversation = Conversation.startNewWithoutUser();
+        log.info("New Conversation {} started without a user", newConversation.getId().id());
+        repository.save(newConversation);
+        return newConversation;
+    }
+
+    public Conversation sendMessage(ConversationId id, UUID sender, String text, LocalDateTime sendOn){
         Conversation conversation = find(id);
         conversation.sendMessage(sender,text,sendOn);
         repository.save(conversation);
         return conversation;
     }
 
-    void endConversation(ConversationId id){
+    public void endConversation(ConversationId id){
         log.info("Conversation {} stopped", id.id());
         repository.remove(id);
     }
