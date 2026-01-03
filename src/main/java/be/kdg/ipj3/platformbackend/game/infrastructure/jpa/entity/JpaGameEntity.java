@@ -23,6 +23,8 @@ public class JpaGameEntity {
 
     @Column
     private String name;
+    @Column
+    private int maxPlayerCount;
 
     @Column
     private String description;
@@ -59,9 +61,10 @@ public class JpaGameEntity {
     public JpaGameEntity() {
     }
 
-    public JpaGameEntity(UUID id, String name, String description, double price, String image, String icon, String url, JpaGenreEntity genre, String aiGameStartEndPoint, String gameStartEndpoint,Map<String, Object> gameSettings) {
+    public JpaGameEntity(UUID id, String name,int maxPlayerCount, String description, double price, String image, String icon, String url, JpaGenreEntity genre, String aiGameStartEndPoint, String gameStartEndpoint,Map<String, Object> gameSettings) {
         this.id = id;
         this.name = name;
+        this.maxPlayerCount = maxPlayerCount;
         this.description = description;
         this.price = price;
         this.image = image;
@@ -77,6 +80,7 @@ public class JpaGameEntity {
         JpaGameEntity entity = new JpaGameEntity(
                 game.getId().id(),
                 game.getName(),
+                game.getMaxPlayerCount(),
                 game.getDescription(),
                 game.getPrice(),
                 game.getImage(),
@@ -103,6 +107,7 @@ public class JpaGameEntity {
         return new Game(
                 new GameId(this.id),
                 this.name,
+                this.maxPlayerCount,
                 this.description,
                 this.price,
                 this.image,

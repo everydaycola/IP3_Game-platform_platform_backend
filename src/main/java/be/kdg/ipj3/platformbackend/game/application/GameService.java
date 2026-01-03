@@ -43,6 +43,7 @@ public class GameService {
         final var game = new Game(
                 new GameId(gameDto.id()),
                 gameDto.name(),
+                gameDto.maxPlayerCount(),
                 gameDto.description(),
                 gameDto.price(),
                 gameDto.image(),
@@ -53,8 +54,8 @@ public class GameService {
                         .map(dto -> new Achievement(
                                 new AchievementId(dto.id()), dto.name(), dto.description()))
                         .toList(),
-                gameDto.aiGameStartEndpoint(),
-                gameDto.gameStartEndpoint(),
+                gameDto.aiStartGameEndpoint(),
+                gameDto.startGameEndpoint(),
                 gameDto.configurableSettings()
         );
         gameRepository.save(game);

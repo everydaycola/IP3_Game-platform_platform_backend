@@ -38,7 +38,7 @@ public class JpaLobbyEntity {
         JpaLobbyEntity entity = new JpaLobbyEntity();
         entity.id = domain.getId().id();
         entity.creationDate = domain.getCreationDate();
-        entity.maxPlayerCount = domain.getMaxPlayerCount();
+        entity.maxPlayerCount = game.getMaxPlayerCount();
         entity.game = JpaGameEntity.fromDomain(game);
         entity.currentGameSessionId = domain.getCurrentGameSessionId();
 

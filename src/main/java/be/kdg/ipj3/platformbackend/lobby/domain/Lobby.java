@@ -23,7 +23,6 @@ public class Lobby {
     List<Player> players;
     LocalDateTime creationDate;
     int maxPlayerCount;
-    //Todo: correctly map game settings.
 
     public ConflictException fullConflict(){
         log.error("Lobby is already full {}",id);

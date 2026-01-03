@@ -14,6 +14,7 @@ import java.util.Map;
 public class Game {
     private final GameId id;
     private final String name;
+    private final int maxPlayerCount;
     private final String description;
     private final double price;
     private final String image;

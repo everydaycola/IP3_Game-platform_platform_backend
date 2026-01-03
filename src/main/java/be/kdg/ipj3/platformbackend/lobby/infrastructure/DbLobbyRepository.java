@@ -27,7 +27,6 @@ public class DbLobbyRepository implements LobbyRepository {
         return jpaLobbyRepository.findAll().stream().map(JpaLobbyEntity::toDomain).toList();
     }
 
-    //TODO: Make sure the max players is set based on what the game expects.
     @Override
     public Lobby createNewLobby(Lobby newLobby, Game game) {
         JpaLobbyEntity createdLobby=jpaLobbyRepository.save(JpaLobbyEntity.fromDomain(newLobby, game));

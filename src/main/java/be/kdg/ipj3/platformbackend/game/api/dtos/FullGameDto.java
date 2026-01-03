@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public record FullGameDto(UUID id, String name, String description, double price, String image, String icon, String genre, String url, List<AchievementDto> achievements, String aiGameStartEndpoint, String gameStartEndpoint, Map<String, Object> configurableSettings) {
+public record FullGameDto(UUID id, String name,int maxPlayerCount, String description, double price, String image, String icon, String genre, String url, List<AchievementDto> achievements, String aiStartGameEndpoint, String startGameEndpoint, Map<String, Object> configurableSettings) {
     public static FullGameDto from(final Game game){
         return new FullGameDto(
                 game.getId().id(),
                 game.getName(),
+                game.getMaxPlayerCount(),
                 game.getDescription(),
                 game.getPrice(),
                 game.getImage(),
