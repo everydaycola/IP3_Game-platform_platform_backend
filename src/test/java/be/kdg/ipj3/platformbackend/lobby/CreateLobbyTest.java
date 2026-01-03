@@ -2,7 +2,6 @@ package be.kdg.ipj3.platformbackend.lobby;
 
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
-import be.kdg.ipj3.platformbackend.game.domain.Genre;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
 import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
@@ -48,10 +47,9 @@ public class CreateLobbyTest {
             UserId userId = new UserId(UUID.randomUUID());
             GameId gameId = new GameId(UUID.randomUUID());
             int maxPlayerCount = 4;
-            Game game = new Game(new GameId(UUID.randomUUID()),"myGame",2,"MyDescription",5.00,"","","localhost:8080",new Genre("strategy",""),new ArrayList<>(),"localhost:8080/start/ai","localhost:8080/start", new HashMap<>());
-            Game mockGame = new Game(gameId, "Test Game", 2,"Desc", 10.0, "img", "icon", "url", null, new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
+            Game mockGame = new Game(gameId, "Test Game", maxPlayerCount,"Desc", 10.0, "img", "icon", "url", null, new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
             PlatformUser mockUser = new PlatformUser(userId, "user1", "email", new ArrayList<>(), "", "", 100.0, new ArrayList<>());
-            Lobby expectedLobby = new Lobby(null, mockGame.getId(),null, new ArrayList<>(), null, game.getMaxPlayerCount());
+            Lobby expectedLobby = new Lobby(null, mockGame.getId(),null, new ArrayList<>(), null, mockGame.getMaxPlayerCount());
             when(gameRepository.findById(gameId.id())).thenReturn(Optional.of(mockGame));
             when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(mockUser));
             when(lobbyRepository.createNewLobby(any(Lobby.class), any(Game.class))).thenReturn(expectedLobby);

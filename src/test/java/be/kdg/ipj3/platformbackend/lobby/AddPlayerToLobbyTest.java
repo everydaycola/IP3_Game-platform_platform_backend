@@ -71,7 +71,7 @@ public class AddPlayerToLobbyTest {
             // Arrange
             LobbyId lobbyId = new LobbyId(UUID.randomUUID());
             UserId userId = new UserId(UUID.randomUUID());
-            Game game = new Game(new GameId(UUID.randomUUID()),"myGame",2,"MyDescription",5.00,"","","localhost:8080",new Genre("strategy",""),new ArrayList<>(),"localhost:8080/start/ai","localhost:8080/start", new HashMap<>());
+            Game game = new Game(new GameId(UUID.randomUUID()),"myGame",1,"MyDescription",5.00,"","","localhost:8080",new Genre("strategy",""),new ArrayList<>(),"localhost:8080/start/ai","localhost:8080/start", new HashMap<>());
             Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), game.getMaxPlayerCount());
             PlatformUser existingUser = new PlatformUser(new UserId(UUID.randomUUID()), "existing", "", null, "", "", 0.0, null);
             lobby.addPlayer(existingUser.getUserId());
