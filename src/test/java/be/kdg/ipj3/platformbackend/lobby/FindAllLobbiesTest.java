@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,7 +26,7 @@ public class FindAllLobbiesTest {
     @Test
     void findAllLobbies_shouldReturnListOfLobbies() {
         // Arrange
-        List<Lobby> expectedLobbies = List.of(new Lobby(null, null, null, null, 0));
+        List<Lobby> expectedLobbies = List.of(new Lobby(null, null, null, null, LocalDateTime.now(),0));
 
         Mockito.when(lobbyRepository.findAllLobbies())
                 .thenReturn(expectedLobbies);

@@ -20,10 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -57,7 +54,7 @@ public class FavoriteGameTest {
             OwnedCopy ownedCopy = new OwnedCopy(ownedCopyId,gameId,false);
             PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>(List.of(ownedCopy)));
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(gameId,"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
+            Game game1 = new Game(gameId,"Tic Tac Toe", 2,"Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>(),"localhost:8080/start/ai", "localhost:8080/start", new HashMap<>());
 
             Mockito.when(platformUserRepository.findUserById(userId))
                     .thenReturn(Optional.of(returnValue));
@@ -101,7 +98,7 @@ public class FavoriteGameTest {
             OwnedCopy ownedCopy = new OwnedCopy(ownedCopyId,gameId,false);
             PlatformUser returnValue = new PlatformUser(userId, "","",new ArrayList<>(),"","",0.0,new ArrayList<>(List.of(ownedCopy)));
             Genre puzzle = new Genre("Puzzle","Genre where you solve puzzles");
-            Game game1 = new Game(gameId,"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>());
+            Game game1 = new Game(gameId,"Tic Tac Toe", 2,"Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>(), "localhost:8080/start/ai", "localhost:8080/start", new HashMap<>());
 
             Mockito.when(platformUserRepository.findUserById(userId))
                     .thenReturn(Optional.of(returnValue));

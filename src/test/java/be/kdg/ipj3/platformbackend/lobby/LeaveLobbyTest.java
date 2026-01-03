@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,8 +51,9 @@ public class LeaveLobbyTest {
             LobbyId lobbyId = new LobbyId(UUID.randomUUID());
             UserId userId1 = new UserId(UUID.randomUUID());
             UserId userId2 = new UserId(UUID.randomUUID());
-            Game game = new Game(new GameId(UUID.randomUUID()),"myGame","MyDescription",5.00,"","","",new Genre("strategy",""),new ArrayList<>());
-            Lobby lobby = new Lobby(lobbyId, game.getId(), new ArrayList<>(), LocalDateTime.now(), 5);
+            GameId gameId = new GameId(UUID.randomUUID());
+            Game game = new Game(gameId, "Test Game", 2,"Desc", 10.0, "img", "icon", "url", null, new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
+            Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser user1 = new PlatformUser(userId1, "u1", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
             PlatformUser user2 = new PlatformUser(userId2, "u2", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
             lobby.addPlayer(user1.getUserId());
@@ -72,8 +74,9 @@ public class LeaveLobbyTest {
             // Arrange
             LobbyId lobbyId = new LobbyId(UUID.randomUUID());
             UserId userId = new UserId(UUID.randomUUID());
-            Game game = new Game(new GameId(UUID.randomUUID()),"myGame","MyDescription",5.00,"","","",new Genre("strategy",""),new ArrayList<>());
-            Lobby lobby = new Lobby(lobbyId, game.getId(), new ArrayList<>(), LocalDateTime.now(), 5);
+            GameId gameId = new GameId(UUID.randomUUID());
+            Game game = new Game(gameId, "Test Game", 2,"Desc", 10.0, "img", "icon", "url", null, new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
+            Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser user = new PlatformUser(userId, "u1", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
             lobby.addPlayer(user.getUserId());
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(lobby));
@@ -96,8 +99,8 @@ public class LeaveLobbyTest {
             LobbyId lobbyId = new LobbyId(UUID.randomUUID());
             UserId userId = new UserId(UUID.randomUUID());
             UserId otherId = new UserId(UUID.randomUUID());
-            Game game = new Game(new GameId(UUID.randomUUID()),"myGame","MyDescription",5.00,"","","",new Genre("strategy",""),new ArrayList<>());
-            Lobby lobby = new Lobby(lobbyId, game.getId(), new ArrayList<>(), LocalDateTime.now(), 5);
+            Game game = new Game(new GameId(UUID.randomUUID()),"myGame",2,"MyDescription",5.00,"","","",new Genre("strategy",""),new ArrayList<>(), "","",new HashMap<>());
+            Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), 5);
             PlatformUser otherUser = new PlatformUser(otherId, "u2", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
             lobby.addPlayer(otherUser.getUserId());
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(lobby));

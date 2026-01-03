@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -35,9 +36,9 @@ public class GetGameListTest {
             Genre strategy = new Genre("Strategy","Genre where a good strategy is key.");
             List<Game> gameList = new ArrayList<>(
                     List.of(
-                            new Game(new GameId(),"Tic Tac Toe", "Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>()),
-                            new Game(new GameId(),"Go", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy, new ArrayList<>()),
-                            new Game(new GameId(),"Tetris", "Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy, new ArrayList<>())
+                            new Game(new GameId(),"Tic Tac Toe", 2,"Game where you...", 20, "testimg.png", "testicon.png", "localhost:8080", puzzle, new ArrayList<>(),"localhost:8080/start/ai", "localhost:8080/start", new HashMap<>()),
+                            new Game(new GameId(),"Go", 2,"Game where you...", 15, "testimg.png", "testicon.png", "localhost:8081", strategy, new ArrayList<>(), "localhost:8081/start/ai","localhost:8081/start", new HashMap<>()),
+                            new Game(new GameId(),"Tetris", 2,"Game where you...", 15, "testimg.png", "testicon.png", "localhost:8082", strategy, new ArrayList<>(), "localhost:8082/start/ai", "localhost:8082/start", new HashMap<>())
                     )
             );
             Mockito.when(gameRepository.findAll()).thenReturn(gameList);
