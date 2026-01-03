@@ -19,7 +19,7 @@ public class JpaConversationEntity {
     @Column
     private UUID id;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private UUID userId;
 
     @OneToMany(mappedBy = "conversation", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -32,7 +32,10 @@ public class JpaConversationEntity {
         JpaConversationEntity entity = new JpaConversationEntity();
 
         entity.id = domain.getId().id();
-        entity.userId = domain.getUser().id();
+
+        entity.userId = domain.getUser() != null
+                ? domain.getUser().id()
+                : null;
         entity.messages = domain.getMessages().stream().map(msg -> JpaChatMessageEntity.fromDomain(msg,entity)).toList();
 
         return entity;

@@ -4,6 +4,7 @@ import be.kdg.ipj3.platformbackend.chatbot.domain.Conversation;
 import be.kdg.ipj3.platformbackend.chatbot.domain.ConversationId;
 import be.kdg.ipj3.platformbackend.chatbot.domain.repository.ConversationRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@Transactional
 public class ConversationService {
     private final ConversationRepository repository;
 

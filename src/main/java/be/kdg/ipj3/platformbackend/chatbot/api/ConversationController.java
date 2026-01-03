@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/conversation")
+@RequestMapping("/api/conversations")
 public class ConversationController {
     private final ConversationService conversations;
 

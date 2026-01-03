@@ -27,7 +27,7 @@ public class DbConversationRepository implements ConversationRepository {
 
     @Override
     public Optional<Conversation> findById(ConversationId id) {
-        return jpaConversationRepository.findByIdWithMessages(id.id()).map(JpaConversationEntity::toDomain);
+        return jpaConversationRepository.findById(id.id()).map(JpaConversationEntity::toDomain);
     }
 
     @Override
