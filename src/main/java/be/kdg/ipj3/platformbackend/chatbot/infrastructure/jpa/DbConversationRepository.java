@@ -29,4 +29,10 @@ public class DbConversationRepository implements ConversationRepository {
     public Optional<Conversation> findById(ConversationId id) {
         return jpaConversationRepository.findByIdWithMessages(id.id()).map(JpaConversationEntity::toDomain);
     }
+
+    @Override
+    public void remove(ConversationId id) {
+        jpaConversationRepository.removeById(id.id());
+        log.info("Conversation {} removed from database", id.id());
+    }
 }

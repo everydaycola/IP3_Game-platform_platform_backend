@@ -15,4 +15,6 @@ JOIN c.messages
 WHERE c.id = :id
 """)
     Optional<JpaConversationEntity> findByIdWithMessages(UUID id);
+
+    void removeById(UUID id);
 }
