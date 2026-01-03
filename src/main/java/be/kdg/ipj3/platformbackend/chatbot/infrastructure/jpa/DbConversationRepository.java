@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.chatbot.domain.ConversationId;
 import be.kdg.ipj3.platformbackend.chatbot.domain.repository.ConversationRepository;
 import be.kdg.ipj3.platformbackend.chatbot.infrastructure.jpa.entity.JpaConversationEntity;
 import be.kdg.ipj3.platformbackend.chatbot.infrastructure.jpa.repository.JpaConversationRepository;
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -34,5 +35,10 @@ public class DbConversationRepository implements ConversationRepository {
     public void remove(ConversationId id) {
         jpaConversationRepository.removeById(id.id());
         log.info("Conversation {} removed from database", id.id());
+    }
+
+    @Override
+    public boolean hasActiveConversation(UserId userId) {
+        return jpaConversationRepository.userHasActiveConversation(userId.id());
     }
 }

@@ -4,6 +4,7 @@ import be.kdg.ipj3.platformbackend.chatbot.domain.Conversation;
 import be.kdg.ipj3.platformbackend.chatbot.domain.ConversationId;
 import be.kdg.ipj3.platformbackend.chatbot.domain.repository.ConversationRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ActiveConversationExistsException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class ConversationService {
     }
 
     public Conversation startNew(UserId userId){
+        if (repository.hasActiveConversation(userId)) {
+            throw new ActiveConversationExistsException(userId);
+        }
         Conversation newConversation = Conversation.startNew(userId);
         log.info("New Conversation {} started for user {}", newConversation.getId().id(), userId.id());
         repository.save(newConversation);
@@ -47,6 +51,7 @@ public class ConversationService {
     }
 
     public void endConversation(ConversationId id){
+        find(id);
         log.info("Conversation {} stopped", id.id());
         repository.remove(id);
     }
