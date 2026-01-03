@@ -1,4 +1,5 @@
 package be.kdg.ipj3.platformbackend.lobby;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.UUID;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,11 +54,54 @@ class LobbyIntegrationTests {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
     @Test
     void findAllLobbies_ShouldReturn401_when_not_authenticated() throws Exception {
         mockMvc.perform(get("/api/lobby")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Nested
+    class FindLobby {
+
+        @Test
+        void findLobby_ShouldReturn200_WhenAuthenticated() throws Exception {
+            mockMvc.perform(get("/api/lobby/{id}", LOBBY_ID)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(USER_ID.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").exists());
+        }
+
+        @Test
+        void findLobby_ShouldReturn404_WhenLobbyDoesNotExist() throws Exception {
+            mockMvc.perform(get("/api/lobby/{id}", NON_EXISTING_LOBBY_ID)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(USER_ID.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void findLobby_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            mockMvc.perform(get("/api/lobby/{id}", LOBBY_ID)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
     }
 
     @Nested
@@ -155,6 +200,7 @@ class LobbyIntegrationTests {
 
     @Nested
     class LeaveLobby {
+
         @Test
         void leaveLobby_ShouldReturn200_WhenAuthenticated() throws Exception {
             //Arrange
