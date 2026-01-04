@@ -7,6 +7,8 @@ import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.infrastructure.DbLobbyRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import org.junit.jupiter.api.Nested;
@@ -16,16 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateLobbyTest {
@@ -48,7 +46,8 @@ public class CreateLobbyTest {
             GameId gameId = new GameId(UUID.randomUUID());
             int maxPlayerCount = 4;
             Game mockGame = new Game(gameId, "Test Game", maxPlayerCount,"Desc", 10.0, "img", "icon", "url", null, new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
-            PlatformUser mockUser = new PlatformUser(userId, "user1", "email", new ArrayList<>(), "", "", 100.0, new ArrayList<>());
+            List<OwnedCopy> ownedCopyList = List.of(new OwnedCopy(new OwnedCopyId(UUID.randomUUID()), mockGame.getId(), false));
+            PlatformUser mockUser = new PlatformUser(userId, "user1", "email", new ArrayList<>(), "", "", 100.0, ownedCopyList);
             Lobby expectedLobby = new Lobby(null, mockGame.getId(),null, new ArrayList<>(), null, mockGame.getMaxPlayerCount());
             when(gameRepository.findById(gameId.id())).thenReturn(Optional.of(mockGame));
             when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(mockUser));
@@ -74,6 +73,33 @@ public class CreateLobbyTest {
             // Assert
             assertThatThrownBy(() -> lobbyService.createNewLobby(userId, 4, gameId))
                     .isInstanceOf(RuntimeException.class);
+        }
+
+        @Test
+        void createNewLobby_shouldThrowException_whenGameCopyIsNotOwned() {
+            // Arrange
+            UserId userId = new UserId(UUID.randomUUID());
+            GameId gameId = new GameId(UUID.randomUUID());
+
+            Game game = new Game(gameId, "Test", 4, "Desc",
+                    10.0, "img", "icon", "url", null,
+                    new ArrayList<>(), "url/start/ai", "/url/start", new HashMap<>());
+
+            PlatformUser user = new PlatformUser(
+                    userId, "user", "email",
+                    new ArrayList<>(), "", "", 100.0, new ArrayList<>()
+            );
+
+            when(gameRepository.findById(gameId.id()))
+                    .thenReturn(Optional.of(game));
+            when(platformUserRepository.findUserById(userId))
+                    .thenReturn(Optional.of(user));
+            // Act
+            // Assert
+            assertThatThrownBy(() ->
+                    lobbyService.createNewLobby(userId, 4, gameId)
+            ).isInstanceOf(RuntimeException.class);
+            verify(lobbyRepository, never()).createNewLobby(any(), any());
         }
 
         @Test
