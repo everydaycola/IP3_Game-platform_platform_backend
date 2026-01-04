@@ -4,7 +4,7 @@
 @player1password=123
 @player2username=456
 @player2password=456
-@baseUrl = http://localhost:8080/api/user
+@baseUrl = http://localhost:8090/api/user
 
 
 ### Get access token (player 1)

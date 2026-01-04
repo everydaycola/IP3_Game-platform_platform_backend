@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:8070/api/user
+@ClientId=go-backend
+@ClientSecret=b0ZVXfrGkyFlgXTPXtvCBOM4TLZzc9UY
+@player1username=123
+@player1password=123
+
+### Get access token (user 1)
+POST http://localhost:8180/realms/FourteenGames/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{player1username}}&password={{player1password}}&grant_type=password&scope=openid
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+
+### register user 1 to the platform (this can be used to populate users based on their jwt token from for ex. first signin)
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+> {%
+    client.global.set("userId", response.body.id);
+%}
+
+### Get platform User data
+GET {{baseUrl}}
+Authorization: Bearer {{access_token}}
+
+### Update the biography for a user
+PATCH {{baseUrl}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "biography": "This is my new bio",
+  "profilePictureUrl": "",
+  "bannerUrl": ""
+}
+
+### Update the profilePictureUrl for a user
+PATCH {{baseUrl}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "biography": "This is my new bio",
+  "profilePictureUrl": "testsite.com/myNewProfileImg.jpg",
+  "bannerUrl": ""
+}
+
+
+### Update the bannerUrl for a user
+PATCH {{baseUrl}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "biography": "This is my new bio",
+  "profilePictureUrl": "testsite.com/myNewProfileImg.jpg",
+  "bannerUrl": "testsite.com/myNewBannerImg.jpg"
+}
+
+### Reset all fields
+PATCH {{baseUrl}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "biography": "",
+  "profilePictureUrl": "",
+  "bannerUrl": ""
+}
+
+### Add credit to user
+POST {{baseUrl}}/credit
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "amount": 50
+}
+
+### Get owned game library
+GET {{baseUrl}}/library
+Authorization: Bearer {{access_token}}
+
+###
+
+### Buy a game
+POST {{baseUrl}}/buy
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "gameId": "11111111-1111-1111-1111-111111111111"
+}

@@ -23,6 +23,17 @@ VALUES ('11111111-1111-1111-1111-111111111111',
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
+VALUES ('11111111-1111-1111-1111-111111111112',
+        '[DEV_TEMP] Tic Tac Toe',
+        'A classic 2-player strategy game.',
+        19.98,
+        'tictactoe.png',
+        'https://www.svgrepo.com/show/143264/tic-tac-toe-game.svg',
+        'Strategy',
+        'http://localhost:5174/')
+    ON CONFLICT (id) DO NOTHING;
+
+/*INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
 VALUES ('22222222-2222-2222-2222-222222222222',
         'Go',
         'An ancient abstract strategy board game originating from East Asia.',
@@ -30,8 +41,8 @@ VALUES ('22222222-2222-2222-2222-222222222222',
         'go.png',
         '',
         'Strategy',
-        'https://team14-go-frontend.civato.org')
-    ON CONFLICT (id) DO NOTHING;
+        '')
+    ON CONFLICT (id) DO NOTHING;*/
 
 INSERT INTO games (id, name, description, price, image, icon, genre_name, url)
 VALUES ('33333333-3333-3333-3333-333333333333',
@@ -44,7 +55,7 @@ VALUES ('33333333-3333-3333-3333-333333333333',
         '')
     ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO achievements (id, name, description, game_id)
+/*INSERT INTO achievements (id, name, description, game_id)
 VALUES
     (
         'f47ac10b-58cc-4372-a567-0e02b2c3d479',
@@ -57,4 +68,4 @@ VALUES
         'Go Home',
         'Lose a game of go',
         '22222222-2222-2222-2222-222222222222'
-    )
+    )*/

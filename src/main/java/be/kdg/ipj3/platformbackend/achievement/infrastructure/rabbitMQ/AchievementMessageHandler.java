@@ -1,6 +1,6 @@
 package be.kdg.ipj3.platformbackend.achievement.infrastructure.rabbitMQ;
 
-import be.kdg.ipj3.platformbackend.achievement.api.AchievementMessageDto;
+import be.kdg.ipj3.platformbackend.game.infrastructure.rabbitMQ.messages.AchievementMessageDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

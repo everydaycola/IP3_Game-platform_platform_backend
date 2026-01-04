@@ -18,26 +18,26 @@ client_id={{ClientId}}&client_secret={{ClientSecret}}&username={{username}}&pass
 %}
 
 ### Test Game Started Event
-POST http://localhost:8080/api/analytics/test/game-started?gameId={{$uuid}}&gameName=Chess
+POST http://localhost:8070/api/analytics/test/game-started?gameId={{$uuid}}&gameName=Chess
 Authorization: Bearer {{access_token}}
 
 ### Test Game Ended Event
-POST http://localhost:8080/api/analytics/test/game-ended?gameId={{gameId}}&sessionId={{sessionId}}&duration=1800&completed=true
+POST http://localhost:8070/api/analytics/test/game-ended?gameId={{gameId}}&sessionId={{sessionId}}&duration=1800&completed=true
 Authorization: Bearer {{access_token}}
 
 ### Test Purchase Event
-POST http://localhost:8080/api/analytics/test/purchase?gameId={{gameId}}&amount=15.99
+POST http://localhost:8070/api/analytics/test/purchase?gameId={{gameId}}&amount=15.99
 Authorization: Bearer {{access_token}}
 
 ### Get Game (triggers gamePage_visit event)
-GET http://localhost:8080/api/games/{{gameId}}
+GET http://localhost:8070/api/games/{{gameId}}
 Authorization: Bearer {{access_token}}
 Referer: http://localhost:5173/search
 
 ### Register User (triggers user_registered event)
-POST http://localhost:8080/api/user
+POST http://localhost:8070/api/user
 Authorization: Bearer {{access_token}}
 
 #### Accept Friend Request (triggers friend_added event)
-#PATCH http://localhost:8080/api/user/friends/{{friendId}}/accept
+#PATCH http://localhost:8070/api/user/friends/{{friendId}}/accept
 #Authorization: Bearer {{access_token}}

@@ -3,14 +3,12 @@ package be.kdg.ipj3.platformbackend.user.infrastructure.jpa.entity;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.infrastructure.jpa.JpaUserAchievementEntity;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
-import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -35,19 +33,32 @@ public class JpaPlatformUserEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JpaFriendRequestEntity> receivedFriendRequests = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JpaUserAchievementEntity> achievements = new ArrayList<>();
+    private Set<JpaUserAchievementEntity> achievements = new HashSet<>();
+    @Column
+    private String profilePictureUrl;
+
+    @Column
+    private String bannerUrl;
+
+    @Column
+    private double credits;
+
+    @OneToMany(mappedBy = "user" ,orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<JpaOwnedCopyEntity> ownedGames;
 
     protected JpaPlatformUserEntity() {
     }
 
-    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, List<JpaUserAchievementEntity> achievements) {
+    private JpaPlatformUserEntity(UUID id, String userName, String biography, List<JpaFriendRequestEntity> friends, Set<JpaUserAchievementEntity> achievements, String profilePictureUrl, String bannerUrl, double credits) {
         this.id = id;
         this.userName = userName;
         this.biography = biography;
         this.receivedFriendRequests = friends;
         this.achievements = achievements;
+        this.profilePictureUrl = profilePictureUrl;
+        this.bannerUrl = bannerUrl;
+        this.credits = credits;
     }
 
     public static JpaPlatformUserEntity fromDomain(PlatformUser domain) {
@@ -55,52 +66,27 @@ public class JpaPlatformUserEntity {
         entity.id = domain.getUserId().id();
         entity.userName = domain.getUserName();
         entity.biography = domain.getBiography();
-
-        entity.receivedFriendRequests = domain.getReceivedFriendRequests().stream()
-                .map(friendReq -> JpaFriendRequestEntity
-                        .fromDomain(friendReq, JpaPlatformUserEntity.fromDomainWithoutFriends(friendReq.getSender()), JpaPlatformUserEntity.fromDomain(friendReq.getReceiver())
-                        ))
-                .collect(Collectors.toList());
-
-        entity.sentFriendRequests = domain.getSentFriendRequests().stream()
-                .map(friendReq -> JpaFriendRequestEntity
-                        .fromDomain(friendReq, JpaPlatformUserEntity.fromDomainWithoutFriends(friendReq.getSender()), JpaPlatformUserEntity.fromDomain(friendReq.getReceiver())
-                        ))
-                .collect(Collectors.toList());
+        entity.profilePictureUrl = domain.getProfilePictureUrl();
+        entity.bannerUrl = domain.getBannerUrl();
+        entity.credits = domain.getCredits();
 
         entity.achievements = domain.getAchievements().stream()
                 .map(ua -> JpaUserAchievementEntity.fromDomain(ua, entity))
-                .collect(Collectors.toList());
-        return entity;
-    }
+                .collect(Collectors.toSet());
 
-    public static JpaPlatformUserEntity fromDomainWithoutFriends(PlatformUser domain) {
-        JpaPlatformUserEntity entity = new JpaPlatformUserEntity();
-        entity.id = domain.getUserId().id();
-        entity.userName = domain.getUserName();
-        entity.biography = domain.getBiography();
-        entity.receivedFriendRequests = new ArrayList<>();
-        entity.sentFriendRequests = new ArrayList<>();
-        entity.achievements = new ArrayList<>();
+        entity.ownedGames = domain.getOwnedGames().stream()
+                .map(oc -> JpaOwnedCopyEntity.fromDomain(oc, entity))
+                .collect(Collectors.toSet());
         return entity;
     }
 
     public PlatformUser toDomain() {
-        List<PlatformFriendRequest> sentFriendRequests = this.sentFriendRequests.stream()
-                .map(JpaFriendRequestEntity::toDomain)
-                .collect(Collectors.toList());
-        List<PlatformFriendRequest> receivedFriendRequests = this.receivedFriendRequests.stream()
-                .map(JpaFriendRequestEntity::toDomain)
-                .collect(Collectors.toList());
         List<UserAchievement> achievementList = achievements.stream()
                 .map(JpaUserAchievementEntity::toDomain)
                 .collect(Collectors.toList());
-
-        return new PlatformUser(new UserId(id), userName, biography, sentFriendRequests, receivedFriendRequests, achievementList);
+        List<OwnedCopy> ownedGamesDomain = this.ownedGames.stream()
+                .map(JpaOwnedCopyEntity::toDomain)
+                .collect(Collectors.toList());
+        return new PlatformUser(new UserId(id), userName, biography, achievementList, profilePictureUrl, bannerUrl, credits, ownedGamesDomain);
     }
-
-    public PlatformUser toDomainWithoutFriendsAndAchievements() {
-        return new PlatformUser(new UserId(id), userName, biography, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-    }
-
 }

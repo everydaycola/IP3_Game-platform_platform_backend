@@ -35,8 +35,8 @@ public class FriendController {
     @GetMapping
     public ResponseEntity<FriendListDto> findAllFriends(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
-        PlatformUser user = friendService.findUserWithFriends(userId);
-        List<PlatformUser> fullFriends =  userService.findUserListByIdList(user.getFriendIds());
+        PlatformUser user = userService.findUserById(userId);
+        List<PlatformUser> fullFriends =  friendService.findAllFriendsOfUserWithId(userId);
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
     @PostMapping("/{friendUserName}")
@@ -45,9 +45,8 @@ public class FriendController {
         PlatformUser friend = userService.findUserByUserName(friendUserName);
         friendService.addFriendRequest(userId, new UserId(friend.getUserId().id()));
 
-        PlatformUser user = friendService.findUserWithFriends(userId);
-        List<UserId> friendIds = user.getFriendIds();
-        List<PlatformUser> fullFriends = userService.findUserListByIdList(friendIds);
+        PlatformUser user = userService.findUserById(userId);
+        List<PlatformUser> fullFriends = friendService.findAllFriendsOfUserWithId(userId);
 
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
@@ -57,9 +56,8 @@ public class FriendController {
         PlatformUser friend = userService.findUserByUserName(friendUserName);
         friendService.removeFriendFromFriendList(userId, friend.getUserId());
 
-        PlatformUser user = friendService.findUserWithFriends(userId);
-        List<UserId> friendIds = user.getFriendIds();
-        List<PlatformUser> fullFriends = userService.findUserListByIdList(friendIds);
+        PlatformUser user = userService.findUserById(userId);
+        List<PlatformUser> fullFriends = friendService.findAllFriendsOfUserWithId(userId);
 
         return ResponseEntity.ok(FriendListDto.from(user, fullFriends));
     }
@@ -70,9 +68,9 @@ public class FriendController {
         PlatformUser friend = userService.findUserByUserName(friendUserName);
         PlatformFriendRequest newFriend = friendService.acceptFriendRequest(userId, friend.getUserId().id());
 
-        UUID otherUserId = newFriend.getReceiver().getUserId().id().equals(userId.id())
-                ? newFriend.getSender().getUserId().id()
-                : newFriend.getReceiver().getUserId().id();
+        UUID otherUserId = newFriend.getReceiver().id().equals(userId.id())
+                ? newFriend.getSender().id()
+                : newFriend.getReceiver().id();
         PlatformUser friendUser = userService.findUserById(new UserId(otherUserId));
 
         return ResponseEntity.ok(FriendDto.from(friendUser));
