@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Slf4j
@@ -13,6 +14,7 @@ import java.util.List;
 public class Game {
     private final GameId id;
     private final String name;
+    private final int maxPlayerCount;
     private final String description;
     private final double price;
     private final String image;
@@ -20,4 +22,7 @@ public class Game {
     private final String url;
     private final Genre genre;
     private List<Achievement> achievements;
+    private String aiGameStartEndpoint;
+    private String gameStartEndpoint;
+    private Map<String, Object> gameSettings;
 }
