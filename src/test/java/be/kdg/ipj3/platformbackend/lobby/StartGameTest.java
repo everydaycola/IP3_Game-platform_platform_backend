@@ -66,7 +66,7 @@ public class StartGameTest {
             PlatformUser mockUser2 = mock(PlatformUser.class);
 
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(mockLobby));
-            when(mockLobby.getLobbyManager()).thenReturn(new Player(player1Id));
+            when(mockLobby.getLobbyHost()).thenReturn(new Player(player1Id));
             when(mockLobby.isLobbyFull()).thenReturn(true);
             when(mockLobby.getGameId()).thenReturn(gameId);
             when(mockLobby.getId()).thenReturn(lobbyId); // Used in log
@@ -122,7 +122,7 @@ public class StartGameTest {
 
             Lobby mockLobby = mock(Lobby.class);
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(mockLobby));
-            when(mockLobby.getLobbyManager()).thenReturn(new Player(managerId));
+            when(mockLobby.getLobbyHost()).thenReturn(new Player(managerId));
             when(mockLobby.notLobbyHostForbidden()).thenReturn(new ForbiddenException("Forbidden"));
 
             // Act
@@ -143,7 +143,7 @@ public class StartGameTest {
 
             Lobby mockLobby = mock(Lobby.class);
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(mockLobby));
-            when(mockLobby.getLobbyManager()).thenReturn(new Player(player1Id));
+            when(mockLobby.getLobbyHost()).thenReturn(new Player(player1Id));
             when(mockLobby.isLobbyFull()).thenReturn(false);
             when(mockLobby.notFullConflict()).thenReturn(new ConflictException("Not Full"));
 
@@ -166,7 +166,7 @@ public class StartGameTest {
 
             Lobby mockLobby = mock(Lobby.class);
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(mockLobby));
-            when(mockLobby.getLobbyManager()).thenReturn(new Player(player1Id));
+            when(mockLobby.getLobbyHost()).thenReturn(new Player(player1Id));
             when(mockLobby.isLobbyFull()).thenReturn(true);
             when(mockLobby.getGameId()).thenReturn(gameId);
 
@@ -195,7 +195,7 @@ public class StartGameTest {
             Game mockGame = mock(Game.class);
 
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(mockLobby));
-            when(mockLobby.getLobbyManager()).thenReturn(new Player(player1Id));
+            when(mockLobby.getLobbyHost()).thenReturn(new Player(player1Id));
             when(mockLobby.isLobbyFull()).thenReturn(true);
             when(mockLobby.getGameId()).thenReturn(gameId);
             when(mockLobby.notAllGameSettingsWereSet()).thenReturn(new BadRequestException("Settings Mismatch"));

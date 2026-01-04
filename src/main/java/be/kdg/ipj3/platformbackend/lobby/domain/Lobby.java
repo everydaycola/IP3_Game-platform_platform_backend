@@ -50,7 +50,7 @@ public class Lobby {
         this.players.remove(player);
     }
 
-    public Player getLobbyManager(){
+    public Player getLobbyHost(){
         return this.players.getFirst();
     }
 

@@ -6,12 +6,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record LobbyDto(UUID id,UUID gameId,UUID currentGameSessionId, List<PlayerDto> players, LocalDateTime creationDate, int maxPlayers) {
+public record LobbyDto(UUID id,UUID gameId,UUID currentGameSessionId,UUID lobbyHostId, List<PlayerDto> players, LocalDateTime creationDate, int maxPlayers) {
     public static LobbyDto from(final Lobby lobby) {
         return new LobbyDto(
                 lobby.getId().id(),
                 lobby.getGameId().id(),
                 lobby.getCurrentGameSessionId(),
+                lobby.getLobbyHost().userId().id(),
                 lobby.getPlayers()
                         .stream()
                         .map(PlayerDto::from)

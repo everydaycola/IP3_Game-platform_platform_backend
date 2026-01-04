@@ -99,7 +99,7 @@ public class LobbyService {
     public UUID startGame(UserId player1Id, UserId player2Id, LobbyId lobbyId, Jwt token, Map<String, Object> settings) {
         Lobby lobby = lobbyRepository.findLobbyById(lobbyId)
                 .orElseThrow(lobbyId::notFound);
-        if (!lobby.getLobbyManager().userId().id().equals(player1Id.id())) {
+        if (!lobby.getLobbyHost().userId().id().equals(player1Id.id())) {
             throw lobby.notLobbyHostForbidden();
         }
         if (!lobby.isLobbyFull()) {
