@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<PlatformUserDto> getAnotherUsersInfo(@AuthenticationPrincipal Jwt token) {
+    public ResponseEntity<PlatformUserDto> getUserInfo(@AuthenticationPrincipal Jwt token) {
         UserId userId = UserId.fromToken(token);
         log.info("User with id {} was recognized by the platform", userId);
         return ResponseEntity.ok(PlatformUserDto.from(userService.findUserById(userId)));

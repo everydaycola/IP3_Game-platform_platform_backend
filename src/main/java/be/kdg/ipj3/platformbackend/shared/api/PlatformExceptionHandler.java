@@ -1,9 +1,6 @@
 package be.kdg.ipj3.platformbackend.shared.api;
 
-import be.kdg.ipj3.platformbackend.shared.domain.exception.BadRequestException;
-import be.kdg.ipj3.platformbackend.shared.domain.exception.ConflictException;
-import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
-import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
