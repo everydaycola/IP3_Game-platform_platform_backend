@@ -6,6 +6,7 @@ import be.kdg.ipj3.platformbackend.lobby.api.dtos.StartGameResponseDto;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.LobbyCreationRequestDto;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.StartGameRequest;
 import be.kdg.ipj3.platformbackend.lobby.application.LobbyService;
+import be.kdg.ipj3.platformbackend.lobby.domain.GameSessionId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
@@ -43,7 +44,8 @@ public class LobbyController {
 
     @GetMapping("/byGame/{gameSessionId}")
     public ResponseEntity<LobbyDto> findLobbyByGameSessionId(@PathVariable UUID gameSessionId){
-        Lobby lobby = lobbyService.findLobbyByGameId(gameSessionId);
+        GameSessionId sessionId = new GameSessionId(gameSessionId);
+        Lobby lobby = lobbyService.findLobbyByGameId(sessionId);
         return ResponseEntity.ok(LobbyDto.from(lobby));
     }
 

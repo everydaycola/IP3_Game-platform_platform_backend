@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.lobby.application;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
+import be.kdg.ipj3.platformbackend.lobby.domain.GameSessionId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.domain.Player;
@@ -125,7 +126,7 @@ public class LobbyService {
         return gameSessionId;
     }
 
-    public Lobby findLobbyByGameId(UUID gameId) {
-        return lobbyRepository.findLobbyByGameId(gameId).get();
+    public Lobby findLobbyByGameId(GameSessionId gameSessionId) {
+        return lobbyRepository.findLobbyByGameSessionId(gameSessionId).orElseThrow(gameSessionId::notFound);
     }
 }
