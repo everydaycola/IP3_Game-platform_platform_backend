@@ -49,7 +49,7 @@ public class ConversationController {
     public ResponseEntity<ConversationDto> sendMessageAsUser(@AuthenticationPrincipal Jwt token, @PathVariable final UUID id, @RequestBody ReceivedChatMessageDto receivedMessage) {
         UserId userId = UserId.fromToken(token);
         ConversationId conversationId = new ConversationId(id);
-        Conversation conversation = conversations.sendMessage(conversationId,userId.id(),receivedMessage.text(),receivedMessage.sentTime());
+        Conversation conversation = conversations.sendMessage(conversationId, userId.id(), receivedMessage.text(), receivedMessage.sentTime(), receivedMessage.gameName(), receivedMessage.currentPageUrl());
         return ResponseEntity.ok(ConversationDto.from(conversation));
     }
 
@@ -69,7 +69,7 @@ public class ConversationController {
     @PostMapping("visitor/{id}/messages")
     public ResponseEntity<ConversationDto> sendMessageAsVisitor(@PathVariable final UUID id, @RequestBody ReceivedChatMessageDto receivedMessage) {
         ConversationId conversationId = new ConversationId(id);
-        Conversation conversation = conversations.sendMessage(conversationId,null,receivedMessage.text(),receivedMessage.sentTime());
+        Conversation conversation = conversations.sendMessage(conversationId, null, receivedMessage.text(), receivedMessage.sentTime(), receivedMessage.gameName(), receivedMessage.currentPageUrl());
         return ResponseEntity.ok(ConversationDto.from(conversation));
     }
 }

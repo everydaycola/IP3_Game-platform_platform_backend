@@ -44,8 +44,10 @@ Authorization: Bearer {{access_token}}
 Content-Type: application/json
 
 {
-  "text": "Hello",
-  "sentTime": "2026-01-03T12:00:00Z"
+  "text": "How to I see my friends?",
+  "sentTime": "2026-01-03T12:00:00Z",
+  "gameName": "",
+  "currentPageUrl": "https://localhost/store"
 }
 
 
@@ -61,14 +63,19 @@ POST {{baseUrl}}/visitor/start
     client.global.set("visitorConversationId", response.body.id);
 %}
 
+### Get conversation (visitor)
+GET {{baseUrl}}/{{visitorConversationId}}
+
 
 ### Send message (visitor)
 POST {{baseUrl}}/visitor/{{visitorConversationId}}/messages
 Content-Type: application/json
 
 {
-  "text": "Hello",
-  "sentTime": "2026-01-03T12:05:00Z"
+  "text": "How to I see my friends?",
+  "sentTime": "2026-01-03T12:00:00Z",
+  "gameName": "",
+  "currentPageUrl": "https://localhost/store"
 }
 
 
