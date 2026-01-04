@@ -41,6 +41,12 @@ public class LobbyController {
         return ResponseEntity.ok(lobbyDtos);
     }
 
+    @GetMapping("/byGame/{gameSessionId}")
+    public ResponseEntity<LobbyDto> findLobbyByGameSessionId(@PathVariable UUID gameSessionId){
+        Lobby lobby = lobbyService.findLobbyByGameId(gameSessionId);
+        return ResponseEntity.ok(LobbyDto.from(lobby));
+    }
+
     @PostMapping
     public ResponseEntity<LobbyDto> createNewLobby(@AuthenticationPrincipal Jwt token, @RequestBody LobbyCreationRequestDto requestDto) {
         UserId userId = UserId.fromToken(token);

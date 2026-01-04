@@ -6,6 +6,7 @@ import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface LobbyRepository {
     List<Lobby> findAllLobbies();
@@ -13,4 +14,5 @@ public interface LobbyRepository {
     Optional<Lobby> findLobbyById(LobbyId lobbyId);
     void save(Lobby lobby, Game game);
     void remove(Lobby lobby, Game game);
+    Optional<Lobby> findLobbyByGameId(UUID gameId);
 }

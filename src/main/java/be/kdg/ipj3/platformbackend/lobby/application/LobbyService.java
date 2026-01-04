@@ -124,4 +124,8 @@ public class LobbyService {
         log.info("Started game {} for game {} in lobby {}", gameSessionId, game.getName(), lobby.getId());
         return gameSessionId;
     }
+
+    public Lobby findLobbyByGameId(UUID gameId) {
+        return lobbyRepository.findLobbyByGameId(gameId).get();
+    }
 }

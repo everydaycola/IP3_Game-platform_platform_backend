@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @Slf4j
@@ -46,5 +47,10 @@ public class DbLobbyRepository implements LobbyRepository {
     @Override
     public void remove(Lobby lobby, Game game) {
         jpaLobbyRepository.delete(JpaLobbyEntity.fromDomain(lobby, game));
+    }
+
+    @Override
+    public Optional<Lobby> findLobbyByGameId(UUID gameId) {
+        return jpaLobbyRepository.findJpaLobbyEntityByCurrentGameSessionId(gameId).map(JpaLobbyEntity::toDomain);
     }
 }
