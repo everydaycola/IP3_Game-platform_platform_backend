@@ -1,5 +1,8 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
+import be.kdg.ipj3.platformbackend.analytics.infrastructure.AnalyticsMessagePublisher;
+import be.kdg.ipj3.platformbackend.analytics.messages.PaymentMadeMessage;
+import be.kdg.ipj3.platformbackend.analytics.messages.PurchaseMadeMessage;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.repository.GameRepository;
@@ -11,6 +14,7 @@ import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -21,23 +25,20 @@ import java.util.UUID;
 @Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     private final PlatformUserRepository platformUserRepository;
     private final GameRepository gameRepository;
-
-    public UserService(PlatformUserRepository platformUserRepository, GameRepository gameRepository) {
-        this.platformUserRepository = platformUserRepository;
-        this.gameRepository = gameRepository;
-    }
+    private final AnalyticsMessagePublisher analyticsMessagePublisher;
 
     public PlatformUser addUser(UserId userId, String userName) {
-        PlatformUser user = new PlatformUser(userId, userName, "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
+        final var user = new PlatformUser(userId, userName, "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
         return platformUserRepository.createUser(user);
     }
 
     public List<PlatformUser> findUserListByIdList(List<UserId> friendIds) {
-        List<UUID> uuids = friendIds.stream()
+        final var uuids = friendIds.stream()
                 .map(UserId::id)
                 .toList();
 
@@ -58,14 +59,14 @@ public class UserService {
     }
 
     public PlatformUser unlockAchievement(AchievementMessageDto dto) {
-        PlatformUser user = findUserById(new UserId(dto.userId()));
-        user = user.unlockAchievement(new AchievementId(dto.achievementId()));
+        final var user = findUserById(new UserId(dto.userId()));
+        user.unlockAchievement(new AchievementId(dto.achievementId()));
         platformUserRepository.save(user);
         return user;
     }
 
     public PlatformUser updateUserProfile(UserId userId, UpdateUserProfileRequestDto request) {
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        final var user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         user.updateProfileDetails(request.biography(), request.profilePictureUrl(), request.bannerUrl());
         platformUserRepository.save(user);
         return user;
@@ -73,10 +74,9 @@ public class UserService {
 
     public Game addFavoriteGame(UserId userId, GameId gameId) {
         log.info("User: " + userId + " added game with id" + gameId.id() + "to their favorites.");
-        Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
-
+        final var game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
+        final var user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        final var oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
         user.favoriteGame(oc.getId(), true);
         platformUserRepository.save(user);
         return game;
@@ -85,9 +85,8 @@ public class UserService {
     public void removeFavoriteGame(UserId userId, GameId gameId) {
         log.info("User: " + userId + " removed game with id" + gameId.id() + "from their favorites.");
         gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        OwnedCopy oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
-
+        final var user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        final var oc = platformUserRepository.findOwnedGameByGameId(userId.id(), gameId.id()).orElseThrow(gameId::notFound);
         user.favoriteGame(oc.getId(), false);
         platformUserRepository.save(user);
     }
@@ -105,9 +104,10 @@ public class UserService {
 
     public PlatformUser addCredit(UserId userId, double amount) {
         log.info("Adding credit amount of {} to user {}", amount, userId.id());
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        final var user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
         user.addCredits(amount);
         platformUserRepository.save(user);
+        analyticsMessagePublisher.publishPaymentMadeMessage(new PaymentMadeMessage(userId.id(), amount));
         return user;
     }
 
@@ -118,10 +118,11 @@ public class UserService {
 
     public OwnedCopy buyGame(UserId userId, GameId gameId) {
         log.info("User {} buying Game {}", userId.id(), gameId.id());
-        PlatformUser user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
-        Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
-        OwnedCopy oc = user.buyGame(gameId,game.getPrice());
+        final var user = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        final var game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
+        final var oc = user.buyGame(gameId,game.getPrice());
         platformUserRepository.save(user);
+        analyticsMessagePublisher.publishPurchaseMadeMessage(new PurchaseMadeMessage(userId.id(), gameId.id(), game.getName(), game.getPrice()));
         return oc;
     }
 }
