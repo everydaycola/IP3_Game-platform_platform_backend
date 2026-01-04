@@ -9,6 +9,8 @@ import be.kdg.ipj3.platformbackend.lobby.domain.Lobby;
 import be.kdg.ipj3.platformbackend.lobby.domain.LobbyId;
 import be.kdg.ipj3.platformbackend.lobby.infrastructure.DbLobbyRepository;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopy;
+import be.kdg.ipj3.platformbackend.user.domain.OwnedCopyId;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import org.junit.jupiter.api.Nested;
@@ -19,10 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -52,7 +51,10 @@ public class AddPlayerToLobbyTest {
             UserId userId = new UserId(UUID.randomUUID());
             Game game = new Game(new GameId(UUID.randomUUID()),"myGame",2,"MyDescription",5.00,"","","localhost:8080",new Genre("strategy",""),new ArrayList<>(),"localhost:8080/start/ai","localhost:8080/start", new HashMap<>());
             Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), game.getMaxPlayerCount());
-            PlatformUser user = new PlatformUser(userId, "u", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
+            List<OwnedCopy> ownedCopyList = List.of(
+                new OwnedCopy(new OwnedCopyId(UUID.randomUUID()),game.getId(), false )
+            );
+            PlatformUser user = new PlatformUser(userId, "u", "", new ArrayList<>(), "", "", 0.0,ownedCopyList);
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(lobby));
             when(gameRepository.findById(game.getId().id())).thenReturn(Optional.of(game));
             when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
@@ -79,6 +81,23 @@ public class AddPlayerToLobbyTest {
             when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(lobby));
             when(gameRepository.findById(game.getId().id())).thenReturn(Optional.of(game));
             when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(newUser));
+            // Act
+            // Assert
+            assertThatThrownBy(() -> lobbyService.addPlayerToLobby(lobbyId, userId))
+                    .isInstanceOf(RuntimeException.class);
+        }
+
+        @Test
+        void addPlayerToLobby_shouldThrowException_whenUserDoesNotOwnACopyOfTheGame() {
+            // Arrange
+            LobbyId lobbyId = new LobbyId(UUID.randomUUID());
+            UserId userId = new UserId(UUID.randomUUID());
+            Game game = new Game(new GameId(UUID.randomUUID()),"myGame",2,"MyDescription",5.00,"","","localhost:8080",new Genre("strategy",""),new ArrayList<>(),"localhost:8080/start/ai","localhost:8080/start", new HashMap<>());
+            Lobby lobby = new Lobby(lobbyId, game.getId(),null, new ArrayList<>(), LocalDateTime.now(), game.getMaxPlayerCount());
+            PlatformUser user = new PlatformUser(userId, "u", "", new ArrayList<>(), "", "", 0.0, new ArrayList<>());
+            when(lobbyRepository.findLobbyById(lobbyId)).thenReturn(Optional.of(lobby));
+            when(gameRepository.findById(game.getId().id())).thenReturn(Optional.of(game));
+            when(platformUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
             // Act
             // Assert
             assertThatThrownBy(() -> lobbyService.addPlayerToLobby(lobbyId, userId))
