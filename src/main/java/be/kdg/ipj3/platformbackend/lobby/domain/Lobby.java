@@ -51,6 +51,9 @@ public class Lobby {
     }
 
     public Player getLobbyHost(){
+        if(this.players.isEmpty()){
+            return null;
+        }
         return this.players.getFirst();
     }
 
