@@ -1,5 +1,7 @@
 package be.kdg.ipj3.platformbackend.user;
 
+import be.kdg.ipj3.platformbackend.analytics.infrastructure.AnalyticsMessagePublisher;
+import be.kdg.ipj3.platformbackend.analytics.messages.PurchaseMadeMessage;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.game.domain.Genre;
@@ -22,8 +24,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class BuyGameTest {
@@ -32,6 +35,9 @@ public class BuyGameTest {
 
     @Mock
     GameRepository gameRepository;
+
+    @Mock
+    AnalyticsMessagePublisher analyticsMessagePublisher;
 
     @InjectMocks
     UserService userService;
@@ -61,6 +67,7 @@ public class BuyGameTest {
             assertThat(ownedCopyResult.getGameId().id()).isEqualTo(gameId.id());
             assertThat(mockUser.getOwnedGames().size()).isEqualTo(1);
             assertThat(mockUser.getCredits()).isEqualTo(30);
+            Mockito.verify(analyticsMessagePublisher).publishPurchaseMadeMessage(any(PurchaseMadeMessage.class));
         }
     }
 
@@ -98,6 +105,7 @@ public class BuyGameTest {
                     .hasMessageContaining("Not enough credits");
             assertThat(mockUser.getOwnedGames().size()).isEqualTo(0);
             assertThat(mockUser.getCredits()).isEqualTo(10);
+            Mockito.verify(analyticsMessagePublisher, never()).publishPurchaseMadeMessage(any(PurchaseMadeMessage.class));
         }
 
         @Test
@@ -125,6 +133,7 @@ public class BuyGameTest {
                     .hasMessageContaining("already owned");
             assertThat(mockUser.getCredits()).isEqualTo(50.0);
             assertThat(mockUser.getOwnedGames().size()).isEqualTo(1);
+            Mockito.verify(analyticsMessagePublisher, never()).publishPurchaseMadeMessage(any(PurchaseMadeMessage.class));
         }
     }
 }

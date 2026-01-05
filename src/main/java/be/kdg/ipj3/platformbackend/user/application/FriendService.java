@@ -1,11 +1,14 @@
 package be.kdg.ipj3.platformbackend.user.application;
 
+import be.kdg.ipj3.platformbackend.analytics.infrastructure.AnalyticsMessagePublisher;
+import be.kdg.ipj3.platformbackend.analytics.messages.FriendAddedMessage;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformFriendRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +22,12 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Transactional
+@RequiredArgsConstructor
 public class FriendService {
 
     private final PlatformUserRepository platformUserRepository;
     private final PlatformUserFriendRepository platformUserFriendRepository;
-
-    public FriendService(PlatformUserRepository platformUserRepository, PlatformUserFriendRepository platformUserFriendRepository) {
-        this.platformUserRepository = platformUserRepository;
-        this.platformUserFriendRepository = platformUserFriendRepository;
-    }
+    private final AnalyticsMessagePublisher analyticsMessagePublisher;
 
     public List<PlatformUser> findAllFriendsOfUserWithId(UserId userId) {
         List<PlatformFriendRequest> friendRequests = platformUserFriendRepository.findAllFriendsForUser(userId);
@@ -75,6 +75,7 @@ public class FriendService {
         log.info("Accepting friend request between {} to user {}", friendId, userId);
         PlatformFriendRequest friendRequest = platformUserFriendRepository.findFriendRequestBetween(friendId, userId);
         friendRequest.accept();
+        analyticsMessagePublisher.publishFriendAddedMessage(FriendAddedMessage.of(friendRequest));
         return platformUserFriendRepository.save(friendRequest);
     }
 
