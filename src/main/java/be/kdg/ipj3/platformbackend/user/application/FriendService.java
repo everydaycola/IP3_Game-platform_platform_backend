@@ -33,9 +33,9 @@ public class FriendService {
         List<PlatformFriendRequest> friendRequests = platformUserFriendRepository.findAllFriendsForUser(userId);
 
         List<UUID> friendIds = friendRequests.stream()
-                .map(fr -> fr.getSender().id() != userId.id()
-                                ? fr.getSender().id()
-                                : fr.getReceiver().id())
+                .map(fr -> !fr.getSender().id().equals(userId.id())
+                        ? fr.getSender().id()
+                        : fr.getReceiver().id())
                 .collect(Collectors.toList());
 
         return platformUserRepository.findByIdIn(friendIds);
