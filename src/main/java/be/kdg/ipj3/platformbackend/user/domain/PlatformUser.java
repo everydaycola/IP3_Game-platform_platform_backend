@@ -41,16 +41,15 @@ public class PlatformUser {
         this.ownedGames = ownedGames;
     }
 
-    public PlatformUser unlockAchievement(AchievementId achievementId) {
+    public void unlockAchievement(AchievementId achievementId) {
         UserAchievementId newUAId = new UserAchievementId(userId, achievementId);
 
         if (achievements.stream().anyMatch(userAchievement -> userAchievement.id().equals(newUAId))) {
             log.info("User {} already has achievement {}", this.userId.id(), achievementId.id());
-            return this;
+            return;
         }
         achievements.add(new UserAchievement(newUAId, LocalDateTime.now()));
         log.info("User {} has unlocked achievement {}", this.userId.id(), achievementId.id());
-        return this;
     }
 
     public void updateProfileDetails(String biography, String profilePictureUrl, String bannerUrl) {

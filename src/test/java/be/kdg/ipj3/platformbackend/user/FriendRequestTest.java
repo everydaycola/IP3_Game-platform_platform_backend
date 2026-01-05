@@ -1,5 +1,7 @@
 package be.kdg.ipj3.platformbackend.user;
 
+import be.kdg.ipj3.platformbackend.analytics.infrastructure.AnalyticsMessagePublisher;
+import be.kdg.ipj3.platformbackend.analytics.messages.FriendAddedMessage;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.NotFoundException;
 import be.kdg.ipj3.platformbackend.user.application.FriendService;
@@ -32,6 +34,9 @@ public class FriendRequestTest {
 
     @Mock
     PlatformUserFriendRepository platformUserFriendRepository;
+
+    @Mock
+    AnalyticsMessagePublisher analyticsMessagePublisher;
 
     @InjectMocks
     FriendService friendService;
@@ -126,6 +131,7 @@ public class FriendRequestTest {
             Mockito.verify(platformUserFriendRepository, times(1)).findFriendRequestBetween(friendId, userId);
             assertTrue(existingRequest.isConfirmed(), "The friend request should be marked as accepted");
             Mockito.verify(platformUserFriendRepository, times(1)).save(existingRequest);
+            Mockito.verify(analyticsMessagePublisher).publishFriendAddedMessage(any(FriendAddedMessage.class));
         }
 
     }
