@@ -1,10 +1,14 @@
 package be.kdg.ipj3.platformbackend.user;
 
+import be.kdg.ipj3.platformbackend.analytics.infrastructure.AnalyticsMessagePublisher;
+import be.kdg.ipj3.platformbackend.analytics.messages.PaymentMadeMessage;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import be.kdg.ipj3.platformbackend.user.api.dtos.UpdateUserProfileRequestDto;
 import be.kdg.ipj3.platformbackend.user.application.UserService;
+import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserFriendRepository;
 import be.kdg.ipj3.platformbackend.user.domain.repository.PlatformUserRepository;
 import be.kdg.ipj3.platformbackend.user.domain.PlatformUser;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +24,16 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class UserTest {
 
     @Mock
     PlatformUserRepository platformUserRepository;
+
+    @Mock
+    AnalyticsMessagePublisher analyticsMessagePublisher;
 
     @InjectMocks
     UserService userService;
@@ -38,7 +46,7 @@ public class UserTest {
             UserId userId = new UserId(UUID.randomUUID());
             String userName1 = "TestUser1";
             PlatformUser mockUser = new PlatformUser(userId,userName1,"", new ArrayList<>(),"" ,"",0.0,new ArrayList<>());
-            Mockito.when(platformUserRepository.createUser(Mockito.any(PlatformUser.class)))
+            Mockito.when(platformUserRepository.createUser(any(PlatformUser.class)))
                     .thenReturn(mockUser);
             // Act
             PlatformUser result = userService.addUser(userId,userName1);
@@ -102,7 +110,7 @@ public class UserTest {
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("test biography", "", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
-                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+                Mockito.doNothing().when(platformUserRepository).save(any(PlatformUser.class));
 
                 // Act
                 PlatformUser result =
@@ -124,7 +132,7 @@ public class UserTest {
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "website.com/testimg.jpg", "");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
-                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+                Mockito.doNothing().when(platformUserRepository).save(any(PlatformUser.class));
 
                 // Act
                 PlatformUser result =
@@ -146,7 +154,7 @@ public class UserTest {
                 UpdateUserProfileRequestDto payload = new UpdateUserProfileRequestDto("", "", "website.com/testimg.jpg");
                 Mockito.when(platformUserRepository.findUserById(userId))
                         .thenReturn(Optional.of(mockUser));
-                Mockito.doNothing().when(platformUserRepository).save(Mockito.any(PlatformUser.class));
+                Mockito.doNothing().when(platformUserRepository).save(any(PlatformUser.class));
 
                 // Act
                 PlatformUser result =
@@ -175,6 +183,7 @@ public class UserTest {
                 //Assert
                 assertEquals(50, result.getCredits());
                 Mockito.verify(platformUserRepository).save(mockUser);
+                Mockito.verify(analyticsMessagePublisher).publishPaymentMadeMessage(any(PaymentMadeMessage.class));
             }
 
         }
