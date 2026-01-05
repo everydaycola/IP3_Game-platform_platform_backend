@@ -53,6 +53,10 @@ public class ExternalAIChatbotApiCatalog implements AiChatbotApiCatalog {
                 );
             }
 
+            if (answer.equals("null") || answer.equals("No games have been uploaded for your team yet.")) {
+                answer = "Can you please rephrase your question?";
+            }
+
             return new ChatbotAnswerDto(answer, error);
 
         } catch (HttpStatusCodeException e) {

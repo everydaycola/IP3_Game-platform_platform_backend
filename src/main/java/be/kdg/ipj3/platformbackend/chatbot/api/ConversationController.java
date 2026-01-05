@@ -66,7 +66,7 @@ public class ConversationController {
         return ResponseEntity.ok("Conversation " + conversationId.id() + " successfully removed");
     }
 
-    @PostMapping("visitor/{id}/messages")
+    @PostMapping("/visitor/{id}/messages")
     public ResponseEntity<ConversationDto> sendMessageAsVisitor(@PathVariable final UUID id, @RequestBody ReceivedChatMessageDto receivedMessage) {
         ConversationId conversationId = new ConversationId(id);
         Conversation conversation = conversations.sendMessage(conversationId, null, receivedMessage.text(), receivedMessage.sentTime(), receivedMessage.gameName(), receivedMessage.currentPageUrl());
