@@ -27,6 +27,8 @@ class LobbyIntegrationTests {
 
     private static final UUID GAME_ID =
             UUID.fromString("11111111-1111-1111-1111-111111111111");
+    private static final UUID GAME_SESSION_ID =
+            UUID.fromString("99999999-9999-9999-9999-999999999999");
 
     private static final UUID USER_ID =
             UUID.fromString("11111111-1111-1111-aaaa-111111111111");
@@ -42,6 +44,9 @@ class LobbyIntegrationTests {
 
     @Test
     void findAllLobbies_ShouldReturn200() throws Exception {
+        //Arrange
+        //Act
+        //Assert
         mockMvc.perform(get("/api/lobby")
                         .with(jwt()
                                 .jwt(jwt -> jwt
@@ -57,6 +62,9 @@ class LobbyIntegrationTests {
 
     @Test
     void findAllLobbies_ShouldReturn401_when_not_authenticated() throws Exception {
+        //Arrange
+        //Act
+        //Assert
         mockMvc.perform(get("/api/lobby")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
@@ -67,6 +75,9 @@ class LobbyIntegrationTests {
 
         @Test
         void findLobby_ShouldReturn200_WhenAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(get("/api/lobby/{id}", LOBBY_ID)
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -83,6 +94,9 @@ class LobbyIntegrationTests {
 
         @Test
         void findLobby_ShouldReturn404_WhenLobbyDoesNotExist() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(get("/api/lobby/{id}", NON_EXISTING_LOBBY_ID)
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -98,6 +112,9 @@ class LobbyIntegrationTests {
 
         @Test
         void findLobby_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(get("/api/lobby/{id}", LOBBY_ID)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
@@ -109,6 +126,9 @@ class LobbyIntegrationTests {
 
         @Test
         void createLobby_ShouldReturn200_WhenAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(post("/api/lobby")
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -130,6 +150,9 @@ class LobbyIntegrationTests {
 
         @Test
         void createLobby_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(post("/api/lobby")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
@@ -147,6 +170,9 @@ class LobbyIntegrationTests {
 
         @Test
         void joinLobby_ShouldReturn200_WhenAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(patch("/api/lobby/{id}", LOBBY_ID)
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -162,6 +188,9 @@ class LobbyIntegrationTests {
 
         @Test
         void joinLobby_ShouldReturn409_WhenAlreadyInLobby() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(patch("/api/lobby/{id}", FULL_LOBBY_ID)
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -177,6 +206,9 @@ class LobbyIntegrationTests {
 
         @Test
         void joinLobby_ShouldReturn404_WhenLobbyDoesNotExist() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(patch("/api/lobby/{id}", NON_EXISTING_LOBBY_ID)
                             .with(jwt()
                                     .jwt(jwt -> jwt
@@ -192,6 +224,9 @@ class LobbyIntegrationTests {
 
         @Test
         void joinLobby_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(patch("/api/lobby/{id}", LOBBY_ID)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
@@ -233,9 +268,66 @@ class LobbyIntegrationTests {
 
         @Test
         void leaveLobby_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
             mockMvc.perform(delete("/api/lobby/{id}", LOBBY_ID)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isUnauthorized());
         }
     }
+
+    @Nested
+    class FindLobbyByGameId {
+
+        @Test
+        void findLobbyByGameId_ShouldReturn200_WhenAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/lobby/byGame/{gameSessionId}", GAME_SESSION_ID)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(USER_ID.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").exists())
+                    .andExpect(jsonPath("$.gameId").value(GAME_ID.toString()));
+        }
+
+        @Test
+        void findLobbyByGameId_ShouldReturn404_WhenLobbyDoesNotExist() throws Exception {
+            //Arrange
+            UUID nonExistingGameId = UUID.randomUUID();
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/lobby/game/{gameId}", nonExistingGameId)
+                            .with(jwt()
+                                    .jwt(jwt -> jwt
+                                            .subject(USER_ID.toString())
+                                            .claim(StandardClaimNames.GIVEN_NAME, "test_user")
+                                            .claim(StandardClaimNames.FAMILY_NAME, "user")
+                                            .claim(StandardClaimNames.EMAIL, "test_user@test.be")
+                                    )
+                            )
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void findLobbyByGameId_ShouldReturn401_WhenNotAuthenticated() throws Exception {
+            //Arrange
+            //Act
+            //Assert
+            mockMvc.perform(get("/api/lobby/game/{gameId}", GAME_ID)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isUnauthorized());
+        }
+    }
+
 }
