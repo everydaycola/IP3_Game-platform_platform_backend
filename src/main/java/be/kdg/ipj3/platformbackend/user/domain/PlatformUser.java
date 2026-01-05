@@ -5,6 +5,7 @@ import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievement;
 import be.kdg.ipj3.platformbackend.achievement.domain.UserAchievementId;
 import be.kdg.ipj3.platformbackend.game.domain.GameId;
 import be.kdg.ipj3.platformbackend.shared.domain.UserId;
+import be.kdg.ipj3.platformbackend.shared.domain.exception.ForbiddenException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.GameAlreadyOwnedException;
 import be.kdg.ipj3.platformbackend.shared.domain.exception.InsufficientCreditsException;
 import lombok.Getter;
@@ -71,7 +72,7 @@ public class PlatformUser {
             throw new InsufficientCreditsException(credits, price);
         }
         if (ownedGames.stream().anyMatch(ownedCopy -> ownedCopy.getGameId().id().equals(gameId.id()))) {
-           log.error("User {} allready owns game {}", this.userId.id(), gameId.id());
+            log.error("User {} allready owns game {}", this.userId.id(), gameId.id());
             throw new GameAlreadyOwnedException(gameId.id());
         }
 
@@ -90,4 +91,13 @@ public class PlatformUser {
                 .filter(oc -> oc.getId().id().equals(ocId.id()))
                 .findFirst().orElseThrow(ocId::notFound).setFavorite(favorite);
     }
+
+    public void validateGameOwnerShip(GameId gameId) {
+        if (this.ownedGames.stream()
+                .noneMatch(ownedCopy -> ownedCopy.getGameId().id().equals(gameId.id()))) {
+            log.info("user {} attempted to player {} but does not own a copy of this game.", this.userId.id(), gameId.id());
+            throw new ForbiddenException(this.userId.id() + " does not own game " + gameId.id());
+        }
+    }
+
 }

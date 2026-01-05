@@ -47,6 +47,7 @@ public class LobbyService {
         Game game = gameRepository.findById(gameId.id()).orElseThrow(gameId::notFound);
         Lobby newLobby = new Lobby(new LobbyId(UUID.randomUUID()), gameId, null, new ArrayList<>(), LocalDateTime.now(), maxPlayerCount);
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        platformUser.validateGameOwnerShip(game.getId());
         newLobby.addPlayer(platformUser.getUserId());
         return lobbyRepository.createNewLobby(newLobby, game);
     }
@@ -76,6 +77,7 @@ public class LobbyService {
         Lobby lobby = lobbyRepository.findLobbyById(lobbyId).orElseThrow(lobbyId::notFound);
         Game game = gameRepository.findById(lobby.getGameId().id()).orElseThrow(lobby.getGameId()::notFound);
         PlatformUser platformUser = platformUserRepository.findUserById(userId).orElseThrow(userId::notFound);
+        platformUser.validateGameOwnerShip(game.getId());
         lobby.getPlayers()
                 .stream()
                 .filter(p -> p.userId().id().equals(userId.id()))
