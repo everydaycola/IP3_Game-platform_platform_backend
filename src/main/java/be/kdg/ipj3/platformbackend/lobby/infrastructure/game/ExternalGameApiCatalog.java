@@ -3,6 +3,7 @@ package be.kdg.ipj3.platformbackend.lobby.infrastructure.game;
 import be.kdg.ipj3.platformbackend.game.domain.Game;
 import be.kdg.ipj3.platformbackend.lobby.api.dtos.request.StartGameRequest;
 import be.kdg.ipj3.platformbackend.lobby.domain.catalog.GameApiCatalog;
+import be.kdg.ipj3.platformbackend.shared.domain.UserId;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,5 +47,21 @@ public class ExternalGameApiCatalog implements GameApiCatalog {
             log.warn("Http error while asking {} to start a new game session.", game.getName());
         }
         return null;
+    }
+
+    @Override
+    public void startTrainingGameSession(Game game, String tokenValue, UserId userId) {
+        log.info("Requesting a new training game session");
+        if (game.getAiGameStartEndpoint() == null) return;
+        try{
+            restClient.post()
+                    .uri(game.getAiGameStartEndpoint())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenValue)
+                    .body(new StartGameRequest(userId.id(), null, new HashMap<>()))
+                    .retrieve()
+                    .body(JsonNode.class);
+        }catch(HttpStatusCodeException e){
+            log.warn("Http error {} while asking {} to start a new game session.", e.getStatusCode(), game.getName());
+        }
     }
 }

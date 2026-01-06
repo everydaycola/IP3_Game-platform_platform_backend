@@ -81,4 +81,14 @@ public class LobbyController {
         return ResponseEntity.ok(new StartGameResponseDto(gameId));
     }
 
+    @PostMapping("/training/{gameUuid}")
+    public ResponseEntity<String> startAiGame(
+            @AuthenticationPrincipal Jwt token,
+            @PathVariable UUID gameUuid
+    ){
+        final var gameId = new GameId(gameUuid);
+        lobbyService.startTrainingGame(gameId, token);
+        return ResponseEntity.ok("Game against Ai started succesfully.");
+    }
+
 }
