@@ -131,4 +131,15 @@ public class LobbyService {
     public Lobby findLobbyByGameId(GameSessionId gameSessionId) {
         return lobbyRepository.findLobbyByGameSessionId(gameSessionId).orElseThrow(gameSessionId::notFound);
     }
+
+    public void startTrainingGame(GameId gameId, Jwt token) {
+        final var game = gameRepository.findById(gameId.id())
+                .orElseThrow(gameId::notFound);
+
+        gameApiCatalog.startTrainingGameSession(
+                game,
+                token.getTokenValue(),
+                UserId.fromToken(token)
+        );
+    }
 }
